@@ -219,10 +219,10 @@ copy halo-cnode1,halo
 modify ulimit -n
 vim /etc/security/limits.conf, for centos7
 add the below content at the end of file then restart server
-```
+
 * soft nofile 102400
 * hard nofile 102400
-```
+
 cat /proc/sys/fs/file-max  will affect the limits
 
 15.
@@ -242,7 +242,6 @@ hdfs namenode -format
 start-all.sh
 stop-all.sh
 
-
 #export YARN_LOG_DIR=$HADOOP_LOG_DIR
 ```
 
@@ -253,3 +252,4 @@ stop-all.sh
 jps
 hadoop dfsadmin -report
 ```
+
