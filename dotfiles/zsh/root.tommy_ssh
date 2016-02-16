@@ -53,6 +53,8 @@ alias cdwpy='cd /home/www/python/'
 alias cdwph='cd /home/www/php/'
 alias cdm='cd /home/manual/'
 alias cdg='cd /home/vc/git/'
+alias cdgd='cd /home/vc/git/dotfiles/'
+alias cdgv='cd /home/vc/git/vimrc/'
 
 alias shl='sh /home/sh/log.sh'
 
