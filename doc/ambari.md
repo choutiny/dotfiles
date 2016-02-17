@@ -27,3 +27,8 @@ ambari-server stop
 
 /hadoop/hdfs
 ```
+
+###Security
+----------------------
+```
+```
