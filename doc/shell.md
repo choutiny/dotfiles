@@ -1994,6 +1994,7 @@ svn revert --recursive ./ 取消掉svn add的内容
 ```
 
 61.mysql usage
+```
 DDL ----Data Definition Language 数据库定义语言 
 如 create procedure之类
 创建数据库 CREATE DATABASE [IF NOT EXISTS] DBNAME [CHARACTER SET 'CHAR_NAME'] [COLLATE 'COLL_NAME']
@@ -2034,6 +2035,9 @@ CREATE INDEX index_name ON TABLE (col_name[(length)] [ASC|DESC]) [USING {BTREE|H
 DROP INDEX index_name ON TBNAME;
 查看表状态:SHOW STATUS LIKE 'TBNAME';
 查看表的索引:SHOW INDEXES FROM TBNAME;
+```
+
+```
 DML
 ----Data Manipulation Language 数据操纵语言
 如insert,delete,update,select(插入、删除、修改、检索)
@@ -2109,6 +2113,9 @@ LIMIT限定查询结果的条数,LIMIT 2,3表示偏移2条数据后,取3条数�
     mysql>(SELECT Name,Age FROM students) UNION (SELECT Tname,Age FROM tutors);
 创建视图
 CREATE VIEW VIEW_NAME AS SELECT....
+```
+
+```
 DCL
 ----Data Control Language 数据库控制语言
 如grant,deny,revoke等,只有管理员才有这样的权限.
