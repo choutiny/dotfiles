@@ -82,7 +82,7 @@ apt-get install cloc
 cloc ./ --3 来代码统计, 可以按照语言排序
 ```
 
-4.echp 输出
+4.echo 输出
 ```
 echo "efwkfjwfjewklfjweklfjeklwjfwe4tjrklegnmer12312j3kljklfwe" | xargs -d X 
     -d用来指定采定界符 这里用的X分开
@@ -134,6 +134,15 @@ echo $(1+2+3+4+5+6+0)
     转换成大写,小写
         declare -u var
         declare -l var
+
+
+echo $$ 当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
+echo $0 当前脚本的文件名
+echo $n 传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是$1，第二个参数是$2。
+echo $# 传递给脚本或函数的参数个数。
+echo $* 传递给脚本或函数的所有参数。
+echo $@ 传递给脚本或函数的所有参数。被双引号(" ")包含时，与 $* 稍有不同，下面将会讲到。
+echo $? 上个命令的退出状态，或函数的返回值。
 ```
 
 5.校检文件
@@ -411,6 +420,7 @@ echo this is digit 8 in a number | sed 's/digit \([0-9]\)/\1/'
 echo seven EIGHT | sed 's/\([a-z]\+\) \([A-Z]\+\)/\2 \1/'
     EIGHT seven
 ([a-z]\+\) 匹配第一个单词 ([A-Z]\+\) 匹配第二个单词 \1 \2 引用它们,这种引用叫向后引用
+$ 匹配最后一行。1匹配第一行，而不是^，这点和正则不大一样
 ```
 
 15.awk 操作数据流的列和行
@@ -3314,7 +3324,7 @@ panels   管理
     cacerts=/etc/ssl/certs/ca-certificates.crt
     [paths][auth]
     hg.int.jumei.com.prefix = https://hg.int.jumei.com/
-    hg.int.jumei.com.username = yuliangx
+    hg.int.jumei.com.username = test 
     hg.int.jumei.com.password = interface
     [hostfingerprints]
     hg.int.jumei.com = d7:ce:75:52:4e:42:44:fb:bf:c2:40:dc:a8:61:32:3f:e0:ec:3f:4c
