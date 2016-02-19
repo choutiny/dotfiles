@@ -14,3 +14,20 @@ Kerberos
 | Realm                                | Kerberos网络,包含KDC和客户端     |
 | KDC Admin Account                    | 通过Ambari管理员创建并产生keytabs|
 ```
+
+###Install
+------------------------
+```
+RHEL/CentOS/Oracle Linux
+yum install krb5-server krb5-libs krb5-workstation
+
+Ubuntu/Debian
+apt-get install krb5-kdc krb5-admin-server
+```
+
+###Configuration
+------------------------
+```
+vim /etc/krb5.conf
+```
+
