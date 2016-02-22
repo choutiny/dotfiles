@@ -2638,6 +2638,9 @@ sh-copy-id -i /root/.ssh/id_rsa.pub -p2222 "git@192.168.86.111"
 如果要删除掉某个已经过期的host key
 ssh-keygen -f "/root/.ssh/known_hosts" -R 192.168.85.123
 
+ssh协议调试
+ssh -v root@ip 可以看见输出日志
+
 Now try logging into the machine, with "ssh 'git@192.168.85.111'", and check in:
   ~/.ssh/authorized_keys
 to make sure we haven't added extra keys that you weren't expecting.
