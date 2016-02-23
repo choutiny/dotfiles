@@ -2215,6 +2215,8 @@ apt-get install package 安装包
 apt-get install package - - reinstall 重新安装包
 apt-get install $(grep -vE "^\s*#" filename  | tr "\n" " ") 从文本文件里面安装包
 apt-get install $(cat filename)
+xargs -a <(cat filename) -r apt-get install
+
 
 apt-get -f install 修复安装"-f = --fix-missing"
 apt-get remove package 删除包
