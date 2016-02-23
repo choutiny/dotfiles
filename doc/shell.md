@@ -2214,6 +2214,7 @@ apt-cache show package 获取包的相关信息,如说明、大小、版本等
 apt-get install package 安装包
 apt-get install package - - reinstall 重新安装包
 apt-get install $(grep -vE "^\s*#" filename  | tr "\n" " ") 从文本文件里面安装包
+apt-get install $(cat filename)
 
 apt-get -f install 修复安装"-f = --fix-missing"
 apt-get remove package 删除包
