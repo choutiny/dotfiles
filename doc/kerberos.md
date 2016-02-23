@@ -43,4 +43,11 @@ Principal:      primary/instance@REALM
                     instance是给有资格的主要信息。实例可以为null。在一个用户的情况下，该实例被经常用于描述的目的用途相应的凭据。在一台主机的情况下，实例是完全合格的主机名 
                     REALM由单个Kerberos数据库以及一组密钥分发中心的服务的逻辑网络。按照惯例，realm名称一般都是全部大写，以区别于互联网领域的境界
 
-``` 
+```
+
+```
+rm -rf /var/Kerberos/krb5kdc/principal*
+kdb5_util create -s -r SYNNEX.ORG 
+    -s表示通过 kadmin 登录本机不需要密码
+    Loading random data 的时间会有点长, 之后会让设置一个密码
+```
