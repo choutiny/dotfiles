@@ -1148,6 +1148,10 @@ find ./ -type l | wc -l //
 重复命令参数 先来看一个例子：mkdir /path/to/exampledir cd !$本例中,第一行命令将创建一个目录,而第二行的命令则转到刚创建的目录.这里,"!$"的作用就是重复前一个命令的参数.事实上,不仅是命令的参数可以重复,命令的选项同样可以.另外,Esc + . 快捷键可以切换这些命令参数或选项.
   !$ 代表了上一个命令的最后一个字符串,所以就可以在第二个命令的时候直接调用!$ 来节约输入
   !! 重复执行上一条命令
+
+./terminfo/mostlike.txt,
+tic mostlike.txt
+alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
 ```
 用于编辑的终端快捷键
     ctrl + a 将光标定位到命令的开头
