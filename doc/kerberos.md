@@ -14,7 +14,7 @@ Kerberos
 | Realm                                | Kerberos网络,包含KDC和客户端     |
 | KDC Admin Account                    | 通过Ambari管理员创建并产生keytabs|
 
-Server: kdc.example.org
+Server: kdctommy.example.org
 Client：kdcc.example.org
 ```
 
@@ -75,8 +75,41 @@ Principal "tommy@EXAMPLE.ORG" created.
 kadmin 和 kadmin.local 都是 KDC 的管理接口, 区别在于 kadmin.local 只能在 Server 上使用,无需密码; kadmin 在 Server 和 Client 上都能使用, 需要密码——当然, 需要在 Server 上启动 Kadmin 服务.
 
 将 KDC 的域名加入到 Kerberos 的数据库
-kadmin.local:  addprinc -randkey host/kdc.example.org
+kadmin.local:  addprinc -randkey host/kdctommy.example.org
 Authenticating as principal root/admin@EXAMPLE.ORG with password.
-WARNING: no policy specified for host/kdc.example.org@EXAMPLE.ORG; defaulting to no policy
-Principal "host/kdc.example.org@EXAMPLE.ORG" created.
+WARNING: no policy specified for host/kdctommy.example.org@EXAMPLE.ORG; defaulting to no policy
+Principal "host/kdctommy.example.org@EXAMPLE.ORG" created.
+
+导出 kadmin 服务的 keytab 文件：
+kadmin.local:  ktadd host/kdctommy.example.org
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type aes256-cts-hmac-sha1-96
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type aes128-cts-hmac-sha1-96
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type des3-cbc-sha1 added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type arcfour-hmac added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type camellia256-cts-cmac added
+to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type camellia128-cts-cmac added
+to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type des-hmac-sha1 added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy.example.org with kvno 2, encryption type des-cbc-md5 added to
+keytab FILE:/etc/krb5.keytab.
+kadmin.local:  quit
+[root@kdctommy krb5kdc/<Right># klist -k
+Keytab name: FILE:/etc/krb5.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+   2 host/kdctommy.example.org@EXAMPLE.ORG
+[root@kdctommy krb5kdc#]]
 ```
