@@ -46,6 +46,12 @@ Principal:      primary/instance@REALM
                     instance是给有资格的主要信息. 实例可以为null. 在一个用户的情况下, 该实例被经常用于描述的目的用途相应的凭据. 在一台主机的情况下, 实例是完全合格的主机名 
                     REALM由单个Kerberos数据库以及一组密钥分发中心的服务的逻辑网络. 按照惯例, realm名称一般都是全部大写, 以区别于互联网领域的境界
 
+
+ealm: 认证管理域。一个realm对应着KDC的一个database，一个Client在未提前配置的情况下只能访问跟其在一个realm的服务。
+principal:KDC database中每一条记录就是一个principal。一个用户或者一个服务，只要其在KDC进行了注册，在database中就会有一条相应的记录，这条记录就是其对应的principal
+    格式：Name[/Instance]@REALM
+    对于用户来说，以zj为例，其对应principal可以是zj/nodeA@US，也可以是zj@US，US为realm名，一般大写。对于服务来说，以ES为例，其对应principal可以为email/nodeB@US，一般不省略nodeB，因为一个服务可能分布在多个节点上，以hostname作为Instance可作区分。 
+.keytab文件: 一个用户，作为人，可以记住自己的密码，在认证时输入即可；但是一个服务是无法做这种交互的，那么就提供一个.keytab文件，记录服务principal的信息（包括加密的密码），在登录KDC时就提供该文件。
 ```
 
 ```
@@ -183,3 +189,6 @@ keytab FILE:/etc/krb5.keytab.
 kadmin:  
 ""
 ```
+
+
+
