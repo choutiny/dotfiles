@@ -112,4 +112,74 @@ KVNO Principal
    2 host/kdctommy.example.org@EXAMPLE.ORG
    2 host/kdctommy.example.org@EXAMPLE.ORG
 [root@kdctommy krb5kdc#]]
+
+修改/etc/ssh/ssh_config
+GSSAPIAuthentication yes
+GSSAPIDelegateCredentials yes
+GSSAPITrustDNS yes
+重启 sshd
+systemctl reload sshd
+配置 PAM
+authconfig-tui
+选择 [*] Use Kerberos 并选择 Next, 确定 Realm、KDC 和 Admin Server 是否正确, 并选择 [*] Use DNS to resolve hosts to realms、[*] Use DNS to locate KDCs for realms, 选择 OK 保存.
+authconfig --enablekrb5 --update
+
+
+配置 firewall（如果开启了的话）
+创建 /etc/firewalld/services/kerberos.xml 文件并写入:
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>Kerberos</short>
+  <description>Kerberos network authentication protocol server</description>
+  <port protocol="tcp" port="88"/>
+  <port protocol="udp" port="88"/>
+  <port protocol="tcp" port="749"/>
+</service>
+向 firewall 中添加 service
+firewall-cmd --permanent --add-service=kerberos
+重新加载 firewall 配置
+firewall-cmd --reload
+
+向 /root/.k5login 添加 principal
+tommyx@EXAMPLE.ORG
+
+配置 Kerberos Client
+安装相关模块
+yum install -y krb5-libs krb5-workstation pam_krb5
+配置文件
+将 Server 上的 /etc/krb5.conf 直接 copy 过来即可
+向 Kerberos 数据库中添加 Client 的域名
+
+kdestroy
+kadmin
+Authenticating as principal root/admin@EXAMPLE.ORG with password.
+Password for root/admin@EXAMPLE.ORG: 
+kadmin:  addp
+addpol    addprinc  
+kadmin:  addp
+addpol    addprinc  
+kadmin:  addp
+addpol    addprinc  
+kadmin:  addprinc -randkey host/kdctommy2.example.org
+WARNING: no policy specified for host/kdctommy2.example.org@EXAMPLE.ORG; defaulting to no policy
+Principal "host/kdctommy2.example.org@EXAMPLE.ORG" created.
+kadmin:  ktadd host/kdctommy2.example.org
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type aes256-cts-hmac-sha1-96
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type aes128-cts-hmac-sha1-96
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type des3-cbc-sha1 added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type arcfour-hmac added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type camellia256-cts-cmac
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type camellia128-cts-cmac
+added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type des-hmac-sha1 added to
+keytab FILE:/etc/krb5.keytab.
+Entry for principal host/kdctommy2.example.org with kvno 2, encryption type des-cbc-md5 added to
+keytab FILE:/etc/krb5.keytab.
+kadmin:  
+""
 ```
