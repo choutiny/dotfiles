@@ -22,7 +22,7 @@ Client：kdcc.example.org
 ------------------------
 ```
 RHEL/CentOS/Oracle Linux
-yum install krb5-server krb5-libs krb5-workstation
+yum install -y krb5-libs krb5-server krb5-workstation pam_krb5
 
 Ubuntu/Debian
 apt-get install krb5-kdc krb5-admin-server
