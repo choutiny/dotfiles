@@ -31,4 +31,5 @@ ambari-server stop
 ###Security
 ----------------------
 ```
+Install JCE
 ```
