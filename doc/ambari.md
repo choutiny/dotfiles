@@ -48,6 +48,6 @@ KDC:
     Domains: .DOMAIN.org,DOMAIN.org
 Kadmin:
     Kadmin host:kdctommy.domain.org
-    Admin principal:admin/admin@DOMAIN.ORG
+    Admin principal:root/admin
     Admin password:domain
 ```
