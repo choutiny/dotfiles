@@ -32,4 +32,9 @@ ambari-server stop
 ----------------------
 ```
 Install JCE
+http://www.oracle.com/technetwork/cn/java/javase/downloads/jce-7-download-432124.html
+ps aux | grep java
+find java path
+cd java_path/jre/lib
+
 ```
