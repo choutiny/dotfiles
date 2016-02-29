@@ -188,6 +188,15 @@ Entry for principal host/kdctommy2.example.org with kvno 2, encryption type des-
 keytab FILE:/etc/krb5.keytab.
 kadmin:  
 ""
+
+Test
+klist -k
+kinit tommyx
+Password for tommyx@DOMAIN.ORG
+klist
+Ticket cache: FILE:/tmp/krb5cc_0
+Default Principal: tommyx@DOMAIN.ORG
+ssh kdctommy@DOMAIN.ORG
 ```
 
 

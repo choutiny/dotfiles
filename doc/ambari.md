@@ -37,4 +37,17 @@ ps aux | grep java
 find java path
 cd java_path/jre/lib
 
+kerberos
+
+ambari client:
+yum install -y krb5-libs krb5-workstation pam_krb5
+
+KDC:
+    KDC host:kdctommy.domain.org
+    Realm name: DOMAIN.ORG
+    Domains: .DOMAIN.org,DOMAIN.org
+Kadmin:
+    Kadmin host:kdctommy.domain.org
+    Admin principal:admin/admin@DOMAIN.ORG
+    Admin password:domain
 ```
