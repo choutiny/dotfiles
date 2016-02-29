@@ -1121,6 +1121,7 @@ lspci//查看PCI设备
 lsusb//查看USB设备 参数 -v 显示USB设备的描述, ls -v
 cat /proc/cpuinfo //查看CPU信息
 hostname 查看计算机名
+hostname -f 查看FQDN
 free -m |grep "Mem" | awk '{print $2}' //查看内存大小 watch -d free监视内存使用 ctrl+c退出
 top //动态显示进程执行情况
 free -m /内存使用
