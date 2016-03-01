@@ -38,7 +38,7 @@ service firewalld stop
 ----------
 ```
 yum install yum-utils createrepo yum-plugin-priorities
-wge repo_file
+wget repo_file
 reposync -r repo_soft_name
 createrepo filepath
 vim /etc/yum.repos.d/repo.file 
