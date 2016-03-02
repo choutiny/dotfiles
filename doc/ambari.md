@@ -12,26 +12,48 @@ ambari-server stop
 ###Remove
 ----------------------
 ```
-yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoop_* zookeeper_* hbase* range* pig*  hive* tez* mysql-*
+yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoop_* zookeeper_* hbase* range* pig*  hive* tez* mysql-* bigtop-*  tuned-* ambari-* apache-maven*
 ```
 
-###Path
+###Reinstall Path
 ----------------------
 ```
-/usr/lib/hadoop
-/usr/lib/hbase
-/usr/lib/zookeeper
-/usr/lib/hcatalog
-/usr/lib/hive
+cd /usr/lib/ 
+rm -rf hadoop hbase zookeeper hcatalog hive ambari-* storm ams-hbase flume hadoop-*
 
-/var/log/hadoop
-/var/log/hbase
+cd /var/log/ 
+rm -rf hadoop hbase spark tuned ambari-* zookeeper hadoop-* hive*
 
-/etc/hadoop
-/etc/hbase
-/etc/hive
+cd /etc/ 
+rm -rf hadoop hbase hive* ambari-* spark tez tuned zookeeper maven
 
-/hadoop/hdfs
+rm -rf /hadoop/hdfs
+
+cd /usr/share
+rm -rf apache-maven
+
+rm /usr/hdp
+
+cd /usr/bin
+rm -rf mvnyjp
+ls -la | grep hdp | awk '{ print $9 }' | xargs rm
+
+cd /home
+
+vim /etc/passwd
+vim /etc/group
+
+ln -s /home/hdfs/data /hadoop/hdfs/data
+ln -s /home/hdfs/namenode /hadoop/hdfs/namenode
+chown hdfs:hadoop data
+chown hdfs:hadoop namenode
+
+yum clean metadata
+yum repolist
+yum -y intall ambari-server
+
+ambari-server setup
+ambari-server start
 ```
 
 ###Security

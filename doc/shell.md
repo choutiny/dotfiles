@@ -4996,6 +4996,18 @@ This is an [example link](http://example.com/ "With a Title").
 apt-get install arp-scan
 arp-scan -I eth0 -l 重复出现的IP就是IP冲突
 ```
+122.Modify timezone
+debian:
+dpkg-reconfigure tzdata
+centos7:
+timedatectl set-time YYYY-MM-DD
+timedatectl set-time HH:mm:ss
+默认系统是使用UTC时间的, 用以下命令打开和关闭UTC时间:
+timedatectl set-local-rtc yes
+timedatectl list-timezones
+timedatectl set-timezone time_zone
+timedatectl set-ntp yes 设置打开NTP
+
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
