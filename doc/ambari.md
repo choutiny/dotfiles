@@ -13,6 +13,7 @@ ambari-server stop
 ----------------------
 ```
 yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoop_* zookeeper_* hbase* range* pig*  hive* tez* mysql-* bigtop-*  tuned-* ambari-* apache-maven*
+postgresql*
 ```
 
 ###Reinstall Path
@@ -20,6 +21,9 @@ yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoo
 ```
 cd /usr/lib/ 
 rm -rf hadoop hbase zookeeper hcatalog hive ambari-* storm ams-hbase flume hadoop-*
+
+cd /var/lib/
+rm -rf ambari-* hadoop-* pgsql
 
 cd /var/log/ 
 rm -rf hadoop hbase spark tuned ambari-* zookeeper hadoop-* hive*
@@ -45,8 +49,8 @@ vim /etc/group
 
 ln -s /home/hdfs/data /hadoop/hdfs/data
 ln -s /home/hdfs/namenode /hadoop/hdfs/namenode
-chown hdfs:hadoop data
-chown hdfs:hadoop namenode
+chown hdfs:hadoop data -R
+chown hdfs:hadoop namenode -R
 
 yum clean metadata
 yum repolist
@@ -78,4 +82,16 @@ Kadmin:
     Kadmin host:kdctommy.domain.org
     Admin principal:root/admin
     Admin password:domain
+```
+
+###Install
+----------------------
+```
+Install Options:
+halo-cnode1
+halo-cnode2
+halo-cnode3
+
+systemctl enable ntpd
+systemctl start ntpd
 ```

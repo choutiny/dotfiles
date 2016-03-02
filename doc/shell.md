@@ -327,6 +327,7 @@ fgrep=grep -F   它利用固定的字符串来对文本进行搜索,但不支持
 
 ls | egrep -E "*\.[0-9]" | xargs rm 删除/var/log下面的数字备份文件, 支持1级
 find ./ -type f | grep -E "[a-z]+\.[0-9]+" | xargs rm, 支持多级
+centos:find ./ -type f | grep -E "[a-z]+-[0-9]+" | xargs rm, 支持多级
 ```
 
 13.cut切分文件
