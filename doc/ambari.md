@@ -84,6 +84,13 @@ Kadmin:
     Admin password:domain
 ```
 
+###Failed
+----------------------
+```
+for storm,hive
+mkdir -p /usr/hdp/2.4.0.0-169/storm/extlib-daemon
+```
+
 ###Install
 ----------------------
 ```
