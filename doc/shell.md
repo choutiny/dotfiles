@@ -413,6 +413,8 @@ sed 's|text|replace|g' 如果定界符出现在样式内部,需要\转义
 sed 's|te\|xt|replace|g'
 
 sed '/^$/d' file 移除空白行
+sed "/keywords/d" 删除
+sed -i "/keywords/a$1" file.txt 接受输入进来的$1, 放到keywords下一行
 sed 用&标记匹配样式的字符串
 echo this is an example | sed 's/\w\+/[&]/g' 正则表达式匹配单词\w\+ ,替换[&]
     [this] [is] [an] [example]
