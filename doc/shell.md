@@ -4269,6 +4269,7 @@ http://192.168.85.123:30303/index.html
 ```
 
 103.GPG KEY error, No PUBKEY xxxxx
+public key
 ```
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com xxxxxx
 ```
