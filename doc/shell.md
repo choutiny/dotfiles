@@ -1139,6 +1139,16 @@ xkill //以图形方式中止一个进程 出现骷髅的标志 点要中止的
 lsof xxx // xxx的进程的
 uptime 显示系统已经运行了多长时间,它依次显示下列信息：现在时间、系统已经运行了多长时间、目前有多少登陆用户、系统在过去的1分钟、5分钟和15分钟内的平均负载
 ulimit -a //查看系统限制
+    ulimit -Sn 软限制
+    ulimit -Hn 硬限制
+    vim /etc/security/limits.conf
+    对nginx的文件限制
+    nginx soft nofile 102400
+    nginx hard nofile 102400
+    对所有的文件限制
+    * soft nofile 1024000
+    * hard nofile 1024000
+
 ipcs -l //查看内核限制
 xrandr //查看当前屏幕分辨率
     dual-screen display
