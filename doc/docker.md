@@ -928,3 +928,12 @@ docker stats $(docker ps -q)
 ```
 docker stats $(docker ps --format '{{.Names}}')
 ```
+
+### Private docker repository
+------------------------------------------------
+```
+docker pull registry
+docker run -d -p 5000:5000 registry
+docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry 自定义仓库地址
+
+```
