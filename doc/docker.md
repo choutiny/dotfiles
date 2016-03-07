@@ -932,8 +932,21 @@ docker stats $(docker ps --format '{{.Names}}')
 ### Private docker repository
 ------------------------------------------------
 ```
+server
 docker pull registry
 docker run -d -p 5000:5000 registry
 docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry 自定义仓库地址
+mkdir -p /opt/data/registry 
+ 
+client
+docker tag image_name server_ip:5000/tag_name
+docker push server_ip:5000/tag_name
 
+error: docker user https
+因为Docker从1.3.X之后，与docker registry交互默认使用的是https，然而此处搭建的私有仓库只提供http服务，所以当与私有仓库交互时就会报上面的错误。为了解决这个问题需要在启动docker server时增加启动参数为默认使用http访问。修改docker启动配置文件
+vim /etc/init/docker.conf
+    --insecure-registry server_ip:5000
+
+	exec "$DOCKER" -d $DOCKER_OPTS --insecure-registry 192.168.85.116:5000 --insecure-registry cdcbi.domain.org:5000
+restart docker
 ```
