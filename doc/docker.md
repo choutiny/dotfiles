@@ -11,10 +11,20 @@ docker hosts
 ```
 #Debian8
 need kernel > 3.8, add the below content into sources.list
-#deb http://http.debian.net/debian jessie-backports main
-#apt-get install docker.io
+    deb http://http.debian.net/debian jessie-backports main
+#apt-get purge docker.io
 有docker 的用户组, 为了避免使用sudo, 需要把当前用户加入到docker组,
 #sudo usermod -aG docker your_username
+#apt-get install apt-transport-https ca-certificates
+#apt-get update
+vim /etc/apt/sources.list
+    deb https://apt.dockerproject.org/repo debian-jessie main
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+apt-get update
+apt-get install docker-engine
+
+
 
 remove docker
 #apt-get purge docker-io
@@ -26,6 +36,8 @@ or
 sudo yum install docker
 sudo systemctl start docker
 sudo systemctl enable docker
+
+
 ```
 
 ###Verify Installation
@@ -947,6 +959,9 @@ error: docker user https
 vim /etc/init/docker.conf
     --insecure-registry server_ip:5000
 
-	exec "$DOCKER" -d $DOCKER_OPTS --insecure-registry 192.168.85.116:5000 --insecure-registry cdcbi.domain.org:5000
+	exec "$DOCKER" -d $DOCKER_OPTS --insecure-registry=192.168.85.116:5000 --insecure-registry=cdcbi.domain.org:5000
 restart docker
+if not work:
+    kill docker,
+run docker -d --insecure-registry 192.168.85.116:5000
 ```
