@@ -38,7 +38,7 @@ try:
         raise Exception("Unable to load", eg_title, " page!")
 
     elem = driver.find_element_by_name("wd")
-    elem.send_keys("synnex")
+    elem.send_keys("domain")
     elem.submit()
     sleep(10)
 except Exception, e:

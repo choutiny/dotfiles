@@ -959,7 +959,7 @@ error: docker user https
 vim /etc/init/docker.conf
     --insecure-registry server_ip:5000
 
-	exec "$DOCKER" -d $DOCKER_OPTS --insecure-registry=192.168.85.116:5000 --insecure-registry=cdcbi.domain.org:5000
+	exec "$DOCKER" -d $DOCKER_OPTS --insecure-registry=192.168.85.116:5000 --insecure-registry=cdcbi.domain.org:5001
 restart docker
 if not work:
     kill docker,
