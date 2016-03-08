@@ -426,5 +426,15 @@ cat /home/hadoop/hbase/conf/regionservers|xargs -i -t scp /home/hadoop/hbase/con
 # graceful重启
 cd ~/hbase
 bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
+
+# hbase 设置replication
+hbase shell
 ```
+    disable 'table_name'
+    alter  'table_name', 'cf0', {REGION_REPLICATION => 2} #调整table_name的replication份数, default=0
+    flush "table_name" #立即生效
+    enable 'table_name'
+```
+test 
+http://halo-cnode1.domain.org:16010/
 
