@@ -432,9 +432,25 @@ hbase shell
 ```
     disable 'table_name'
     alter  'table_name', 'cf0', {REGION_REPLICATION => 2} #调整table_name的replication份数, default=0
+    alter 'table_name','cf0',{REPLICATION_SCOPE => 2}
     flush "table_name" #立即生效
     enable 'table_name'
 ```
 test 
 http://halo-cnode1.domain.org:16010/
 
+
+
+# Hbase thrift
+--------------
+
+在查阅HBase文档（http://hbase.apache.org/book.html#config.files）后发现，负责外部系统与HBase通信的Thrift Server服务具有三个参数用来控制同时启动的线程数量。
+这三个参数分别是：
+l hbase.thrift.minWorkerThreads
+l hbase.thrift.maxWorkerThreads
+l hbase.thrift.maxQueuedRequests
+ 
+hbase.thrift.minWorkerThreads是thrift server的最小线程数，默认值为16个。hbase.thrift.maxWorkerThreads是thrift server的最大线程数，默认值为1000个。hbase.thrift.maxQueuedRequests是在队列中等待的链接数量，默认值为1000个。
+当程序访问HBase Thrift Server时，每当有一个新的连接就会创建一个新的线程，直到线程数量达到最小线程数。当线程池中没有空闲的线程时，新的连接会被加入队列。只有当队列中的等待连接数量超过队列的最大值时，才会为这些等待中的连接创建新的线程，直到线程数量达到最大线程数。当线程数量超过最大线程数时，Thrift Server就会开始丢弃连接。
+3.     解决办法
+在HBase中加入上述三个参数并设置合适的线程数后，启动HBase Thrift Server服务，之前出现的阻塞问题即可解决。
