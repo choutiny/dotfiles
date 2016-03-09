@@ -6,7 +6,7 @@ China Hbase Fastest Node [China Hbase Node](http://mirrors.cnnic.cn/apache/hbase
 #Install
 
 ###Install JAVA
-------
+----------------------
 Oracle Java Download [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 ```
 #mkdir /usr/java && cd /usr/java
@@ -26,7 +26,7 @@ java -version
 ```
 
 ###Install HBase
-------
+----------------------
 ```
 #cd /tmp && wget http://mirrors.cnnic.cn/apache/hbase/stable/hbase-1.1.2-bin.tar.gz
 #tar -zxvf hbase-0.98.16.1-src.tar.gz -C /usr/
@@ -41,13 +41,13 @@ export JAVA_HOME=/usr/java/java7/
 ```
 
 ###Verify Install
-------
+----------------------
 ```
 #hbase version
 ```
 
-Usage
-------
+#Usage
+----------------------
 ###start hbase 
 ```
 #$HBASE_HOME/bin/start-hbase.sh
@@ -166,7 +166,7 @@ ROW                                                          COLUMN+CELL
 3 row(s) in 0.0210 seconds
 ```
 
-4. Describe table
+4 Describe table
 ```
 e.g.: describe 'table_name'
 hbase(main):011:0> describe 'user'
@@ -178,19 +178,19 @@ COLUMN FAMILIES DESCRIPTION
 1 row(s) in 0.0170 seconds
 ```
 
-5. Disable and Drop table
+5 Disable and Drop table
 ```
 e.g.: disable 'table_name'
 e.g.: drop 'table_name'
 ```
 
-6. Delete one cell
+6 Delete one cell
 ```
 e.g.: delete 'table_name', 'rowkey', 'col:qual'
 >delete 'testtable','myrow-2','colfam1:q2'
 ```
 
-7. All command
+7  All command
 ```
 normal command
 
@@ -198,54 +198,21 @@ status
 Version
 
 DDL
-
-alter
-create
-describe
-disable
-drop
-enable
-exists
-is_disabled
-is_enabled
-List
+    alter,create,describe,disable,drop,enable,exists,is_disabled,is_enabled,list
 
 DML
-
-count
-delete
-delteall
-get
-get_counter
-incr
-put
-scan
-truncate
+    count,delete,delteall,get,get_counter,incr,put,scan,truncate
 
 Tool
-
-assign
-balance_switch
-balancer
-compact
-Flush
-major_compact
-Move
-split
-unassign
-zk_dump
+    assign,balance_switch,balancer,compact,Flush,major_compact,Move,split,unassign,zk_dump
 
 Replication
-
-add_peer
-disable_peer
-enable_peer
-remove_peer
-start_replication
-stop_replication
+    add_peer,disable_peer,enable_peer,remove_peer,start_replication,stop_replication
 ```
 
-### Instruction cn
+#Instruction cn
+--------------------
+```
 HBase以表的形式存储数据。表有行和列组成。列划分为若干个列族/列簇(column family)。
 
 Row Key	column-family1	column-family2	column-family3
@@ -256,9 +223,10 @@ key3
 如上图所示，key1,key2,key3是三条记录的唯一的row key值，column-family1,column-family2,column-family3是三个列族，每个列族下又包括几列。比如column-family1这个列族下包括两列，名字是column1和column2，t1:abc,t2:gdxdf是由row key1和column-family1-column1唯一确定的一个单元cell。这个cell中有两个数据，abc和gdxdf。两个值的时间戳不一样，分别是t1,t2, hbase会返回最新时间的值给请求者。
 
 这些名词的具体含义如下：
+```
 
-(1) Row Key
-
+1 Row Key
+```
 与nosql数据库们一样,row key是用来检索记录的主键。访问hbase table中的行，只有三种方式：
     (1.1) 通过单个row key访问
     (1.2) 通过row key的range
@@ -267,34 +235,48 @@ Row key行键 (Row key)可以是任意字符串(最大长度是 64KB，实际应
 存储时，数据按照Row key的字典序(byte order)排序存储。设计key时，要充分排序存储这个特性，将经常一起读取的行存储放到一起。(位置相关性)
 注意： 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99。要保持整形的自然序，行键必须用0作左填充。
 行的一次读写是原子操作 (不论一次读写多少列)。这个设计决策能够使用户很容易的理解程序在对同一个行进行并发更新操作时的行为。
+```
 
-(2) 列族 column family
+2 列族 column family
+```
 hbase表中的每个列，都归属与某个列族。列族是表的chema的一部分(而列不是)，必须在使用表之前定义。列名都以列族作为前缀。例如courses:history ， courses:math 都属于 courses 这个列族。
 访问控制、磁盘和内存的使用统计都是在列族层面进行的。实际应用中，列族上的控制权限能帮助我们管理不同类型的应用：我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）。
+```
 
-(3) 单元 Cell
+3 单元 Cell
+```
 HBase中通过row和columns确定的为一个存贮单元称为cell。由{row key, column( =<family> + <label>), version} 唯一确定的单元。cell中的数据是没有类型的，全部是字节码形式存贮。
+```
 
-(4) 时间戳 timestamp
+4 时间戳 timestamp
+```
 每个cell都保存着同一份数据的多个版本。版本通过时间戳来索引。时间戳的类型是 64位整型。时间戳可以由hbase(在数据写入时自动 )赋值，此时时间戳是精确到毫秒的当前系统时间。时间戳也可以由客户显式赋值。如果应用程序要避免数据版本冲突，就必须自己生成具有唯一性的时间戳。每个cell中，不同版本的数据按照时间倒序排序，即最新的数据排在最前面。
 
 为了避免数据存在过多版本造成的的管理 (包括存贮和索引)负担，hbase提供了两种数据版本回收方式。一是保存数据的最后n个版本，二是保存最近一段时间内的版本（比如最近七天）。用户可以针对每个列族进行设置。
+```
 
-3. HBase shell的基本用法
+#HBase shell的基本用法
+----------------------
+
 hbase提供了一个shell的终端给用户交互。使用命令hbase shell进入命令界面。通过执行 help可以看到命令的帮助信息。
 以网上的一个学生成绩表的例子来演示hbase的用法。
+```
 name	grad	course
 math	art
 Tom	5	97	87
 Jim	4	89	80
+```
 这里grad对于表来说是一个只有它自己的列族,course对于表来说是一个有两个列的列族,这个列族由两个列组成math和art,当然我们可以根据我们的需要在course中建立更多的列族,如computer,physics等相应的列添加入course列族。
 
-(1)建立一个表scores，有两个列族grad和courese
+1 建立一个表scores，有两个列族grad和courese
+```
 hbase(main):001:0> create 'scores','grade', 'course'
 
 可以使用list命令来查看当前HBase里有哪些表。使用describe命令来查看表结构。（记得所有的表明、列名都需要加上引号）
+```
 
-(2)按设计的表结构插入值：
+2 按设计的表结构插入值：
+```
 put 'scores','Tom','grade:','5'
 put 'scores','Tom','course:math','97'
 put 'scores','Tom','course:art','87'
@@ -304,18 +286,17 @@ put 'scores','Jim','course:','80'
 
 这样表结构就起来了，其实比较自由，列族里边可以自由添加子列很方便。如果列族下没有子列，加不加冒号都是可以的。
 put命令比较简单，只有这一种用法：
-
 hbase> put 't1', 'r1', 'c1', 'value', ts1
-
 t1指表名，r1指行键名，c1指列名，value指单元格值。ts1指时间戳，一般都省略掉了。
+```
 
-(3)根据键值查询数据
+3 根据键值查询数据
+```
 get 'scores','Jim'
 get 'scores','Jim','grade'
 
 可能你就发现规律了，HBase的shell操作，一个大概顺序就是操作关键词后跟表名，行名，列名这样的一个顺序，如果有其他条件再用花括号加上。
 get有用法如下：
-
 hbase> get 't1', 'r1'
 hbase> get 't1', 'r1', {TIMERANGE => [ts1, ts2]}
 hbase> get 't1', 'r1', {COLUMN => 'c1'}
@@ -326,15 +307,14 @@ hbase> get 't1', 'r1', {COLUMN => 'c1', TIMESTAMP => ts1, VERSIONS => 4}
 hbase> get 't1', 'r1', 'c1'
 hbase> get 't1', 'r1', 'c1', 'c2'
 hbase> get 't1', 'r1', ['c1', 'c2']
+```
 
-(4)扫描所有数据
-
+4 扫描所有数据
+```
 scan 'scores'
-
 也可以指定一些修饰词：TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS。没任何修饰词，就是上边例句，就会显示所有数据行。
 
 例句如下：
-
 hbase> scan '.META.'
 hbase> scan '.META.', {COLUMNS => 'info:regioninfo'}
 hbase> scan 't1', {COLUMNS => ['c1', 'c2'], LIMIT => 10, STARTROW => 'xyz'}
@@ -348,68 +328,68 @@ Filter Language document attached to the HBASE-4176 JIRA
 b. Using the entire package name of the filter.
 
 还有一个CACHE_BLOCKS修饰词，开关scan的缓存的，默认是开启的（CACHE_BLOCKS=>true），可以选择关闭（CACHE_BLOCKS=>false）。
+```
 
-(5)删除指定数据
-
+5 删除指定数据
+```
 delete 'scores','Jim','grade'
 delete 'scores','Jim'
 
 删除数据命令也没太多变化，只有一个：
-
 hbase> delete 't1', 'r1', 'c1', ts1
-
 另外有一个deleteall命令，可以进行整行的范围的删除操作，慎用！
 如果需要进行全表删除操作，就使用truncate命令，其实没有直接的全表删除命令，这个命令也是disable，drop，create三个命令组合出来的。
+```
 
-(6)修改表结构
-
+6 修改表结构
+```
 disable 'scores'
 alter 'scores',NAME=>'info'
 enable 'scores'
 
 alter命令使用如下（如果无法成功的版本，需要先通用表disable）：
-a、改变或添加一个列族：
 
+a、改变或添加一个列族：
 hbase> alter 't1', NAME => 'f1', VERSIONS => 5
 
 b、删除一个列族：
-
 hbase> alter 't1', NAME => 'f1', METHOD => 'delete'
 hbase> alter 't1', 'delete' => 'f1'
 
 c、也可以修改表属性如MAX_FILESIZE
 MEMSTORE_FLUSHSIZE, READONLY,和 DEFERRED_LOG_FLUSH：
 hbase> alter 't1', METHOD => 'table_att', MAX_FILESIZE => '134217728'
+
 d、可以添加一个表协同处理器
-
 hbase> alter 't1', METHOD => 'table_att', 'coprocessor'=> 'hdfs:///foo.jar|com.foo.FooRegionObserver|1001|arg1=1,arg2=2'
-
 一个表上可以配置多个协同处理器，一个序列会自动增长进行标识。加载协同处理器（可以说是过滤程序）需要符合以下规则：
-
 [coprocessor jar file location] | class name | [priority] | [arguments]
 
 e、移除coprocessor如下：
-
 hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'MAX_FILESIZE'
 hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'coprocessor$1'
 
 f、可以一次执行多个alter命令：
-
 hbase> alter 't1', {NAME => 'f1'}, {NAME => 'f2', METHOD => 'delete'}
+```
 
-(7)统计行数：
-
+7 统计行数：
+```
 hbase> count 't1'
 hbase> count 't1', INTERVAL => 100000
 hbase> count 't1', CACHE => 1000
 hbase> count 't1', INTERVAL => 10, CACHE => 1000
 
 count一般会比较耗时，使用mapreduce进行统计，统计结果会缓存，默认是10行。统计间隔默认的是1000行（INTERVAL）。
+```
 
-(8)disable 和 enable 操作
+8 disable 和 enable 操作
+```
 很多操作需要先暂停表的可用性，比如上边说的alter操作，删除表也需要这个操作。disable_all和enable_all能够操作更多的表。
+```
 
-(9)表的删除
+9 表的删除
+```
 先停止表的可使用性，然后执行删除命令。
 
 drop 't1'
@@ -418,28 +398,45 @@ drop 't1'
 
 COMMAND GROUPS:
   Group name: general
-  Commands: status, version
+  Commands: status, table_help, version, whoami
 
   Group name: ddl
-  Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all,
-enable, enable_all, exists, is_disabled, is_enabled, list, show_filters
+  Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all, enable, enable_all, exists, get_table, is_disabled, is_enabled, list, show_filters
+
+  Group name: namespace
+  Commands: alter_namespace, create_namespace, describe_namespace, drop_namespace, list_namespace, list_namespace_tables
 
   Group name: dml
-  Commands: count, delete, deleteall, get, get_counter, incr, put, scan, truncate
+  Commands: append, count, delete, deleteall, get, get_counter, get_splits, incr, put, scan, truncate, truncate_preserve
 
   Group name: tools
-  Commands: assign, balance_switch, balancer, close_region, compact, flush, hlog_roll, major_compact,
-move, split, unassign, zk_dump
+  Commands: assign, balance_switch, balancer, balancer_enabled, catalogjanitor_enabled, catalogjanitor_run, catalogjanitor_switch, close_region, compact, compact_rs, flush, major_compact, merge_region, move, normalize, normalizer_enabled
+, normalizer_switch, split, trace, unassign, wal_roll, zk_dump
 
   Group name: replication
-  Commands: add_peer, disable_peer, enable_peer, list_peers, remove_peer, start_replication, 
-stop_replication
+  Commands: add_peer, append_peer_tableCFs, disable_peer, disable_table_replication, enable_peer, enable_table_replication, list_peers, list_replicated_tables, remove_peer, remove_peer_tableCFs, set_peer_tableCFs, show_peer_tableCFs
+
+  Group name: snapshots
+  Commands: clone_snapshot, delete_all_snapshot, delete_snapshot, list_snapshots, restore_snapshot, snapshot, snapshot_all, snapshot_restore
+
+  Group name: configuration
+  Commands: update_all_config, update_config
+
+  Group name: quotas
+  Commands: list_quotas, set_quota
 
   Group name: security
   Commands: grant, revoke, user_permission
 
+  Group name: procedures
+  Commands: abort_procedure, list_procedures
 
-### Instruction
+  Group name: visibility labels
+  Commands: add_labels, clear_auths, get_auths, list_labels, set_auths, set_visibility
+```
+
+# Instruction
+----------------------
 1.Hbase 
 ```
 Hbase use coordinate.
@@ -623,24 +620,50 @@ cat /home/hadoop/hbase/conf/regionservers|xargs -i -t scp /home/hadoop/hbase/con
 # graceful重启
 cd ~/hbase
 bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
+```
 
 # hbase 设置replication
+----------------------
 hbase shell
 ```
     disable 'table_name'
-    alter  'table_name', 'cf1', {REPLICATION_SCOPE => 2} #调整table_name的replication份数, default=0
-    alter 'table_name','cf1',{REPLICATION_SCOPE => 2} #cf1 = column_family_1
+    alter  'table_name', 'cf1', {REPLICATION_SCOPE => '2'} #调整table_name的replication份数, default=0
+    alter 'table_name','cf1',{REPLICATION_SCOPE => '2'} #cf1 = column_family_1
     enable 'table_name'
     flush "table_name" #立即生效
+
+    stop_replication,start_replication
 ```
 test 
 http://halo-cnode1.domain.org:16010/
 
+master hbase-site.xml
+```
+<property>  
+  <name>hbase.replication</name>  
+  <value>true</value>  
+</property>  
+```
+
+use "verifyrep" to check
+```
+hbase org.apache.hadoop.hbase.mapreduce.replication.VerifyReplication --starttime=1265875194289 --stoptime=1265878794289 1 TestTable  
+```
+refer: http://hbase.apache.org/book.html#_cluster_replication
+
+
+# hbase split table
+----------------------
+```
+Hbase中split是一个很重要的功能，Hbase是通过把数据分配到一定数量的region来达到负载均衡的。一个table会被分配到一个或多个region中，这些region会被分配到一个或者多个regionServer中。在自动split策略中，当一个region达到一定的大小就会自动split成两个region。table在region中是按照row key来排序的，并且一个row key所对应的行只会存储在一个region中，这一点保证了Hbase的强一致性 。
+在一个region中有一个或多个stroe，每个stroe对应一个column families(列族)。一个store中包含一个memstore 和 0 或 多个store files。每个column family 是分开存放和分开访问的。
+disable 'table_name','cf1', {REGION_REPLICATION => 3}
+```
 
 
 # Hbase thrift
---------------
-
+----------------------
+```
 在查阅HBase文档（http://hbase.apache.org/book.html#config.files）后发现，负责外部系统与HBase通信的Thrift Server服务具有三个参数用来控制同时启动的线程数量。
 这三个参数分别是：
 l hbase.thrift.minWorkerThreads
@@ -649,8 +672,9 @@ l hbase.thrift.maxQueuedRequests
  
 hbase.thrift.minWorkerThreads是thrift server的最小线程数，默认值为16个。hbase.thrift.maxWorkerThreads是thrift server的最大线程数，默认值为1000个。hbase.thrift.maxQueuedRequests是在队列中等待的链接数量，默认值为1000个。
 当程序访问HBase Thrift Server时，每当有一个新的连接就会创建一个新的线程，直到线程数量达到最小线程数。当线程池中没有空闲的线程时，新的连接会被加入队列。只有当队列中的等待连接数量超过队列的最大值时，才会为这些等待中的连接创建新的线程，直到线程数量达到最大线程数。当线程数量超过最大线程数时，Thrift Server就会开始丢弃连接。
-3.     解决办法
+解决办法
 在HBase中加入上述三个参数并设置合适的线程数后，启动HBase Thrift Server服务，之前出现的阻塞问题即可解决。
+```
 
 
 

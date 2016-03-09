@@ -30,6 +30,11 @@ ${HBASE_HOME}/bin/hbase-daemons sh {start,stop} zookeeper
 HBase是一个分布式的、面向列的开源数据库,源于google的一篇论文《bigtable：一个结构化数据的分布式存储系统》。HBase是Google Bigtable的开源实现，它利用Hadoop HDFS作为其文件存储系统，利用Hadoop MapReduce来处理HBase中的海量数据，利用Zookeeper作为协同服务。
 HBase以表的形式存储数据。表有行和列组成。列划分为若干个列族/列簇(column family)。
 
+Master选举：HBase基于Master-Slave模式架构，可以有多个HMaster，使用ZooKeeper实现了SPOF下Master的选举
+租约管理：客户端与RegionServer交互时，会生成租约，该租约对象具有有效期
+表元数据管理：HBase中包括用户表及其两个特殊的表：-ROOT-表和.META.表（例如，管理-ROOT-表中location信息，一个-ROOT-表只有一个Region，它保存了RegionServer的地址信息。）
+协调RegionServer节点：数据变更会通过ZooKeeper同步复制到其他节点
+
 Row Key	column-family1	column-family2	column-family3
 column1	column2	column1	column2	column3	column1
 key1						
@@ -66,4 +71,25 @@ HBase中通过row和columns确定的为一个存贮单元称为cell。由{row ke
 ###HIVE
 ---------------
 
-###
+###Solr
+---------------
+Solr是一个开源的分布式搜索引擎，支持索引的分片和复制，可以根据需要来线性增加节点，扩展集群。Solr使用ZooKeeper主要实现如下功能：
+
+配置文件的管理：每个Collection都有对应的配置文件，多个分片共享配置文件（schema.xml、solrconfig.xml）
+Collection管理：一个Solr集群可以有多个逻辑上独立的Collection，每个Collection又包括多个分片和副本
+集群节点管理：Solr集群中有哪些活跃的节点可以使用，每个节点上都有Collection的分片（Shard）
+Leader分片选举：一个Collection的多个分片可以设置冗余的副本，一个分片的多个副本中只有一个Leader可以进提供服务，如果某个存储Leader分片的节点宕机，Solr基于ZooKeeper来重新选出一个Leader分片，持续提供服务
+
+###Lily
+---------------
+Lily是一个分布式数据管理平台，它基于Hadoop、HBase、Solr、ZooKeeper实现。使用ZooKeeper来注册Lily Node，从而管理集群节点的状态信息。
+
+###Storm
+---------------
+Storm流式计算框架使用ZooKeeper来协调整个计算集群，Storm计算集群存在Nimbus和Supervisor两类节点。Nimbus负责分配任务（Topology），将任务信息写入ZooKeeper存储，然后Supervisor从ZooKeeper中读取任务信息。另外，Nimbus也监控集群中的计算任务节点，Supervisor也会发送心跳信息（包括状态信息）到ZooKeeper中，使得Nimbus可以实现状态的监控，任何计算节点出现故障，只要重新启动之后，继续从ZooKeeper中获取数据即可继续执行计算任务。
+
+###Consul
+---------------
+Consul是HashiCorp公司推出的开源工具，用于实现分布式系统的服务发现与配置。与其他分布式服务注册与发现的方案，比如 Airbnb的SmartStack等相比，Consul的方案更“一站式”，内置了服务注册与发现框 架、分布一致性协议实现、健康检查、Key/Value存储、多数据中心方案，不再需要依赖其他工具（比如ZooKeeper等）。使用起来也较 为简单。Consul用Golang实现，因此具有天然可移植性(支持Linux、windows和Mac OS X)；安装包仅包含一个可执行文件，方便部署，与Docker等轻量级容器可无缝配合。
+
+
