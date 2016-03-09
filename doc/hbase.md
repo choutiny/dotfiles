@@ -640,9 +640,45 @@ http://halo-cnode1.domain.org:16010/
 master hbase-site.xml
 ```
 <property>  
-  <name>hbase.replication</name>  
-  <value>true</value>  
+    <name>hbase.replication</name>  
+    <value>true</value>  
 </property>  
+<property>
+    <name>replication.source.nb.capacity</name>
+    <value>25000</value>
+    <description>主集群每次向从集群发送的entry最大的个数，默认值25000，可根据集群规模做出适当调整</description>
+    <description>The master send maximum entry numbers to cluster, default, 25000</description>
+</property>
+<property>
+    <name>replication.source.size.capacity</name>
+    <value>67108864</value>
+    <description> 主集群每次向从集群发送的entry的包的最大值大小，默认为64M </description>
+    <description> The master send maximun entry package size to cluster, default 64MB</description>
+</property>
+<property>
+    <name>replication.source.ratio</name>
+    <value>1</value>
+    <description> 主集群使用的从集群的RS的数据百分比，默认为0.1，需调整为1，充分利用从集群的RS </description>
+    <description> The master use cluster RS ratio, default 0.1=10%, can increase to 100%</description>
+</property>
+<property>
+    <name>replication.sleep.before.failover</name>
+    <value>2000</value>
+    <description> 主集群在RS宕机多长时间后进行failover，默认为2秒，具体的sleep时间是： sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
+    <description> The master will failover after RS dump, default 2 seconds, the failover value=sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
+</property>
+<property>
+    <name>replication.executor.workers</name>
+    <value>1</value>
+    <description> 从事replication的线程数，默认为1，如果写入量大，可以适当调大 </description>
+    <description> The thread number of replication, default 1, if put is too large can increase the value</description>
+</property>
+
+cluster hbase-site.xml
+<property>
+    <name>hbase.replication</name>
+    <value>true</value>
+</property>
 ```
 
 use "verifyrep" to check
