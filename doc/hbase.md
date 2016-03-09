@@ -627,8 +627,8 @@ bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
 hbase shell
 ```
     disable 'table_name'
-    alter  'table_name', 'cf1', {REPLICATION_SCOPE => '2'} #调整table_name的replication份数, default=0
-    alter 'table_name','cf1',{REPLICATION_SCOPE => '2'} #cf1 = column_family_1
+
+    alter  'table_name',  { NAME => 'cf1', REPLICATION_SCOPE => 1} #开启table_name的replication, default=0, cf1 = column_family_1
     enable 'table_name'
     flush "table_name" #立即生效
 
