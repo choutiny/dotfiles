@@ -244,6 +244,201 @@ remove_peer
 start_replication
 stop_replication
 ```
+
+### Instruction cn
+HBase以表的形式存储数据。表有行和列组成。列划分为若干个列族/列簇(column family)。
+
+Row Key	column-family1	column-family2	column-family3
+column1	column2	column1	column2	column3	column1
+key1						
+key2						
+key3						
+如上图所示，key1,key2,key3是三条记录的唯一的row key值，column-family1,column-family2,column-family3是三个列族，每个列族下又包括几列。比如column-family1这个列族下包括两列，名字是column1和column2，t1:abc,t2:gdxdf是由row key1和column-family1-column1唯一确定的一个单元cell。这个cell中有两个数据，abc和gdxdf。两个值的时间戳不一样，分别是t1,t2, hbase会返回最新时间的值给请求者。
+
+这些名词的具体含义如下：
+
+(1) Row Key
+
+与nosql数据库们一样,row key是用来检索记录的主键。访问hbase table中的行，只有三种方式：
+    (1.1) 通过单个row key访问
+    (1.2) 通过row key的range
+    (1.3) 全表扫描
+Row key行键 (Row key)可以是任意字符串(最大长度是 64KB，实际应用中长度一般为 10-100bytes)，在hbase内部，row key保存为字节数组。
+存储时，数据按照Row key的字典序(byte order)排序存储。设计key时，要充分排序存储这个特性，将经常一起读取的行存储放到一起。(位置相关性)
+注意： 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99。要保持整形的自然序，行键必须用0作左填充。
+行的一次读写是原子操作 (不论一次读写多少列)。这个设计决策能够使用户很容易的理解程序在对同一个行进行并发更新操作时的行为。
+
+(2) 列族 column family
+hbase表中的每个列，都归属与某个列族。列族是表的chema的一部分(而列不是)，必须在使用表之前定义。列名都以列族作为前缀。例如courses:history ， courses:math 都属于 courses 这个列族。
+访问控制、磁盘和内存的使用统计都是在列族层面进行的。实际应用中，列族上的控制权限能帮助我们管理不同类型的应用：我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）。
+
+(3) 单元 Cell
+HBase中通过row和columns确定的为一个存贮单元称为cell。由{row key, column( =<family> + <label>), version} 唯一确定的单元。cell中的数据是没有类型的，全部是字节码形式存贮。
+
+(4) 时间戳 timestamp
+每个cell都保存着同一份数据的多个版本。版本通过时间戳来索引。时间戳的类型是 64位整型。时间戳可以由hbase(在数据写入时自动 )赋值，此时时间戳是精确到毫秒的当前系统时间。时间戳也可以由客户显式赋值。如果应用程序要避免数据版本冲突，就必须自己生成具有唯一性的时间戳。每个cell中，不同版本的数据按照时间倒序排序，即最新的数据排在最前面。
+
+为了避免数据存在过多版本造成的的管理 (包括存贮和索引)负担，hbase提供了两种数据版本回收方式。一是保存数据的最后n个版本，二是保存最近一段时间内的版本（比如最近七天）。用户可以针对每个列族进行设置。
+
+3. HBase shell的基本用法
+hbase提供了一个shell的终端给用户交互。使用命令hbase shell进入命令界面。通过执行 help可以看到命令的帮助信息。
+以网上的一个学生成绩表的例子来演示hbase的用法。
+name	grad	course
+math	art
+Tom	5	97	87
+Jim	4	89	80
+这里grad对于表来说是一个只有它自己的列族,course对于表来说是一个有两个列的列族,这个列族由两个列组成math和art,当然我们可以根据我们的需要在course中建立更多的列族,如computer,physics等相应的列添加入course列族。
+
+(1)建立一个表scores，有两个列族grad和courese
+hbase(main):001:0> create 'scores','grade', 'course'
+
+可以使用list命令来查看当前HBase里有哪些表。使用describe命令来查看表结构。（记得所有的表明、列名都需要加上引号）
+
+(2)按设计的表结构插入值：
+put 'scores','Tom','grade:','5'
+put 'scores','Tom','course:math','97'
+put 'scores','Tom','course:art','87'
+put 'scores','Jim','grade','4'
+put 'scores','Jim','course:','89'
+put 'scores','Jim','course:','80'
+
+这样表结构就起来了，其实比较自由，列族里边可以自由添加子列很方便。如果列族下没有子列，加不加冒号都是可以的。
+put命令比较简单，只有这一种用法：
+
+hbase> put 't1', 'r1', 'c1', 'value', ts1
+
+t1指表名，r1指行键名，c1指列名，value指单元格值。ts1指时间戳，一般都省略掉了。
+
+(3)根据键值查询数据
+get 'scores','Jim'
+get 'scores','Jim','grade'
+
+可能你就发现规律了，HBase的shell操作，一个大概顺序就是操作关键词后跟表名，行名，列名这样的一个顺序，如果有其他条件再用花括号加上。
+get有用法如下：
+
+hbase> get 't1', 'r1'
+hbase> get 't1', 'r1', {TIMERANGE => [ts1, ts2]}
+hbase> get 't1', 'r1', {COLUMN => 'c1'}
+hbase> get 't1', 'r1', {COLUMN => ['c1', 'c2', 'c3']}
+hbase> get 't1', 'r1', {COLUMN => 'c1', TIMESTAMP => ts1}
+hbase> get 't1', 'r1', {COLUMN => 'c1', TIMERANGE => [ts1, ts2], VERSIONS => 4}
+hbase> get 't1', 'r1', {COLUMN => 'c1', TIMESTAMP => ts1, VERSIONS => 4}
+hbase> get 't1', 'r1', 'c1'
+hbase> get 't1', 'r1', 'c1', 'c2'
+hbase> get 't1', 'r1', ['c1', 'c2']
+
+(4)扫描所有数据
+
+scan 'scores'
+
+也可以指定一些修饰词：TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS。没任何修饰词，就是上边例句，就会显示所有数据行。
+
+例句如下：
+
+hbase> scan '.META.'
+hbase> scan '.META.', {COLUMNS => 'info:regioninfo'}
+hbase> scan 't1', {COLUMNS => ['c1', 'c2'], LIMIT => 10, STARTROW => 'xyz'}
+hbase> scan 't1', {COLUMNS => 'c1', TIMERANGE => [1303668804, 1303668904]}
+hbase> scan 't1', {FILTER => "(PrefixFilter ('row2') AND (QualifierFilter (>=, 'binary:xyz'))) AND (TimestampsFilter ( 123, 456))"}
+hbase> scan 't1', {FILTER => org.apache.hadoop.hbase.filter.ColumnPaginationFilter.new(1, 0)}
+
+过滤器filter有两种方法指出：
+a. Using a filterString - more information on this is available in the
+Filter Language document attached to the HBASE-4176 JIRA
+b. Using the entire package name of the filter.
+
+还有一个CACHE_BLOCKS修饰词，开关scan的缓存的，默认是开启的（CACHE_BLOCKS=>true），可以选择关闭（CACHE_BLOCKS=>false）。
+
+(5)删除指定数据
+
+delete 'scores','Jim','grade'
+delete 'scores','Jim'
+
+删除数据命令也没太多变化，只有一个：
+
+hbase> delete 't1', 'r1', 'c1', ts1
+
+另外有一个deleteall命令，可以进行整行的范围的删除操作，慎用！
+如果需要进行全表删除操作，就使用truncate命令，其实没有直接的全表删除命令，这个命令也是disable，drop，create三个命令组合出来的。
+
+(6)修改表结构
+
+disable 'scores'
+alter 'scores',NAME=>'info'
+enable 'scores'
+
+alter命令使用如下（如果无法成功的版本，需要先通用表disable）：
+a、改变或添加一个列族：
+
+hbase> alter 't1', NAME => 'f1', VERSIONS => 5
+
+b、删除一个列族：
+
+hbase> alter 't1', NAME => 'f1', METHOD => 'delete'
+hbase> alter 't1', 'delete' => 'f1'
+
+c、也可以修改表属性如MAX_FILESIZE
+MEMSTORE_FLUSHSIZE, READONLY,和 DEFERRED_LOG_FLUSH：
+hbase> alter 't1', METHOD => 'table_att', MAX_FILESIZE => '134217728'
+d、可以添加一个表协同处理器
+
+hbase> alter 't1', METHOD => 'table_att', 'coprocessor'=> 'hdfs:///foo.jar|com.foo.FooRegionObserver|1001|arg1=1,arg2=2'
+
+一个表上可以配置多个协同处理器，一个序列会自动增长进行标识。加载协同处理器（可以说是过滤程序）需要符合以下规则：
+
+[coprocessor jar file location] | class name | [priority] | [arguments]
+
+e、移除coprocessor如下：
+
+hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'MAX_FILESIZE'
+hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'coprocessor$1'
+
+f、可以一次执行多个alter命令：
+
+hbase> alter 't1', {NAME => 'f1'}, {NAME => 'f2', METHOD => 'delete'}
+
+(7)统计行数：
+
+hbase> count 't1'
+hbase> count 't1', INTERVAL => 100000
+hbase> count 't1', CACHE => 1000
+hbase> count 't1', INTERVAL => 10, CACHE => 1000
+
+count一般会比较耗时，使用mapreduce进行统计，统计结果会缓存，默认是10行。统计间隔默认的是1000行（INTERVAL）。
+
+(8)disable 和 enable 操作
+很多操作需要先暂停表的可用性，比如上边说的alter操作，删除表也需要这个操作。disable_all和enable_all能够操作更多的表。
+
+(9)表的删除
+先停止表的可使用性，然后执行删除命令。
+
+drop 't1'
+
+以上是一些常用命令详解，具体的所有hbase的shell命令如下，分了几个命令群，看英文是可以看出大概用处的，详细的用法使用help "cmd" 进行了解。
+
+COMMAND GROUPS:
+  Group name: general
+  Commands: status, version
+
+  Group name: ddl
+  Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all,
+enable, enable_all, exists, is_disabled, is_enabled, list, show_filters
+
+  Group name: dml
+  Commands: count, delete, deleteall, get, get_counter, incr, put, scan, truncate
+
+  Group name: tools
+  Commands: assign, balance_switch, balancer, close_region, compact, flush, hlog_roll, major_compact,
+move, split, unassign, zk_dump
+
+  Group name: replication
+  Commands: add_peer, disable_peer, enable_peer, list_peers, remove_peer, start_replication, 
+stop_replication
+
+  Group name: security
+  Commands: grant, revoke, user_permission
+
+
 ### Instruction
 1.Hbase 
 ```
@@ -285,6 +480,8 @@ hbase(main)> list
 # 语法：create <table>, {NAME => <family>, VERSIONS => <VERSIONS>}
 # 例如：创建表t1，有两个family name：f1，f2，且版本数均为2
 hbase(main)> create 't1',{NAME => 'f1', VERSIONS => 2},{NAME => 'f2', VERSIONS => 2}
+    
+
 3）删除表
 
 分两步：首先disable，然后drop
@@ -431,10 +628,10 @@ bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
 hbase shell
 ```
     disable 'table_name'
-    alter  'table_name', 'cf0', {REGION_REPLICATION => 2} #调整table_name的replication份数, default=0
-    alter 'table_name','cf0',{REPLICATION_SCOPE => 2}
-    flush "table_name" #立即生效
+    alter  'table_name', 'cf1', {REPLICATION_SCOPE => 2} #调整table_name的replication份数, default=0
+    alter 'table_name','cf1',{REPLICATION_SCOPE => 2} #cf1 = column_family_1
     enable 'table_name'
+    flush "table_name" #立即生效
 ```
 test 
 http://halo-cnode1.domain.org:16010/
@@ -454,3 +651,6 @@ hbase.thrift.minWorkerThreads是thrift server的最小线程数，默认值为16
 当程序访问HBase Thrift Server时，每当有一个新的连接就会创建一个新的线程，直到线程数量达到最小线程数。当线程池中没有空闲的线程时，新的连接会被加入队列。只有当队列中的等待连接数量超过队列的最大值时，才会为这些等待中的连接创建新的线程，直到线程数量达到最大线程数。当线程数量超过最大线程数时，Thrift Server就会开始丢弃连接。
 3.     解决办法
 在HBase中加入上述三个参数并设置合适的线程数后，启动HBase Thrift Server服务，之前出现的阻塞问题即可解决。
+
+
+
