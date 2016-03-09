@@ -1484,6 +1484,7 @@ pmap -d PID 显示PID的内存信息
 56.Others skills
 ```
 echo '1+2'|bc -l //数学运算
+date +%s // timestamp
 time command //查看命令的运行时间
     date -d@12345677890 时间截转时间
     >file.txt 创建一个空文件.类似touch
