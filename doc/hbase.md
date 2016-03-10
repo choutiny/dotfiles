@@ -699,6 +699,44 @@ refer: http://hbase.apache.org/book.html#_cluster_replication
 Hbase中split是一个很重要的功能，Hbase是通过把数据分配到一定数量的region来达到负载均衡的。一个table会被分配到一个或多个region中，这些region会被分配到一个或者多个regionServer中。在自动split策略中，当一个region达到一定的大小就会自动split成两个region。table在region中是按照row key来排序的，并且一个row key所对应的行只会存储在一个region中，这一点保证了Hbase的强一致性 。
 在一个region中有一个或多个stroe，每个stroe对应一个column families(列族)。一个store中包含一个memstore 和 0 或 多个store files。每个column family 是分开存放和分开访问的。
 disable 'table_name','cf1', {REGION_REPLICATION => 3}
+
+
+Client 
+    Disable auto flush for client writebuffer, close will contain flush.
+RegionServer(RS)
+    Split region when create table, design rowkey.
+    Query
+        Order read, close block cache
+        Rand read, open block cache, set hfile.block.cache.size, use boolean filter.
+    Compact & split, set  hbase.hregion.majorcompaction=0, set hbase.hregion.max.filesize.  when region hbase exceed this value will split it into RS.
+    Memory, hbase.regionserver.global.memstore.upperLimit，hbase.regionserver.global.memstore.lowerLimit，memstore.flush .size
+    HFile
+        compress, GZIP, LZO, Snappy. (recommend LZO or Snappy)
+            Algorithm   % remaining Encoding    Decoding
+            GZIP        13.4%       21 MB/s     118 MB/s
+            LZO         20.5%       135 MB/s    410 MB/s
+            Snappy      22.2%       172 MB/s    409 MB/s
+    create 'testtable', { NAME => 'colfam1', COMPRESSION => 'GZ' }
+    create 'testtable', { NAME => 'colfam1', COMPRESSION => 'lzo' } 
+        # need lzo and native liberary, copy native.jar into hadoop/lib/native and hbase/lib/native
+        # core-site.xml
+            <property>
+                <name>io.compression.codecs</name>
+                <value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec
+                </value>
+            </property>
+            <property>
+                <name>io.compression.codec.lzo.class</name>
+                <value>com.hadoop.compression.lzo.LzoCodec</value>
+            </property>
+    create 'testtable', { NAME => 'colfam1', COMPRESSION => 'snappy' } 
+        # need snappy liberary, copy snappy-SNAPSHOT.jar into hbase, hadoop/lib 
+        # core-site.xml
+            <property>
+                <name>io.compression.codecs</name>
+                <value>org.apache.hadoop.io.compress.SnappyCodec
+            </value>
+            </property>
 ```
 
 
