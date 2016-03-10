@@ -489,7 +489,7 @@ hbase(main)> disable 't1'
 hbase(main)> drop 't1'
 4）查看表的结构
 
-# 语法：describe <table>
+# 语法：describe <table>, desc <table>
 # 例如：查看表t1的结构
 hbase(main)> describe 't1'
 5）修改表结构
@@ -622,7 +622,7 @@ cd ~/hbase
 bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
 ```
 
-# hbase 设置replication
+# hbase 设置replication复制
 ----------------------
 hbase shell
 ```
