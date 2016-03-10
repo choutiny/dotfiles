@@ -1404,7 +1404,11 @@ ping -a IP
 ```
 history | awk '{a[$2]++}END{for(i in a){print a[i] "" i}}' | sort -rn | head 
 history | awk '{CMD[$2]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl | head -n10
+bash for debian
 history | awk '{CMD[$3]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c4 -s " " -t | sort -nr | nl | head -n10
+zsh
+history | awk '{CMD[$4,$5,$6]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c4 -s " " -t | sort -nr | nl | head -n10
+
 ```
 zshrc
 ```
