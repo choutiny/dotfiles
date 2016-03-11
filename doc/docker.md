@@ -348,8 +348,8 @@ $sudo docker run -d -p 192.168.85.123:33333:80 --name static_web rainysia/static
 更新docker images里面的内容后. 
 需要stop掉当前的docker, 然后rm 掉, 启新的
 $sudo docker ps -a 
-$sudo docker stop xxxxid
-$sudo docker rm xxxxid
+$sudo docker stop Container_xxxxid
+$sudo docker rm Container_xxxxid/Name
 $sudo docker start new_xxxxid
 
 $sudo docker rmi image_id 根据image_id删除镜像
@@ -953,6 +953,15 @@ mkdir -p /opt/data/registry
 client
 docker tag image_name server_ip:5000/tag_name
 docker push server_ip:5000/tag_name
+
+docker pull williamyeh/scala
+docker tag  2.11.6 cdcbi.domain.org:5000/scala
+docker push cdcbi.domain.org:5000/scala
+
+docker search private registry
+v2 registry
+curl -k https://cdcbi.domain.org:5000/v2/_catalog 
+
 
 error: docker user https
 因为Docker从1.3.X之后，与docker registry交互默认使用的是https，然而此处搭建的私有仓库只提供http服务，所以当与私有仓库交互时就会报上面的错误。为了解决这个问题需要在启动docker server时增加启动参数为默认使用http访问。修改docker启动配置文件

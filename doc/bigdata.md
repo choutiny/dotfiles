@@ -242,6 +242,7 @@ Cloudera Hue: 是一个基于WEB的监控和管理系统，实现对HDFS，MapRe
 ###HDFS
 ---------------
 HDFS集群以Master-Slave模式运行，主要有两类节点：一个Namenode(即Master)和多个Datanode(即Slave)。
+![HDFS NameNode](./hdfs_namenode1.png)
 Namenode 管理者文件系统的Namespace。它维护着文件系统树(filesystem tree)以及文件树中所有的文件和文件夹的元数据(metadata)
 Datanode是文件系统的工作节点，他们根据客户端或者是namenode的调度存储和检索数据，并且定期向namenode发送他们所存储的块(block)的列表。
 
