@@ -674,7 +674,7 @@ master hbase-site.xml
     <description> The thread number of replication, default 1, if put is too large can increase the value</description>
 </property>
 <property>  
-    <name>hbase.regionserver.wal.enablecompression</name>  
+    <name>hbase.regionserver.wal.enablecompression</name>   #Write Ahead Log (WAL)
     <value>false</value> 
     <description> 主集群关闭hlog的压缩</description>  
 </property> 
@@ -737,6 +737,16 @@ RegionServer(RS)
                 <value>org.apache.hadoop.io.compress.SnappyCodec
             </value>
             </property>
+
+Regions是由每个Column Family的Store组成。
+
+Region大小
+Region的大小是一个棘手的问题，需要考量如下几个因素。
+Regions是可用性和分布式的最基本单位
+    HBase通过将region切分在许多机器上实现分布式。也就是说，你如果有16GB的数据，只分了2个region， 你却有20台机器，有18台就浪费了。
+    region数目太多就会造成性能下降，现在比以前好多了。但是对于同样大小的数据，700个region比3000个要好。
+    region数目太少就会妨碍可扩展性，降低并行能力。有的时候导致压力不够分散。这就是为什么，你向一个10节点的Hbase集群导入200MB的数据，大部分的节点是idle的。
+    RegionServer中1个region和10个region索引需要的内存量没有太多的差别。
 ```
 
 
