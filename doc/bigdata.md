@@ -84,6 +84,13 @@ Leader分片选举：一个Collection的多个分片可以设置冗余的副本�
 ---------------
 Lily是一个分布式数据管理平台，它基于Hadoop、HBase、Solr、ZooKeeper实现。使用ZooKeeper来注册Lily Node，从而管理集群节点的状态信息。
 
+###BigDATA engine
+---------------
+首先第一代的计算引擎，无疑就是 Hadoop 承载的 MapReduce。这里大家应该都不会对 MapReduce 陌生，它将计算分为两个阶段，分别为 Map 和 Reduce。对于上层应用来说，就不得不想方设法去拆分算法，甚至于不得不在上层应用实现多个 Job 的串联，以完成一个完整的算法，例如迭代计算。
+由于这样的弊端，催生了支持 DAG 框架的产生。因此，支持 DAG 的框架被划分为第二代计算引擎。如 Tez 以及更上层的 Oozie。这里我们不去细究各种 DAG 实现之间的区别，不过对于当时的 Tez 和 Oozie 来说，大多还是批处理的任务。
+接下来就是以 Spark 为代表的第三代的计算引擎。第三代计算引擎的特点主要是 Job 内部的 DAG 支持（不跨越 Job），以及强调的实时计算。在这里，很多人也会认为第三代计算引擎也能够很好的运行批处理的 Job。
+随着第三代计算引擎的出现，促进了上层应用快速发展，例如各种迭代计算的性能以及对流计算和 SQL 等的支持。Flink 的诞生就被归在了第四代。这应该主要表现在 Flink 对流计算的支持，以及更一步的实时性上面。当然 Flink 也可以支持 Batch 的任务，以及 DAG 的运算。
+
 ###Storm
 ---------------
 Storm流式计算框架使用ZooKeeper来协调整个计算集群，Storm计算集群存在Nimbus和Supervisor两类节点。Nimbus负责分配任务（Topology），将任务信息写入ZooKeeper存储，然后Supervisor从ZooKeeper中读取任务信息。另外，Nimbus也监控集群中的计算任务节点，Supervisor也会发送心跳信息（包括状态信息）到ZooKeeper中，使得Nimbus可以实现状态的监控，任何计算节点出现故障，只要重新启动之后，继续从ZooKeeper中获取数据即可继续执行计算任务。
@@ -91,6 +98,24 @@ Storm流式计算框架使用ZooKeeper来协调整个计算集群，Storm计算�
 ###Consul
 ---------------
 Consul是HashiCorp公司推出的开源工具，用于实现分布式系统的服务发现与配置。与其他分布式服务注册与发现的方案，比如 Airbnb的SmartStack等相比，Consul的方案更“一站式”，内置了服务注册与发现框 架、分布一致性协议实现、健康检查、Key/Value存储、多数据中心方案，不再需要依赖其他工具（比如ZooKeeper等）。使用起来也较 为简单。Consul用Golang实现，因此具有天然可移植性(支持Linux、windows和Mac OS X)；安装包仅包含一个可执行文件，方便部署，与Docker等轻量级容器可无缝配合。
+
+###Spark
+---------------
+Spark是一种快速、通用的计算集群系统，Spark提出的最主要抽象概念是弹性分布式数据集(RDD)，它是一个元素集合，划分到集群的各个节点上，可以被并行操作。用户也可以让Spark保留一个RDD在内存中，使其能在并行操作中被有效的重复使用。Flink是可扩展的批处理和流式数据处理的数据处理平台，设计思想主要来源于Hadoop、MPP数据库、流式计算系统等，支持增量迭代计算。
+
+Spark为应用提供了REST API来获取各种信息，包括jobs、stages、tasks、storage info等。
+Spark Streaming增加了UI，可以方便用户查看各种状态，另外与Kafka的融合也更加深度，加强了对Kinesis的支持。
+Spark SQL（DataFrame）添加ORCFile类型支持，另外还支持所有的Hive metastore。
+Spark ML/MLlib的ML pipelines愈加成熟，提供了更多的算法和工具。Tungsten项目的持续优化，特别是内存管理、代码生成、垃圾回收等方面都有很多改进。SparkR发布，更友好的R语法支持。
+![Spark Ecosystem](./spark_echosystem.jpg)
+
+###Flink
+---------------
+Flink 是一个针对流数据和批数据的分布式处理引擎。它主要是由 Java 代码实现。目前主要还是依靠开源社区的贡献而发展。对 Flink 而言，其所要处理的主要场景就是流数据，批数据只是流数据的一个极限特例而已。再换句话说，Flink 会把所有任务当成流来处理，这也是其最大的特点。Flink 可以支持本地的快速迭代，以及一些环形的迭代任务。并且 Flink 可以定制化内存管理。在这点，如果要对比 Flink 和 Spark 的话，Flink 并没有将内存完全交给应用层。这也是为什么 Spark 相对于 Flink，更容易出现 OOM 的原因（out of memory）。就框架本身与应用场景来说，Flink 更相似与 Storm。
+![Flink architecture](./flink_arch.png)
+如图所示，我们可以了解到 Flink 几个最基础的概念，Client、JobManager 和 TaskManager。Client 用来提交任务给 JobManager，JobManager 分发任务给 TaskManager 去执行，然后 TaskManager 会心跳的汇报任务状态。看到这里，有的人应该已经有种回到 Hadoop 一代的错觉。确实，从架构图去看，JobManager 很像当年的 JobTracker，TaskManager 也很像当年的 TaskTracker。然而有一个最重要的区别就是 TaskManager 之间是是流（Stream）。其次，Hadoop 一代中，只有 Map 和 Reduce 之间的 Shuffle，而对 Flink 而言，可能是很多级，并且在 TaskManager 内部和 TaskManager 之间都会有数据传递，而不像 Hadoop，是固定的 Map 到 Reduce。
+![Flink Ecosystem](./flink_ecosystem.jpg)
+
 
 ###YARN
 ---------------
@@ -121,3 +146,4 @@ Kafka是Linkedin于2010年12月份开源的消息系统，它主要用于处理�
 ###thrift
 ---------------
 Thrift是一个跨语言的服务部署框架，最初由Facebook于2007年开发，2008年进入Apache开源项目。Thrift通过一个中间语言(IDL, 接口定义语言)来定义RPC的接口和数据类型，然后通过一个编译器生成不同语言的代码（目前支持C++,Java, Python, PHP, Ruby, Erlang, Perl, Haskell, C#, Cocoa, Smalltalk和OCaml）,并由生成的代码负责RPC协议层和传输层的实现。
+

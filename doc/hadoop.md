@@ -248,6 +248,7 @@ stop-all.sh
 ###Verify Install
 ------
 ```
+
 #hadoop version
 jps
 hadoop dfsadmin -report
