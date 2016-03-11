@@ -70,6 +70,11 @@ HBase中通过row和columns确定的为一个存贮单元称为cell。由{row ke
 
 ###HIVE
 ---------------
+HIVE是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。
+
+###Pig
+---------------
+Pig是一个基于Hadoop的大规模数据分析工具，它提供的SQL-LIKE语言叫Pig Latin，该语言的编译器会把类SQL的数据分析请求转换为一系列经过优化处理的MapReduce运算。
 
 ###Solr
 ---------------
@@ -109,6 +114,38 @@ Spark SQL（DataFrame）添加ORCFile类型支持，另外还支持所有的Hive
 Spark ML/MLlib的ML pipelines愈加成熟，提供了更多的算法和工具。Tungsten项目的持续优化，特别是内存管理、代码生成、垃圾回收等方面都有很多改进。SparkR发布，更友好的R语法支持。
 ![Spark Ecosystem](./spark_echosystem.jpg)
 
+RDD是什么？
+
+RDD，全称为Resilient Distributed Datasets，是一个容错的、并行的数据结构，可以让用户显式地将数据存储到磁盘和内存中，并能控制数据的分区。同时，RDD还提供了一组丰富的操作来操作这些数据。在这些操作中，诸如map、flatMap、filter等转换操作实现了monad模式，很好地契合了Scala的集合操作。除此之外，RDD还提供了诸如join、groupBy、reduceByKey等更为方便的操作（注意，reduceByKey是action，而非transformation），以支持常见的数据运算。
+
+通常来讲，针对数据处理有几种常见模型，包括：Iterative Algorithms，Relational Queries，MapReduce，Stream Processing。例如Hadoop MapReduce采用了MapReduces模型，Storm则采用了Stream Processing模型。RDD混合了这四种模型，使得Spark可以应用于各种大数据处理场景。
+
+RDD作为数据结构，本质上是一个只读的分区记录集合。一个RDD可以包含多个分区，每个分区就是一个dataset片段。RDD可以相互依赖。如果RDD的每个分区最多只能被一个Child RDD的一个分区使用，则称之为narrow dependency；若多个Child RDD分区都可以依赖，则称之为wide dependency。不同的操作依据其特性，可能会产生不同的依赖。例如map操作会产生narrow dependency，而join操作则产生wide dependency。
+RDD本质上是一个内存数据集，在访问RDD时，指针只会指向与操作相关的部分。例如存在一个面向列的数据结构，其中一个实现为Int的数组，另一个实现为Float的数组。如果只需要访问Int字段，RDD的指针可以只访问Int数组，避免了对整个数据结构的扫描。
+
+RDD将操作分为两类：transformation与action。无论执行了多少次transformation操作，RDD都不会真正执行运算，只有当action操作被执行时，运算才会触发。而在RDD的内部实现机制中，底层接口则是基于迭代器的，从而使得数据访问变得更高效，也避免了大量中间结果对内存的消耗。
+
+在实现时，RDD针对transformation操作，都提供了对应的继承自RDD的类型，例如map操作会返回MappedRDD，而flatMap则返回FlatMappedRDD。当我们执行map或flatMap操作时，不过是将当前RDD对象传递给对应的RDD对象而已。
+DD对容错的支持
+
+支持容错通常采用两种方式：数据复制或日志记录。对于以数据为中心的系统而言，这两种方式都非常昂贵，因为它需要跨集群网络拷贝大量数据，毕竟带宽的数据远远低于内存。
+
+RDD天生是支持容错的。首先，它自身是一个不变的(immutable)数据集，其次，它能够记住构建它的操作图（Graph of Operation），因此当执行任务的Worker失败时，完全可以通过操作图获得之前执行的操作，进行重新计算。由于无需采用replication方式支持容错，很好地降低了跨网络的数据传输成本。
+
+不过，在某些场景下，Spark也需要利用记录日志的方式来支持容错。例如，在Spark Streaming中，针对数据进行update操作，或者调用Streaming提供的window操作时，就需要恢复执行过程的中间状态。此时，需要通过Spark提供的checkpoint机制，以支持操作能够从checkpoint得到恢复。
+
+针对RDD的wide dependency，最有效的容错方式同样还是采用checkpoint机制。不过，似乎Spark的最新版本仍然没有引入auto checkpointing机制。
+
+总结
+
+RDD是Spark的核心，也是整个Spark的架构基础。它的特性可以总结如下：
+
+它是不变的数据结构存储
+它是支持跨集群的分布式数据结构
+可以根据数据记录的key对结构进行分区
+提供了粗粒度的操作，且这些操作都支持分区
+它将数据存储在内存中，从而提供了低延迟性
+
 ###Flink
 ---------------
 Flink 是一个针对流数据和批数据的分布式处理引擎。它主要是由 Java 代码实现。目前主要还是依靠开源社区的贡献而发展。对 Flink 而言，其所要处理的主要场景就是流数据，批数据只是流数据的一个极限特例而已。再换句话说，Flink 会把所有任务当成流来处理，这也是其最大的特点。Flink 可以支持本地的快速迭代，以及一些环形的迭代任务。并且 Flink 可以定制化内存管理。在这点，如果要对比 Flink 和 Spark 的话，Flink 并没有将内存完全交给应用层。这也是为什么 Spark 相对于 Flink，更容易出现 OOM 的原因（out of memory）。就框架本身与应用场景来说，Flink 更相似与 Storm。
@@ -126,7 +163,9 @@ YARN作为一个通用数据操作系统，既可以运行像MapReduce、Spark�
 
 ###Mesos
 ---------------
-Mesos是一个开源的资源管理系统，可以对集群中的资源做弹性管理，目前twitter, apple等公司在大量使用mesos管理集群资源，大家记得apple的siri吗，它的后端便是采用的mesos进行资源管理（自行在网上查找文章：“新一代Siri后端将采用开放源代码平台Mesos”）。国内也有零零散散的公司在使用mesos，比如豆瓣。 Mesos是高仿google内部的资源管理系统borg（论文已经发表）实现的，随着近期它对docker容器支持的越来越好，将备受关注。（注：Mesosphere，一家试图围绕 Apache Mesos 项目开展商业活动的公司，不久前从 Andreessen Horowitz 那里获得了 1000 万美元投资。他做的事情就是用开源方案实现一个borg，选用的技术栈是：mesos+docker）。
+Mesos是一个开源的资源管理系统，可以对集群中的资源做弹性管理，抽象物理机的CPU、内存、存储和计算资源，再由框架自身的调度器决定资源的使用者。
+Mesos是Master／Slave结构，由Mesos－master，Mesos－slave，Framework和executor四个组件构成。
+目前twitter, apple等公司在大量使用mesos管理集群资源，大家记得apple的siri吗，它的后端便是采用的mesos进行资源管理（自行在网上查找文章：“新一代Siri后端将采用开放源代码平台Mesos”）。国内也有零零散散的公司在使用mesos，比如豆瓣。 Mesos是高仿google内部的资源管理系统borg（论文已经发表）实现的，随着近期它对docker容器支持的越来越好，将备受关注。（注：Mesosphere，一家试图围绕 Apache Mesos 项目开展商业活动的公司，不久前从 Andreessen Horowitz 那里获得了 1000 万美元投资。他做的事情就是用开源方案实现一个borg，选用的技术栈是：mesos+docker）。
 
 Hadoop YARN要比Mesos更主流，前景更广阔。YARN在实现资源管理的系统前提下，能够跟hadoop生态系统完美结合，在YARN的东家hortonworks看来，YARN定位为大数据中的数据操作系统，能够更好地为上层各类应用程序（MapReduce/Spark）提供资源管理和调度功能。另外，非常重要的一点，YARN的社区力量要比Mesos强大的多，它的参与人员众多，周边系统的建设非常完善（包括最新诞生的apache二级项目Twill，Apache Twill ，cloudera的Kitten，均是方便大家使用YARN而诞生的项目）。
 YARN是从MapReduce中演化而来的，因而在大数据处理中扮演重要角色，但这也使得它受限：它现在还不能看做是一个通用的资源管理系统，太多的内部实现过于狭隘，比如资源申请和分配模型，对长服务的支持等。不过，YARN自己仍把它定位在通用资源管理系统上，因而在不断改进，比如最近的版本中，增加了对长服务和docker的支持。
@@ -146,4 +185,63 @@ Kafka是Linkedin于2010年12月份开源的消息系统，它主要用于处理�
 ###thrift
 ---------------
 Thrift是一个跨语言的服务部署框架，最初由Facebook于2007年开发，2008年进入Apache开源项目。Thrift通过一个中间语言(IDL, 接口定义语言)来定义RPC的接口和数据类型，然后通过一个编译器生成不同语言的代码（目前支持C++,Java, Python, PHP, Ruby, Erlang, Perl, Haskell, C#, Cocoa, Smalltalk和OCaml）,并由生成的代码负责RPC协议层和传输层的实现。
+
+###Zepellin
+---------------
+Zepellin是一个集成IPythoon notebook风格的Spark应用。Zepellin可以基于Spark和Scala，允许用户很简单直接的在他们的博客或者网站发布代码执行的结果。
+Zepellin也支持其它语言插件，包括Scala和Spark，Python和Spark，SparkSQL，HIve，Markdown和Shell。
+
+###Alluxio
+---------------
+Alluxio是一个分布式内存文件系统，它在减轻Spark内存压力的同时，也赋予Spark内存快速读写海量数据的能力。Alluxio以前叫做Tachyon，即钨丝。Spark jobs可以不做任何改变即可运行在Alluxio上，并能得到极大的性能优化。Alluxio宣称：“百度使用Alluxio可以提高30倍多数据处理能力”。
+
+###Sqoop
+---------------
+Sqoop: 是一个用来将Hadoop和关系型数据库中的数据相互转移的工具，可以将一个关系型数据库（MySQL ,Oracle ,Postgres等）中的数据导进到Hadoop的HDFS中，也可以将HDFS的数据导进到关系型数据库中。
+
+###Mahout
+---------------
+Mahout:是基于Hadoop的机器学习和数据挖掘的一个分布式框架。Mahout用MapReduce实现了部分数据挖掘算法，解决了并行挖掘的问题。
+
+###Cassandra
+---------------
+Cassandra:是一套开源分布式NoSQL数据库系统。它最初由Facebook开发，用于储存简单格式数据，集Google BigTable的数据模型与Amazon Dynamo的完全分布式的架构于一身
+
+###Avro
+---------------
+Avro: 是一个数据序列化系统，设计用于支持数据密集型，大批量数据交换的应用。Avro是新的数据序列化格式与传输工具，将逐步取代Hadoop原有的IPC机制
+
+###Ambari
+---------------
+Ambari: 是一种基于Web的工具，支持Hadoop集群的供应、管理和监控。
+
+###Chukwa
+---------------
+Chukwa: 是一个开源的用于监控大型分布式系统的数据收集系统，它可以将各种各样类型的数据收集成适合 Hadoop 处理的文件保存在 HDFS 中供 Hadoop 进行各种 MapReduce 操作。
+
+###Hama
+---------------
+Hama: 是一个基于HDFS的BSP（Bulk Synchronous Parallel)并行计算框架, Hama可用于包括图、矩阵和网络算法在内的大规模、大数据计算。
+
+###Flume
+---------------
+Flume: 是一个分布的、可靠的、高可用的海量日志聚合的系统，可用于日志数据收集，日志数据处理，日志数据传输。
+
+###Oozie
+---------------
+Oozie: 是一个工作流引擎服务器, 用于管理和协调运行在Hadoop平台上（HDFS、Pig和MapReduce）的任务。
+
+###Bigtop
+---------------
+Bigtop: 是一个对Hadoop及其周边生态进行打包，分发和测试的工具。
+
+###Cloudera Hue
+---------------
+Cloudera Hue: 是一个基于WEB的监控和管理系统，实现对HDFS，MapReduce/YARN, HBase, Hive, Pig的web化操作和管理。
+
+###
+---------------
+
+###
+---------------
 
