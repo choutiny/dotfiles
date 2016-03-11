@@ -948,7 +948,8 @@ server
 docker pull registry
 docker run -d -p 5000:5000 registry
 docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry 自定义仓库地址
-mkdir -p /opt/data/registry 
+
+docker stop `ps -a`
  
 client
 docker tag image_name server_ip:5000/tag_name
@@ -956,6 +957,7 @@ docker push server_ip:5000/tag_name
 
 docker pull williamyeh/scala
 docker tag  2.11.6 cdcbi.domain.org:5000/scala
+docker tag  williamyeh/scala 192.168.85.116:5000/scala
 docker push cdcbi.domain.org:5000/scala
 
 docker search private registry
@@ -990,4 +992,7 @@ add the below
     DOCKER_OPTS="-D --insecure-registry cdcbi.domain.org:5000"
 or 
     OPTIONS="-D --insecure-registry cdcbi.domain.org:5000"
+
+systemctl restart docker
+systemctl daemon-reload
 ```
