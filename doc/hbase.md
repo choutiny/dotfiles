@@ -213,66 +213,66 @@ Replication
 #Instruction cn
 --------------------
 ```
-HBase以表的形式存储数据。表有行和列组成。列划分为若干个列族/列簇(column family)。
+HBase以表的形式存储数据.表有行和列组成.列划分为若干个列族/列簇(column family).
 
 Row Key	column-family1	column-family2	column-family3
 column1	column2	column1	column2	column3	column1
 key1						
 key2						
 key3						
-如上图所示，key1,key2,key3是三条记录的唯一的row key值，column-family1,column-family2,column-family3是三个列族，每个列族下又包括几列。比如column-family1这个列族下包括两列，名字是column1和column2，t1:abc,t2:gdxdf是由row key1和column-family1-column1唯一确定的一个单元cell。这个cell中有两个数据，abc和gdxdf。两个值的时间戳不一样，分别是t1,t2, hbase会返回最新时间的值给请求者。
+如上图所示,key1,key2,key3是三条记录的唯一的row key值,column-family1,column-family2,column-family3是三个列族,每个列族下又包括几列.比如column-family1这个列族下包括两列,名字是column1和column2,t1:abc,t2:gdxdf是由row key1和column-family1-column1唯一确定的一个单元cell.这个cell中有两个数据,abc和gdxdf.两个值的时间戳不一样,分别是t1,t2, hbase会返回最新时间的值给请求者.
 
 这些名词的具体含义如下：
 ```
 
 1 Row Key
 ```
-与nosql数据库们一样,row key是用来检索记录的主键。访问hbase table中的行，只有三种方式：
+与nosql数据库们一样,row key是用来检索记录的主键.访问hbase table中的行,只有三种方式：
     (1.1) 通过单个row key访问
     (1.2) 通过row key的range
     (1.3) 全表扫描
-Row key行键 (Row key)可以是任意字符串(最大长度是 64KB，实际应用中长度一般为 10-100bytes)，在hbase内部，row key保存为字节数组。
-存储时，数据按照Row key的字典序(byte order)排序存储。设计key时，要充分排序存储这个特性，将经常一起读取的行存储放到一起。(位置相关性)
-注意： 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99。要保持整形的自然序，行键必须用0作左填充。
-行的一次读写是原子操作 (不论一次读写多少列)。这个设计决策能够使用户很容易的理解程序在对同一个行进行并发更新操作时的行为。
+Row key行键 (Row key)可以是任意字符串(最大长度是 64KB,实际应用中长度一般为 10-100bytes),在hbase内部,row key保存为字节数组.
+存储时,数据按照Row key的字典序(byte order)排序存储.设计key时,要充分排序存储这个特性,将经常一起读取的行存储放到一起.(位置相关性)
+注意： 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99.要保持整形的自然序,行键必须用0作左填充.
+行的一次读写是原子操作 (不论一次读写多少列).这个设计决策能够使用户很容易的理解程序在对同一个行进行并发更新操作时的行为.
 ```
 
 2 列族 column family
 ```
-hbase表中的每个列，都归属与某个列族。列族是表的chema的一部分(而列不是)，必须在使用表之前定义。列名都以列族作为前缀。例如courses:history ， courses:math 都属于 courses 这个列族。
-访问控制、磁盘和内存的使用统计都是在列族层面进行的。实际应用中，列族上的控制权限能帮助我们管理不同类型的应用：我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）。
+hbase表中的每个列,都归属与某个列族.列族是表的chema的一部分(而列不是),必须在使用表之前定义.列名都以列族作为前缀.例如courses:history , courses:math 都属于 courses 这个列族.
+访问控制、磁盘和内存的使用统计都是在列族层面进行的.实际应用中,列族上的控制权限能帮助我们管理不同类型的应用：我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）.
 ```
 
 3 单元 Cell
 ```
-HBase中通过row和columns确定的为一个存贮单元称为cell。由{row key, column( =<family> + <label>), version} 唯一确定的单元。cell中的数据是没有类型的，全部是字节码形式存贮。
+HBase中通过row和columns确定的为一个存贮单元称为cell.由{row key, column( =<family> + <label>), version} 唯一确定的单元.cell中的数据是没有类型的,全部是字节码形式存贮.
 ```
 
 4 时间戳 timestamp
 ```
-每个cell都保存着同一份数据的多个版本。版本通过时间戳来索引。时间戳的类型是 64位整型。时间戳可以由hbase(在数据写入时自动 )赋值，此时时间戳是精确到毫秒的当前系统时间。时间戳也可以由客户显式赋值。如果应用程序要避免数据版本冲突，就必须自己生成具有唯一性的时间戳。每个cell中，不同版本的数据按照时间倒序排序，即最新的数据排在最前面。
+每个cell都保存着同一份数据的多个版本.版本通过时间戳来索引.时间戳的类型是 64位整型.时间戳可以由hbase(在数据写入时自动 )赋值,此时时间戳是精确到毫秒的当前系统时间.时间戳也可以由客户显式赋值.如果应用程序要避免数据版本冲突,就必须自己生成具有唯一性的时间戳.每个cell中,不同版本的数据按照时间倒序排序,即最新的数据排在最前面.
 
-为了避免数据存在过多版本造成的的管理 (包括存贮和索引)负担，hbase提供了两种数据版本回收方式。一是保存数据的最后n个版本，二是保存最近一段时间内的版本（比如最近七天）。用户可以针对每个列族进行设置。
+为了避免数据存在过多版本造成的的管理 (包括存贮和索引)负担,hbase提供了两种数据版本回收方式.一是保存数据的最后n个版本,二是保存最近一段时间内的版本（比如最近七天）.用户可以针对每个列族进行设置.
 ```
 
 #HBase shell的基本用法
 ----------------------
 
-hbase提供了一个shell的终端给用户交互。使用命令hbase shell进入命令界面。通过执行 help可以看到命令的帮助信息。
-以网上的一个学生成绩表的例子来演示hbase的用法。
+hbase提供了一个shell的终端给用户交互.使用命令hbase shell进入命令界面.通过执行 help可以看到命令的帮助信息.
+以网上的一个学生成绩表的例子来演示hbase的用法.
 ```
 name	grad	course
 math	art
 Tom	5	97	87
 Jim	4	89	80
 ```
-这里grad对于表来说是一个只有它自己的列族,course对于表来说是一个有两个列的列族,这个列族由两个列组成math和art,当然我们可以根据我们的需要在course中建立更多的列族,如computer,physics等相应的列添加入course列族。
+这里grad对于表来说是一个只有它自己的列族,course对于表来说是一个有两个列的列族,这个列族由两个列组成math和art,当然我们可以根据我们的需要在course中建立更多的列族,如computer,physics等相应的列添加入course列族.
 
-1 建立一个表scores，有两个列族grad和courese
+1 建立一个表scores,有两个列族grad和courese
 ```
 hbase(main):001:0> create 'scores','grade', 'course'
 
-可以使用list命令来查看当前HBase里有哪些表。使用describe命令来查看表结构。（记得所有的表明、列名都需要加上引号）
+可以使用list命令来查看当前HBase里有哪些表.使用describe命令来查看表结构.（记得所有的表明、列名都需要加上引号）
 ```
 
 2 按设计的表结构插入值：
@@ -284,10 +284,10 @@ put 'scores','Jim','grade','4'
 put 'scores','Jim','course:','89'
 put 'scores','Jim','course:','80'
 
-这样表结构就起来了，其实比较自由，列族里边可以自由添加子列很方便。如果列族下没有子列，加不加冒号都是可以的。
-put命令比较简单，只有这一种用法：
+这样表结构就起来了,其实比较自由,列族里边可以自由添加子列很方便.如果列族下没有子列,加不加冒号都是可以的.
+put命令比较简单,只有这一种用法：
 hbase> put 't1', 'r1', 'c1', 'value', ts1
-t1指表名，r1指行键名，c1指列名，value指单元格值。ts1指时间戳，一般都省略掉了。
+t1指表名,r1指行键名,c1指列名,value指单元格值.ts1指时间戳,一般都省略掉了.
 ```
 
 3 根据键值查询数据
@@ -295,7 +295,7 @@ t1指表名，r1指行键名，c1指列名，value指单元格值。ts1指时间
 get 'scores','Jim'
 get 'scores','Jim','grade'
 
-可能你就发现规律了，HBase的shell操作，一个大概顺序就是操作关键词后跟表名，行名，列名这样的一个顺序，如果有其他条件再用花括号加上。
+可能你就发现规律了,HBase的shell操作,一个大概顺序就是操作关键词后跟表名,行名,列名这样的一个顺序,如果有其他条件再用花括号加上.
 get有用法如下：
 hbase> get 't1', 'r1'
 hbase> get 't1', 'r1', {TIMERANGE => [ts1, ts2]}
@@ -312,7 +312,7 @@ hbase> get 't1', 'r1', ['c1', 'c2']
 4 扫描所有数据
 ```
 scan 'scores'
-也可以指定一些修饰词：TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS。没任何修饰词，就是上边例句，就会显示所有数据行。
+也可以指定一些修饰词：TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS.没任何修饰词,就是上边例句,就会显示所有数据行.
 
 例句如下：
 hbase> scan '.META.'
@@ -327,7 +327,7 @@ a. Using a filterString - more information on this is available in the
 Filter Language document attached to the HBASE-4176 JIRA
 b. Using the entire package name of the filter.
 
-还有一个CACHE_BLOCKS修饰词，开关scan的缓存的，默认是开启的（CACHE_BLOCKS=>true），可以选择关闭（CACHE_BLOCKS=>false）。
+还有一个CACHE_BLOCKS修饰词,开关scan的缓存的,默认是开启的（CACHE_BLOCKS=>true）,可以选择关闭（CACHE_BLOCKS=>false）.
 ```
 
 5 删除指定数据
@@ -335,10 +335,10 @@ b. Using the entire package name of the filter.
 delete 'scores','Jim','grade'
 delete 'scores','Jim'
 
-删除数据命令也没太多变化，只有一个：
+删除数据命令也没太多变化,只有一个：
 hbase> delete 't1', 'r1', 'c1', ts1
-另外有一个deleteall命令，可以进行整行的范围的删除操作，慎用！
-如果需要进行全表删除操作，就使用truncate命令，其实没有直接的全表删除命令，这个命令也是disable，drop，create三个命令组合出来的。
+另外有一个deleteall命令,可以进行整行的范围的删除操作,慎用！
+如果需要进行全表删除操作,就使用truncate命令,其实没有直接的全表删除命令,这个命令也是disable,drop,create三个命令组合出来的.
 ```
 
 6 修改表结构
@@ -347,7 +347,7 @@ disable 'scores'
 alter 'scores',NAME=>'info'
 enable 'scores'
 
-alter命令使用如下（如果无法成功的版本，需要先通用表disable）：
+alter命令使用如下（如果无法成功的版本,需要先通用表disable）：
 
 a、改变或添加一个列族：
 hbase> alter 't1', NAME => 'f1', VERSIONS => 5
@@ -362,7 +362,7 @@ hbase> alter 't1', METHOD => 'table_att', MAX_FILESIZE => '134217728'
 
 d、可以添加一个表协同处理器
 hbase> alter 't1', METHOD => 'table_att', 'coprocessor'=> 'hdfs:///foo.jar|com.foo.FooRegionObserver|1001|arg1=1,arg2=2'
-一个表上可以配置多个协同处理器，一个序列会自动增长进行标识。加载协同处理器（可以说是过滤程序）需要符合以下规则：
+一个表上可以配置多个协同处理器,一个序列会自动增长进行标识.加载协同处理器（可以说是过滤程序）需要符合以下规则：
 [coprocessor jar file location] | class name | [priority] | [arguments]
 
 e、移除coprocessor如下：
@@ -380,21 +380,21 @@ hbase> count 't1', INTERVAL => 100000
 hbase> count 't1', CACHE => 1000
 hbase> count 't1', INTERVAL => 10, CACHE => 1000
 
-count一般会比较耗时，使用mapreduce进行统计，统计结果会缓存，默认是10行。统计间隔默认的是1000行（INTERVAL）。
+count一般会比较耗时,使用mapreduce进行统计,统计结果会缓存,默认是10行.统计间隔默认的是1000行（INTERVAL）.
 ```
 
 8 disable 和 enable 操作
 ```
-很多操作需要先暂停表的可用性，比如上边说的alter操作，删除表也需要这个操作。disable_all和enable_all能够操作更多的表。
+很多操作需要先暂停表的可用性,比如上边说的alter操作,删除表也需要这个操作.disable_all和enable_all能够操作更多的表.
 ```
 
 9 表的删除
 ```
-先停止表的可使用性，然后执行删除命令。
+先停止表的可使用性,然后执行删除命令.
 
 drop 't1'
 
-以上是一些常用命令详解，具体的所有hbase的shell命令如下，分了几个命令群，看英文是可以看出大概用处的，详细的用法使用help "cmd" 进行了解。
+以上是一些常用命令详解,具体的所有hbase的shell命令如下,分了几个命令群,看英文是可以看出大概用处的,详细的用法使用help "cmd" 进行了解.
 
 COMMAND GROUPS:
   Group name: general
@@ -464,7 +464,7 @@ hbase(main):020:0> put 'user','TheRealMT','info:name','Tommy'
 进入hbase shell console
 
 $HBASE_HOME/bin/hbase shell
-如果有kerberos认证，需要事先使用相应的keytab进行一下认证（使用kinit命令），认证成功之后再使用hbase shell进入可以使用whoami命令可查看当前用户
+如果有kerberos认证,需要事先使用相应的keytab进行一下认证（使用kinit命令）,认证成功之后再使用hbase shell进入可以使用whoami命令可查看当前用户
 
 hbase(main)> whoami
 表的管理
@@ -475,13 +475,13 @@ hbase(main)> list
 2）创建表
 
 # 语法：create <table>, {NAME => <family>, VERSIONS => <VERSIONS>}
-# 例如：创建表t1，有两个family name：f1，f2，且版本数均为2
+# 例如：创建表t1,有两个family name：f1,f2,且版本数均为2
 hbase(main)> create 't1',{NAME => 'f1', VERSIONS => 2},{NAME => 'f2', VERSIONS => 2}
     
 
 3）删除表
 
-分两步：首先disable，然后drop
+分两步：首先disable,然后drop
 
 例如：删除表t1
 
@@ -508,63 +508,63 @@ hbase(main)> enable 'test1'
 # 语法 : grant <user> <permissions> <table> <column family> <column qualifier> 参数后面用逗号分隔
 # 权限用五个字母表示： "RWXCA".
 # READ('R'), WRITE('W'), EXEC('X'), CREATE('C'), ADMIN('A')
-# 例如，给用户‘test'分配对表t1有读写的权限，
+# 例如,给用户‘test'分配对表t1有读写的权限,
 hbase(main)> grant 'test','RW','t1'
 2）查看权限
 
 # 语法：user_permission <table>
-# 例如，查看表t1的权限列表
+# 例如,查看表t1的权限列表
 hbase(main)> user_permission 't1'
 3）收回权限
 
-# 与分配权限类似，语法：revoke <user> <table> <column family> <column qualifier>
-# 例如，收回test用户在表t1上的权限
+# 与分配权限类似,语法：revoke <user> <table> <column family> <column qualifier>
+# 例如,收回test用户在表t1上的权限
 hbase(main)> revoke 'test','t1'
 表数据的增删改查
 
 1）添加数据
 
 # 语法：put <table>,<rowkey>,<family:column>,<value>,<timestamp>
-# 例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认
+# 例如：给表t1的添加一行记录：rowkey是rowkey001,family name：f1,column name：col1,value：value01,timestamp：系统默认
 hbase(main)> put 't1','rowkey001','f1:col1','value01'
-用法比较单一。
+用法比较单一.
 
 2）查询数据
 
 a）查询某行记录
 
 # 语法：get <table>,<rowkey>,[<family:column>,....]
-# 例如：查询表t1，rowkey001中的f1下的col1的值
+# 例如：查询表t1,rowkey001中的f1下的col1的值
 hbase(main)> get 't1','rowkey001', 'f1:col1'
 # 或者：
 hbase(main)> get 't1','rowkey001', {COLUMN=>'f1:col1'}
-# 查询表t1，rowke002中的f1下的所有列值
+# 查询表t1,rowke002中的f1下的所有列值
 hbase(main)> get 't1','rowkey001'
 b）扫描表
 
 # 语法：scan <table>, {COLUMNS => [ <family:column>,.... ], LIMIT => num}
-# 另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能
+# 另外,还可以添加STARTROW、TIMERANGE和FITLER等高级功能
 # 例如：扫描表t1的前5条数据
 hbase(main)> scan 't1',{LIMIT=>5}
 c）查询表中的数据行数
 
 # 语法：count <table>, {INTERVAL => intervalNum, CACHE => cacheNum}
-# INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度
-# 例如，查询表t1中的行数，每100条显示一次，缓存区为500
+# INTERVAL设置多少行显示一次及对应的rowkey,默认1000;CACHE每次去取的缓存区大小,默认是10,调整该参数可提高查询速度
+# 例如,查询表t1中的行数,每100条显示一次,缓存区为500
 hbase(main)> count 't1', {INTERVAL => 100, CACHE => 500}
 3）删除数据
 
 a )删除行中的某个列值
 
 # 语法：delete <table>, <rowkey>,  <family:column> , <timestamp>,必须指定列名
-# 例如：删除表t1，rowkey001中的f1:col1的数据
+# 例如：删除表t1,rowkey001中的f1:col1的数据
 hbase(main)> delete 't1','rowkey001','f1:col1'
 注：将删除改行f1:col1列所有版本的数据
 
 b )删除行
 
-# 语法：deleteall <table>, <rowkey>,  <family:column> , <timestamp>，可以不指定列名，删除整行数据
-# 例如：删除表t1，rowk001的数据
+# 语法：deleteall <table>, <rowkey>,  <family:column> , <timestamp>,可以不指定列名,删除整行数据
+# 例如：删除表t1,rowk001的数据
 hbase(main)> deleteall 't1','rowkey001'
 c）删除表中的所有数据
 
@@ -577,7 +577,7 @@ Region管理
 1）移动region
 
 # 语法：move 'encodeRegionName', 'ServerName'
-# encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表
+# encodeRegionName指的regioName后面的编码,ServerName指的是master-status的Region Servers列表
 # 示例
 hbase(main)>move '4343995a58be8e5bbc739af1e91cd72d', 'db-41.xxx.xxx.org,60020,1390274516739'
 2）开启/关闭region
@@ -646,31 +646,31 @@ master hbase-site.xml
 <property>
     <name>replication.source.nb.capacity</name>
     <value>25000</value>
-    <description>主集群每次向从集群发送的entry最大的个数，默认值25000，可根据集群规模做出适当调整</description>
+    <description>主集群每次向从集群发送的entry最大的个数,默认值25000,可根据集群规模做出适当调整</description>
     <description>The master send maximum entry numbers to cluster, default, 25000,</description>
 </property>
 <property>
     <name>replication.source.size.capacity</name>
     <value>67108864</value>
-    <description> 主集群每次向从集群发送的entry的包的最大值大小，默认为64M,不推荐过大 </description>
+    <description> 主集群每次向从集群发送的entry的包的最大值大小,默认为64M,不推荐过大 </description>
     <description> The master send maximun entry package size to cluster, default 64MB</description>
 </property>
 <property>
     <name>replication.source.ratio</name>
     <value>1</value>
-    <description> 主集群使用的从集群的RS的数据百分比，默认为0.1，需调整为1，充分利用从集群的RS,主集群里使用slave服务器的百分比 </description>
+    <description> 主集群使用的从集群的RS的数据百分比,默认为0.1,需调整为1,充分利用从集群的RS,主集群里使用slave服务器的百分比 </description>
     <description> The master use cluster RS ratio, default 0.1=10%, can increase to 100%</description>
 </property>
 <property>
     <name>replication.sleep.before.failover</name>
     <value>2000</value>
-    <description> 主集群在RS(regionserver)宕机多长时间后(毫秒)进行failover，默认为2秒，具体的sleep时间是： sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
+    <description> 主集群在RS(regionserver)宕机多长时间后(毫秒)进行failover,默认为2秒,具体的sleep时间是： sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
     <description> The master will failover after RS dump, default 2 seconds, the failover value=sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
 </property>
 <property>
     <name>replication.executor.workers</name>
     <value>1</value>
-    <description> 从事replication的线程数，默认为1，如果写入量大，可以适当调大 </description>
+    <description> 从事replication的线程数,默认为1,如果写入量大,可以适当调大 </description>
     <description> The thread number of replication, default 1, if put is too large can increase the value</description>
 </property>
 <property>  
@@ -696,8 +696,8 @@ refer: http://hbase.apache.org/book.html#_cluster_replication
 # hbase split table
 ----------------------
 ```
-Hbase中split是一个很重要的功能，Hbase是通过把数据分配到一定数量的region来达到负载均衡的。一个table会被分配到一个或多个region中，这些region会被分配到一个或者多个regionServer中。在自动split策略中，当一个region达到一定的大小就会自动split成两个region。table在region中是按照row key来排序的，并且一个row key所对应的行只会存储在一个region中，这一点保证了Hbase的强一致性 。
-在一个region中有一个或多个stroe，每个stroe对应一个column families(列族)。一个store中包含一个memstore 和 0 或 多个store files。每个column family 是分开存放和分开访问的。
+Hbase中split是一个很重要的功能,Hbase是通过把数据分配到一定数量的region来达到负载均衡的.一个table会被分配到一个或多个region中,这些region会被分配到一个或者多个regionServer中.在自动split策略中,当一个region达到一定的大小就会自动split成两个region.table在region中是按照row key来排序的,并且一个row key所对应的行只会存储在一个region中,这一点保证了Hbase的强一致性 .
+在一个region中有一个或多个stroe,每个stroe对应一个column families(列族).一个store中包含一个memstore 和 0 或 多个store files.每个column family 是分开存放和分开访问的.
 disable 'table_name','cf1', {REGION_REPLICATION => 3}
 
 
@@ -709,7 +709,7 @@ RegionServer(RS)
         Order read, close block cache
         Rand read, open block cache, set hfile.block.cache.size, use boolean filter.
     Compact & split, set  hbase.hregion.majorcompaction=0, set hbase.hregion.max.filesize.  when region hbase exceed this value will split it into RS.
-    Memory, hbase.regionserver.global.memstore.upperLimit，hbase.regionserver.global.memstore.lowerLimit，memstore.flush .size
+    Memory, hbase.regionserver.global.memstore.upperLimit,hbase.regionserver.global.memstore.lowerLimit,memstore.flush .size
     HFile
         compress, GZIP, LZO, Snappy. (recommend LZO or Snappy)
             Algorithm   % remaining Encoding    Decoding
@@ -738,31 +738,47 @@ RegionServer(RS)
             </value>
             </property>
 
-Regions是由每个Column Family的Store组成。
+Regions是由每个Column Family的Store组成.
 
 Region大小
-Region的大小是一个棘手的问题，需要考量如下几个因素。
+Region的大小是一个棘手的问题,需要考量如下几个因素.
 Regions是可用性和分布式的最基本单位
-    HBase通过将region切分在许多机器上实现分布式。也就是说，你如果有16GB的数据，只分了2个region， 你却有20台机器，有18台就浪费了。
-    region数目太多就会造成性能下降，现在比以前好多了。但是对于同样大小的数据，700个region比3000个要好。
-    region数目太少就会妨碍可扩展性，降低并行能力。有的时候导致压力不够分散。这就是为什么，你向一个10节点的Hbase集群导入200MB的数据，大部分的节点是idle的。
-    RegionServer中1个region和10个region索引需要的内存量没有太多的差别。
+    HBase通过将region切分在许多机器上实现分布式.也就是说,你如果有16GB的数据,只分了2个region, 你却有20台机器,有18台就浪费了.
+    region数目太多就会造成性能下降,现在比以前好多了.但是对于同样大小的数据,700个region比3000个要好.
+    region数目太少就会妨碍可扩展性,降低并行能力.有的时候导致压力不够分散.这就是为什么,你向一个10节点的Hbase集群导入200MB的数据,大部分的节点是idle的.
+    RegionServer中1个region和10个region索引需要的内存量没有太多的差别.
+```
+
+# HBase snapshot
+----------------------
+HBase以往数据的备份基于distcp或者copyTable等工具,这些备份机制或多或少对当前的online数据读写存在一定的影响,Snapshot提供了一种快速的数据备份方式,无需进行数据copy
+基于snapshot文件,可以做clone一个新表,restore,export到另外一个集群中操作;其中clone生成的新表只是增加元数据,相关的数据文件还是复用snapshot指定的数据文件
+
+Online
+在线方式是enabletable,由Master指示region server进行snapshot操作,在此过程中,master和regionserver之间类似两阶段commit的snapshot操作
+```
+
+```
+Offline
+离线方式是disabletable,由HBase Master遍历HDFS中的table metadata和hfiles,建立对他们的引用.
+```
+
 ```
 
 
-# Hbase thrift
+# HBase thrift
 ----------------------
 ```
-在查阅HBase文档（http://hbase.apache.org/book.html#config.files）后发现，负责外部系统与HBase通信的Thrift Server服务具有三个参数用来控制同时启动的线程数量。
+在查阅HBase文档（http://hbase.apache.org/book.html#config.files）后发现,负责外部系统与HBase通信的Thrift Server服务具有三个参数用来控制同时启动的线程数量.
 这三个参数分别是：
 l hbase.thrift.minWorkerThreads
 l hbase.thrift.maxWorkerThreads
 l hbase.thrift.maxQueuedRequests
  
-hbase.thrift.minWorkerThreads是thrift server的最小线程数，默认值为16个。hbase.thrift.maxWorkerThreads是thrift server的最大线程数，默认值为1000个。hbase.thrift.maxQueuedRequests是在队列中等待的链接数量，默认值为1000个。
-当程序访问HBase Thrift Server时，每当有一个新的连接就会创建一个新的线程，直到线程数量达到最小线程数。当线程池中没有空闲的线程时，新的连接会被加入队列。只有当队列中的等待连接数量超过队列的最大值时，才会为这些等待中的连接创建新的线程，直到线程数量达到最大线程数。当线程数量超过最大线程数时，Thrift Server就会开始丢弃连接。
+hbase.thrift.minWorkerThreads是thrift server的最小线程数,默认值为16个.hbase.thrift.maxWorkerThreads是thrift server的最大线程数,默认值为1000个.hbase.thrift.maxQueuedRequests是在队列中等待的链接数量,默认值为1000个.
+当程序访问HBase Thrift Server时,每当有一个新的连接就会创建一个新的线程,直到线程数量达到最小线程数.当线程池中没有空闲的线程时,新的连接会被加入队列.只有当队列中的等待连接数量超过队列的最大值时,才会为这些等待中的连接创建新的线程,直到线程数量达到最大线程数.当线程数量超过最大线程数时,Thrift Server就会开始丢弃连接.
 解决办法
-在HBase中加入上述三个参数并设置合适的线程数后，启动HBase Thrift Server服务，之前出现的阻塞问题即可解决。
+在HBase中加入上述三个参数并设置合适的线程数后,启动HBase Thrift Server服务,之前出现的阻塞问题即可解决.
 ```
 
 # Hbase simple
