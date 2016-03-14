@@ -2258,7 +2258,7 @@ apt-get dselect-upgrade 使用 dselect 升级
 apt-cache depends package 了解使用依赖
 apt-cache rdepends package 是查看该包被哪些包依赖
 apt-get build-dep package 安装相关的编译环境
-apt-get source package 下载该包的源代码
+apt-get source package 下载该包的源代码, apt-get build-dep package(need dpkg-dev, apt-get install dpkg-dev), dpkg -i package.deb
 apt-get clean && sudo apt-get autoclean 清理无用的包
 apt-get check 检查是否有损坏的依赖
 apt-get build-dep xxx 安装包的时候解决依赖
