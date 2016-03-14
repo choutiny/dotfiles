@@ -222,25 +222,25 @@ key2
 key3						
 如上图所示,key1,key2,key3是三条记录的唯一的row key值,column-family1,column-family2,column-family3是三个列族,每个列族下又包括几列.比如column-family1这个列族下包括两列,名字是column1和column2,t1:abc,t2:gdxdf是由row key1和column-family1-column1唯一确定的一个单元cell.这个cell中有两个数据,abc和gdxdf.两个值的时间戳不一样,分别是t1,t2, hbase会返回最新时间的值给请求者.
 
-这些名词的具体含义如下：
+这些名词的具体含义如下:
 ```
 
 1 Row Key
 ```
-与nosql数据库们一样,row key是用来检索记录的主键.访问hbase table中的行,只有三种方式：
+与nosql数据库们一样,row key是用来检索记录的主键.访问hbase table中的行,只有三种方式:
     (1.1) 通过单个row key访问
     (1.2) 通过row key的range
     (1.3) 全表扫描
 Row key行键 (Row key)可以是任意字符串(最大长度是 64KB,实际应用中长度一般为 10-100bytes),在hbase内部,row key保存为字节数组.
 存储时,数据按照Row key的字典序(byte order)排序存储.设计key时,要充分排序存储这个特性,将经常一起读取的行存储放到一起.(位置相关性)
-注意： 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99.要保持整形的自然序,行键必须用0作左填充.
+注意: 字典序对int排序的结果是1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99.要保持整形的自然序,行键必须用0作左填充.
 行的一次读写是原子操作 (不论一次读写多少列).这个设计决策能够使用户很容易的理解程序在对同一个行进行并发更新操作时的行为.
 ```
 
 2 列族 column family
 ```
 hbase表中的每个列,都归属与某个列族.列族是表的chema的一部分(而列不是),必须在使用表之前定义.列名都以列族作为前缀.例如courses:history , courses:math 都属于 courses 这个列族.
-访问控制、磁盘和内存的使用统计都是在列族层面进行的.实际应用中,列族上的控制权限能帮助我们管理不同类型的应用：我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）.
+访问控制、磁盘和内存的使用统计都是在列族层面进行的.实际应用中,列族上的控制权限能帮助我们管理不同类型的应用:我们允许一些应用可以添加新的基本数据、一些应用可以读取基本数据并创建继承的列族、一些应用则只允许浏览数据（甚至可能因为隐私的原因不能浏览所有数据）.
 ```
 
 3 单元 Cell
@@ -275,7 +275,7 @@ hbase(main):001:0> create 'scores','grade', 'course'
 可以使用list命令来查看当前HBase里有哪些表.使用describe命令来查看表结构.（记得所有的表明、列名都需要加上引号）
 ```
 
-2 按设计的表结构插入值：
+2 按设计的表结构插入值:
 ```
 put 'scores','Tom','grade:','5'
 put 'scores','Tom','course:math','97'
@@ -285,7 +285,7 @@ put 'scores','Jim','course:','89'
 put 'scores','Jim','course:','80'
 
 这样表结构就起来了,其实比较自由,列族里边可以自由添加子列很方便.如果列族下没有子列,加不加冒号都是可以的.
-put命令比较简单,只有这一种用法：
+put命令比较简单,只有这一种用法:
 hbase> put 't1', 'r1', 'c1', 'value', ts1
 t1指表名,r1指行键名,c1指列名,value指单元格值.ts1指时间戳,一般都省略掉了.
 ```
@@ -296,7 +296,7 @@ get 'scores','Jim'
 get 'scores','Jim','grade'
 
 可能你就发现规律了,HBase的shell操作,一个大概顺序就是操作关键词后跟表名,行名,列名这样的一个顺序,如果有其他条件再用花括号加上.
-get有用法如下：
+get有用法如下:
 hbase> get 't1', 'r1'
 hbase> get 't1', 'r1', {TIMERANGE => [ts1, ts2]}
 hbase> get 't1', 'r1', {COLUMN => 'c1'}
@@ -312,9 +312,9 @@ hbase> get 't1', 'r1', ['c1', 'c2']
 4 扫描所有数据
 ```
 scan 'scores'
-也可以指定一些修饰词：TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS.没任何修饰词,就是上边例句,就会显示所有数据行.
+也可以指定一些修饰词:TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, TIMESTAMP, MAXLENGTH,or COLUMNS.没任何修饰词,就是上边例句,就会显示所有数据行.
 
-例句如下：
+例句如下:
 hbase> scan '.META.'
 hbase> scan '.META.', {COLUMNS => 'info:regioninfo'}
 hbase> scan 't1', {COLUMNS => ['c1', 'c2'], LIMIT => 10, STARTROW => 'xyz'}
@@ -322,7 +322,7 @@ hbase> scan 't1', {COLUMNS => 'c1', TIMERANGE => [1303668804, 1303668904]}
 hbase> scan 't1', {FILTER => "(PrefixFilter ('row2') AND (QualifierFilter (>=, 'binary:xyz'))) AND (TimestampsFilter ( 123, 456))"}
 hbase> scan 't1', {FILTER => org.apache.hadoop.hbase.filter.ColumnPaginationFilter.new(1, 0)}
 
-过滤器filter有两种方法指出：
+过滤器filter有两种方法指出:
 a. Using a filterString - more information on this is available in the
 Filter Language document attached to the HBASE-4176 JIRA
 b. Using the entire package name of the filter.
@@ -335,7 +335,7 @@ b. Using the entire package name of the filter.
 delete 'scores','Jim','grade'
 delete 'scores','Jim'
 
-删除数据命令也没太多变化,只有一个：
+删除数据命令也没太多变化,只有一个:
 hbase> delete 't1', 'r1', 'c1', ts1
 另外有一个deleteall命令,可以进行整行的范围的删除操作,慎用！
 如果需要进行全表删除操作,就使用truncate命令,其实没有直接的全表删除命令,这个命令也是disable,drop,create三个命令组合出来的.
@@ -347,33 +347,33 @@ disable 'scores'
 alter 'scores',NAME=>'info'
 enable 'scores'
 
-alter命令使用如下（如果无法成功的版本,需要先通用表disable）：
+alter命令使用如下（如果无法成功的版本,需要先通用表disable）:
 
-a、改变或添加一个列族：
+a、改变或添加一个列族:
 hbase> alter 't1', NAME => 'f1', VERSIONS => 5
 
-b、删除一个列族：
+b、删除一个列族:
 hbase> alter 't1', NAME => 'f1', METHOD => 'delete'
 hbase> alter 't1', 'delete' => 'f1'
 
 c、也可以修改表属性如MAX_FILESIZE
-MEMSTORE_FLUSHSIZE, READONLY,和 DEFERRED_LOG_FLUSH：
+MEMSTORE_FLUSHSIZE, READONLY,和 DEFERRED_LOG_FLUSH:
 hbase> alter 't1', METHOD => 'table_att', MAX_FILESIZE => '134217728'
 
 d、可以添加一个表协同处理器
 hbase> alter 't1', METHOD => 'table_att', 'coprocessor'=> 'hdfs:///foo.jar|com.foo.FooRegionObserver|1001|arg1=1,arg2=2'
-一个表上可以配置多个协同处理器,一个序列会自动增长进行标识.加载协同处理器（可以说是过滤程序）需要符合以下规则：
+一个表上可以配置多个协同处理器,一个序列会自动增长进行标识.加载协同处理器（可以说是过滤程序）需要符合以下规则:
 [coprocessor jar file location] | class name | [priority] | [arguments]
 
-e、移除coprocessor如下：
+e、移除coprocessor如下:
 hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'MAX_FILESIZE'
 hbase> alter 't1', METHOD => 'table_att_unset', NAME => 'coprocessor$1'
 
-f、可以一次执行多个alter命令：
+f、可以一次执行多个alter命令:
 hbase> alter 't1', {NAME => 'f1'}, {NAME => 'f2', METHOD => 'delete'}
 ```
 
-7 统计行数：
+7 统计行数:
 ```
 hbase> count 't1'
 hbase> count 't1', INTERVAL => 100000
@@ -474,30 +474,30 @@ hbase(main)> whoami
 hbase(main)> list
 2）创建表
 
-# 语法：create <table>, {NAME => <family>, VERSIONS => <VERSIONS>}
-# 例如：创建表t1,有两个family name：f1,f2,且版本数均为2
+# 语法:create <table>, {NAME => <family>, VERSIONS => <VERSIONS>}
+# 例如:创建表t1,有两个family name:f1,f2,且版本数均为2
 hbase(main)> create 't1',{NAME => 'f1', VERSIONS => 2},{NAME => 'f2', VERSIONS => 2}
     
 
 3）删除表
 
-分两步：首先disable,然后drop
+分两步:首先disable,然后drop
 
-例如：删除表t1
+例如:删除表t1
 
 hbase(main)> disable 't1'
 hbase(main)> drop 't1'
 4）查看表的结构
 
-# 语法：describe <table>, desc <table>
-# 例如：查看表t1的结构
+# 语法:describe <table>, desc <table>
+# 例如:查看表t1的结构
 hbase(main)> describe 't1'
 5）修改表结构
 
 修改表结构必须先disable
 
-# 语法：alter 't1', {NAME => 'f1'}, {NAME => 'f2', METHOD => 'delete'}
-# 例如：修改表test1的cf的TTL为180天
+# 语法:alter 't1', {NAME => 'f1'}, {NAME => 'f2', METHOD => 'delete'}
+# 例如:修改表test1的cf的TTL为180天
 hbase(main)> disable 'test1'
 hbase(main)> alter 'test1',{NAME=>'body',TTL=>'15552000'},{NAME=>'meta', TTL=>'15552000'}
 hbase(main)> enable 'test1'
@@ -506,26 +506,26 @@ hbase(main)> enable 'test1'
 1）分配权限
 
 # 语法 : grant <user> <permissions> <table> <column family> <column qualifier> 参数后面用逗号分隔
-# 权限用五个字母表示： "RWXCA".
+# 权限用五个字母表示: "RWXCA".
 # READ('R'), WRITE('W'), EXEC('X'), CREATE('C'), ADMIN('A')
 # 例如,给用户‘test'分配对表t1有读写的权限,
 hbase(main)> grant 'test','RW','t1'
 2）查看权限
 
-# 语法：user_permission <table>
+# 语法:user_permission <table>
 # 例如,查看表t1的权限列表
 hbase(main)> user_permission 't1'
 3）收回权限
 
-# 与分配权限类似,语法：revoke <user> <table> <column family> <column qualifier>
+# 与分配权限类似,语法:revoke <user> <table> <column family> <column qualifier>
 # 例如,收回test用户在表t1上的权限
 hbase(main)> revoke 'test','t1'
 表数据的增删改查
 
 1）添加数据
 
-# 语法：put <table>,<rowkey>,<family:column>,<value>,<timestamp>
-# 例如：给表t1的添加一行记录：rowkey是rowkey001,family name：f1,column name：col1,value：value01,timestamp：系统默认
+# 语法:put <table>,<rowkey>,<family:column>,<value>,<timestamp>
+# 例如:给表t1的添加一行记录:rowkey是rowkey001,family name:f1,column name:col1,value:value01,timestamp:系统默认
 hbase(main)> put 't1','rowkey001','f1:col1','value01'
 用法比较单一.
 
@@ -533,22 +533,22 @@ hbase(main)> put 't1','rowkey001','f1:col1','value01'
 
 a）查询某行记录
 
-# 语法：get <table>,<rowkey>,[<family:column>,....]
-# 例如：查询表t1,rowkey001中的f1下的col1的值
+# 语法:get <table>,<rowkey>,[<family:column>,....]
+# 例如:查询表t1,rowkey001中的f1下的col1的值
 hbase(main)> get 't1','rowkey001', 'f1:col1'
-# 或者：
+# 或者:
 hbase(main)> get 't1','rowkey001', {COLUMN=>'f1:col1'}
 # 查询表t1,rowke002中的f1下的所有列值
 hbase(main)> get 't1','rowkey001'
 b）扫描表
 
-# 语法：scan <table>, {COLUMNS => [ <family:column>,.... ], LIMIT => num}
+# 语法:scan <table>, {COLUMNS => [ <family:column>,.... ], LIMIT => num}
 # 另外,还可以添加STARTROW、TIMERANGE和FITLER等高级功能
-# 例如：扫描表t1的前5条数据
+# 例如:扫描表t1的前5条数据
 hbase(main)> scan 't1',{LIMIT=>5}
 c）查询表中的数据行数
 
-# 语法：count <table>, {INTERVAL => intervalNum, CACHE => cacheNum}
+# 语法:count <table>, {INTERVAL => intervalNum, CACHE => cacheNum}
 # INTERVAL设置多少行显示一次及对应的rowkey,默认1000;CACHE每次去取的缓存区大小,默认是10,调整该参数可提高查询速度
 # 例如,查询表t1中的行数,每100条显示一次,缓存区为500
 hbase(main)> count 't1', {INTERVAL => 100, CACHE => 500}
@@ -556,40 +556,40 @@ hbase(main)> count 't1', {INTERVAL => 100, CACHE => 500}
 
 a )删除行中的某个列值
 
-# 语法：delete <table>, <rowkey>,  <family:column> , <timestamp>,必须指定列名
-# 例如：删除表t1,rowkey001中的f1:col1的数据
+# 语法:delete <table>, <rowkey>,  <family:column> , <timestamp>,必须指定列名
+# 例如:删除表t1,rowkey001中的f1:col1的数据
 hbase(main)> delete 't1','rowkey001','f1:col1'
-注：将删除改行f1:col1列所有版本的数据
+注:将删除改行f1:col1列所有版本的数据
 
 b )删除行
 
-# 语法：deleteall <table>, <rowkey>,  <family:column> , <timestamp>,可以不指定列名,删除整行数据
-# 例如：删除表t1,rowk001的数据
+# 语法:deleteall <table>, <rowkey>,  <family:column> , <timestamp>,可以不指定列名,删除整行数据
+# 例如:删除表t1,rowk001的数据
 hbase(main)> deleteall 't1','rowkey001'
 c）删除表中的所有数据
 
-# 语法： truncate <table>
-# 其具体过程是：disable table -> drop table -> create table
-# 例如：删除表t1的所有数据
+# 语法: truncate <table>
+# 其具体过程是:disable table -> drop table -> create table
+# 例如:删除表t1的所有数据
 hbase(main)> truncate 't1'
 Region管理
 
 1）移动region
 
-# 语法：move 'encodeRegionName', 'ServerName'
+# 语法:move 'encodeRegionName', 'ServerName'
 # encodeRegionName指的regioName后面的编码,ServerName指的是master-status的Region Servers列表
 # 示例
 hbase(main)>move '4343995a58be8e5bbc739af1e91cd72d', 'db-41.xxx.xxx.org,60020,1390274516739'
 2）开启/关闭region
 
-# 语法：balance_switch true|false
+# 语法:balance_switch true|false
 hbase(main)> balance_switch
 3）手动split
 
-# 语法：split 'regionName', 'splitKey'
+# 语法:split 'regionName', 'splitKey'
 4）手动触发major compaction
 
-#语法：
+#语法:
 
 #Compact all regions in a table:
 #hbase> major_compact 't1'
@@ -603,17 +603,17 @@ hbase(main)> balance_switch
 
 1）修改hdfs配置
 
-hdfs配置位置：/etc/hadoop/conf
+hdfs配置位置:/etc/hadoop/conf
 
 # 同步hdfs配置
 cat /home/hadoop/slaves|xargs -i -t scp /etc/hadoop/conf/hdfs-site.xml hadoop@{}:/etc/hadoop/conf/hdfs-site.xml
-#关闭：
+#关闭:
 cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} "sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh --config /etc/hadoop/conf stop datanode"
-#启动：
+#启动:
 cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} "sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh --config /etc/hadoop/conf start datanode"
 2）修改hbase配置
 
-hbase配置位置：
+hbase配置位置:
 
 # 同步hbase配置
 cat /home/hadoop/hbase/conf/regionservers|xargs -i -t scp /home/hadoop/hbase/conf/hbase-site.xml hadoop@{}:/home/hadoop/hbase/conf/hbase-site.xml
@@ -664,7 +664,7 @@ master hbase-site.xml
 <property>
     <name>replication.sleep.before.failover</name>
     <value>2000</value>
-    <description> 主集群在RS(regionserver)宕机多长时间后(毫秒)进行failover,默认为2秒,具体的sleep时间是： sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
+    <description> 主集群在RS(regionserver)宕机多长时间后(毫秒)进行failover,默认为2秒,具体的sleep时间是: sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
     <description> The master will failover after RS dump, default 2 seconds, the failover value=sleepBeforeFailover + (long) (new Random().nextFloat() * sleepBeforeFailover) </description>
 </property>
 <property>
@@ -764,13 +764,27 @@ Offline
 ```
 
 ```
-
+```
+快照:
+   hbase> snapshot 'myTable','myTableSnapshot-122112'
+列出当前所有得快照: 
+    hbase> list_snapshots
+删除快照信息: 
+  hbase> delete_snapshot'myTableSnapshot-122112'
+基于快照，clone一个新表: 
+  hbase> clone_snapshot'myTableSnapshot-122112', 'myNewTestTable'
+基于快照恢复表: 
+  hbase> disable 'myTable'
+  hbase> restore_snapshot'myTableSnapshot-122112'
+ 导出到另外一个集群中:
+$bin/hbase class org.apache.hadoop.hbase.snapshot.tool.ExportSnapshot -snapshotMySnapshot -copy-to hdfs:///srv2:8082/hbase -mappers 16
+```
 
 # HBase thrift
 ----------------------
 ```
 在查阅HBase文档（http://hbase.apache.org/book.html#config.files）后发现,负责外部系统与HBase通信的Thrift Server服务具有三个参数用来控制同时启动的线程数量.
-这三个参数分别是：
+这三个参数分别是:
 l hbase.thrift.minWorkerThreads
 l hbase.thrift.maxWorkerThreads
 l hbase.thrift.maxQueuedRequests
