@@ -102,3 +102,14 @@ halo-cnode3
 systemctl enable ntpd
 systemctl start ntpd
 ```
+
+###Install from docker
+----------------------
+```
+git clone https://github.com/sequenceiq/docker-ambari.git
+switch to root
+source ambari-function
+amb-start-cluster 3
+```
+
+
