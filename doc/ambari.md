@@ -110,6 +110,12 @@ git clone https://github.com/sequenceiq/docker-ambari.git
 switch to root
 source ambari-function
 amb-start-cluster 3
+amb-settings
+docker run -d --privileged --name amb2 -h amb2.service.consul hortonworks/ambari-agent:latest systemd.setenv=NAMESERVER_ADDR=172.17.0.2
+
+1. run consul docker
+2. run ambari-server docker
+3. run ambari-agent docker
 ```
 
 
