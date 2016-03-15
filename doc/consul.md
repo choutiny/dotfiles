@@ -122,6 +122,7 @@ mysql-1.node.domain.org.consul. 0 IN  CNAME mysql-1.node.consul.
 --------------
 https://www.consul.io/docs/guides/external.html
 以servce.consul结尾的内部域名才会被解析, 否则都会走config文件的dns来作外部dns(8.8.8.8)解析
+配置文件在/config/consul.json, recursor 是外部DNS地址, 可以修改成内部
 
 ```
 curl -X PUT -d '{"Datacenter": "dc1", "Node": "cnode2", "Address": "192.168.85.115", "Service": {"Service": "cnode2"}}' http://172.17.0.2:8500/v1/catalog/register
