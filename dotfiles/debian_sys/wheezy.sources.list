@@ -7,29 +7,47 @@
 # deb http://ftp.debian.org/debian/ wheezy-updates main
 # deb-src http://ftp.debian.org/debian/ wheezy-updates main
 
-#deb http://mirrors.163.com/debian wheezy main non-free contrib
-#deb http://mirrors.163.com/debian wheezy-proposed-updates main contrib non-free
-#deb-src http://mirrors.163.com/debian wheezy main non-free contrib
-#deb-src http://mirrors.163.com/debian wheezy-proposed-updates main contrib non-free
+# deb http://mirrors.163.com/debian jessie main non-free contrib
+# deb-src http://mirrors.163.com/debian jessie main non-free contrib
+# deb http://mirrors.163.com/debian-security jessie/updates main contrib non-free
+# deb-src http://mirrors.163.com/debian-security jessie/updates main contrib non-free
+# deb http://mirrors.163.com/debian jessie-proposed-updates main contrib non-free
+# deb-src http://mirrors.163.com/debian jessie-proposed-updates main contrib non-free
+#
+#
 
-#deb http://mirrors.163.com/debian-security wheezy/updates main contrib non-free
-#deb-src http://mirrors.163.com/debian-security wheezy/updates main contrib non-free
+## deb http://non-us.debian.org/debian-non-US jessie/non-US main contrib non-free
+#deb http://http.us.debian.org/debian jessie main contrib non-free
+#deb http://security.debian.org jessie/updates main contrib non-free
 
-deb http://http.us.debian.org/debian wheezy main contrib non-free
-# deb http://non-us.debian.org/debian-non-US wheezy/non-US main contrib non-free
-deb http://security.debian.org wheezy/updates main contrib non-free
-
-deb http://mirrors.sohu.com/debian/ wheezy main non-free contrib
-deb http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib
-deb-src http://mirrors.sohu.com/debian/ wheezy main non-free contrib
-deb-src http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib
+# deb http://mirrors.sohu.com/debian/ wheezy main non-free contrib
+# deb http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib
+# deb-src http://mirrors.sohu.com/debian/ wheezy main non-free contrib
+# deb-src http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib
 
 # deb http://mirrors.ustc.edu.cn/debian/ wheezy main non-free contrib
 # deb http://mirrors.ustc.edu.cn/debian/ wheezy-proposed-updates main non-free contrib
 # deb-src http://mirrors.ustc.edu.cn/debian/ wheezy main non-free contrib
 # deb-src http://mirrors.ustc.edu.cn/debian/ wheezy-proposed-updates main non-free contrib
 
-deb http://downloads.sourceforge.net/project/ubuntuzilla/mozilla/apt all main
-deb http://ppa.launchpad.net/ubuntu-wine/ubuntu lucid main
+#deb http://downloads.sourceforge.net/project/ubuntuzilla/mozilla/apt all main
+# deb http://ppa.launchpad.net/ubuntu-wine/ubuntu utopic main
 # deb http://ftp.de.debian.org/debian jessie main
 # deb http://www.rabbitmq.com/debian/ testing main
+# deb http://shadowsocks.org/debian wheezy main
+
+deb http://mirrors.ustc.edu.cn/debian jessie main non-free contrib
+deb-src http://mirrors.ustc.edu.cn/debian jessie main non-free contrib
+deb http://mirrors.ustc.edu.cn/debian jessie-updates main non-free contrib
+deb-src http://mirrors.ustc.edu.cn/debian jessie-updates main non-free contrib
+deb http://mirrors.ustc.edu.cn/debian jessie-proposed-updates main non-free contrib
+deb-src http://mirrors.ustc.edu.cn/debian jessie-proposed-updates main non-free contrib
+
+deb http://mirrors.ustc.edu.cn/bjlx jessie main
+deb-src http://mirrors.ustc.edu.cn/bjlx/ jessie main
+deb http://http.debian.net/debian jessie-backports main
+
+deb http://ppa.launchpad.net/justzx2011/openyoudao-v0.4/ubuntu trusty main 
+deb-src http://ppa.launchpad.net/justzx2011/openyoudao-v0.4/ubuntu trusty main
+
+deb https://apt.dockerproject.org/repo debian-jessie main
