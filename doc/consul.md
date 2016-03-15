@@ -121,6 +121,52 @@ mysql-1.node.domain.org.consul. 0 IN  CNAME mysql-1.node.consul.
 ###Register external domain
 --------------
 https://www.consul.io/docs/guides/external.html
+以servce.consul结尾的内部域名才会被解析, 否则都会走config文件的dns来作外部dns(8.8.8.8)解析
+
 ```
 curl -X PUT -d '{"Datacenter": "dc1", "Node": "cnode2", "Address": "192.168.85.115", "Service": {"Service": "cnode2"}}' http://172.17.0.2:8500/v1/catalog/register
+
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy", "Address": "192.168.85.83", "Service": {"Service": "kdctommy"}}' http://172.17.0.2:8500/v1/catalog/register
+
+root@debian:/ # dig @172.17.0.2 halo-cnode1.service.consul                                                                                                                                                                        [14:03:09]
+
+; <<>> DiG 9.9.5-9+deb8u5-Debian <<>> @172.17.0.2 halo-cnode1.service.consul
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 27848
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;halo-cnode1.service.consul.    IN      A
+
+;; ANSWER SECTION:
+halo-cnode1.service.consul. 0   IN      A       192.168.85.109
+
+;; Query time: 0 msec
+;; SERVER: 172.17.0.2#53(172.17.0.2)
+;; WHEN: Tue Mar 15 14:03:16 CST 2016
+;; MSG SIZE  rcvd: 86
+
+root@debian:/ # dig @172.17.0.2 kdctommy.service.consul                                                                                                                                                                           [14:03:16]
+
+; <<>> DiG 9.9.5-9+deb8u5-Debian <<>> @172.17.0.2 kdctommy.service.consul
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 40877
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;kdctommy.service.consul.       IN      A
+
+;; ANSWER SECTION:
+kdctommy.service.consul. 0      IN      A       192.168.85.83
+
+;; Query time: 0 msec
+;; SERVER: 172.17.0.2#53(172.17.0.2)
+;; WHEN: Tue Mar 15 14:03:32 CST 2016
+;; MSG SIZE  rcvd: 80
+
 ```

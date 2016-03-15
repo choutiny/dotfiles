@@ -793,6 +793,10 @@ hbase.thrift.minWorkerThreads是thrift server的最小线程数,默认值为16�
 当程序访问HBase Thrift Server时,每当有一个新的连接就会创建一个新的线程,直到线程数量达到最小线程数.当线程池中没有空闲的线程时,新的连接会被加入队列.只有当队列中的等待连接数量超过队列的最大值时,才会为这些等待中的连接创建新的线程,直到线程数量达到最大线程数.当线程数量超过最大线程数时,Thrift Server就会开始丢弃连接.
 解决办法
 在HBase中加入上述三个参数并设置合适的线程数后,启动HBase Thrift Server服务,之前出现的阻塞问题即可解决.
+
+ambari-hbase thrift
+/usr/hdp/2.4.0.0-169/hbase/bin/hbase-daemon.sh start thrift
+thrift默认的监听端口是9090，可以用netstat -nl | grep 9090
 ```
 
 # Hbase simple
