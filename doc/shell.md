@@ -982,7 +982,21 @@ lynx -dump url>webpage_as_text.txt (以ascii字符下载到文本中) 这会把�
 curl 将下载文件输出到stdou,将进度信息输出到stderr,如果不想显示进度信息,需要用—slient
 curl url –silent
 curl ifconfig.me 当机器在内网的时候,可以通过这个命令查看外网IP
-curl -I http://xxx.com 获取http头
+
+curl -o filename www.sina.com       #保存网页为文件
+curl -L www.sina.com                #自动跳转网页
+curl -i www.sina.com                #显示http response的头信息,连同网页代码一起
+curl -I http://xxx.com              #只获取http头
+curl -v www.sina.com                #显示一次http通信的整个过程.包括端口信息和http request头信息
+curl --trace filename www.sina.com  #详细
+curl example.com/form.cgi?data=xxx  #发送GET数据
+curl -X POST --data "data=xxx" example.com/form.cgi #发送POST数据
+curl -X POST--data-urlencode "date=April 1" example.com/form.cgi 
+curl --cookie "name=xxx" www.example.com #发送cookie
+curl --user-agent "[User Agent]" [URL]  #模拟user-agent
+`-c cookie-file`可以保存服务器返回的cookie到文件，`-b cookie-file`可以使用这个文件作为cookie信息，进行后续的请求。
+curl -X PUT -d 'json_format' url    #发送json
+
 ```
 
 25.网络 
@@ -4199,6 +4213,7 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
                     vmwtat 1 5
     检查DNS Server工作是否正常,这里以61.139.2.69为例 
                     dig www.baidu.com @61.139.2.69
+                    dig @dns_ip_address domain
     检查当前登录的用户个数
                     who | wc -l
     日志查看、搜索 

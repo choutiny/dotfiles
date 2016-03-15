@@ -170,6 +170,13 @@ Mesos是Master／Slave结构，由Mesos－master，Mesos－slave，Framework和e
 Hadoop YARN要比Mesos更主流，前景更广阔。YARN在实现资源管理的系统前提下，能够跟hadoop生态系统完美结合，在YARN的东家hortonworks看来，YARN定位为大数据中的数据操作系统，能够更好地为上层各类应用程序（MapReduce/Spark）提供资源管理和调度功能。另外，非常重要的一点，YARN的社区力量要比Mesos强大的多，它的参与人员众多，周边系统的建设非常完善（包括最新诞生的apache二级项目Twill，Apache Twill ，cloudera的Kitten，均是方便大家使用YARN而诞生的项目）。
 YARN是从MapReduce中演化而来的，因而在大数据处理中扮演重要角色，但这也使得它受限：它现在还不能看做是一个通用的资源管理系统，太多的内部实现过于狭隘，比如资源申请和分配模型，对长服务的支持等。不过，YARN自己仍把它定位在通用资源管理系统上，因而在不断改进，比如最近的版本中，增加了对长服务和docker的支持。
 
+###Marathon
+---------------
+Marathon是一个全新的框架，它将Mesos变成一个更有活力的工具，进而可以在单一的集群上运行不同的应用程序。Marathon出自于一家初创公司Mesosphere，该公司由两位前Airbnb的工程师创立。
+
+它的设计宗旨就是让用户在同一组服务器之上，更智能地运行多种应用程序和服务——Hadoop、Storm，甚至一个标准的Web应用。Marathon出自于一家初创公司 Mesosphere之手，这家公司主要就是想构建一个数据中心操作系统，不过这个系统是运行在 Mesos集群管理软件之上，这也是 Twitter基础设施的重要组成部分。该公司的联合创始人是前Airbnb的工程师Florian Leibert（也曾在Twitter工作过）和Tobias Knaup。 
+
+Marathon只不过占据了Mesosphere的一小部分，但是Leibert表示它很重要且有着非常大的吸引力。就目前而言，云计算和大数据的发展趋势已经从巩固阶段跳转到问题的解决阶段，未来可能需要多个分布式系统去处理那些特定的任务。 
 
 ###Kafka
 ---------------

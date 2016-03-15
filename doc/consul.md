@@ -59,12 +59,12 @@ dig @127.0.0.1 -p 8600 testServerName.node.consul #使用DNS协议查看节点�
 curl -X PUT -d '{"Datacenter": "domain.org", "Node": "mysql-1", "Address": \
 "mysql-1.node.consul","Service": {"Service": "mysql", "tags": ["master","v1"], \
 "Port": 3306}}' http://127.0.0.1:8500/v1/catalog/register
-```
-```
+
 curl -X PUT -d '{"Datacenter": "domain.org", "Node": "mysql-2", "Address": \
 "mysql-2.node.consul","Service": {"Service": "mysql", "tags": ["slave","v1"],\
 "Port": 3306}}' http://127.0.0.1:8500/v1/catalog/register
 ```
+
 curl http://127.0.0.1:8500/v1/catalog/service/mysql
 ```
  [
@@ -116,4 +116,11 @@ mysql-1.node.domain.org.consul. 0 IN  CNAME mysql-1.node.consul.
 ;; Query time: 0 msec
 ;; SERVER: 127.0.0.1#8600(127.0.0.1)
 ;; MSG SIZE  rcvd: 280
+```
+
+###Register external domain
+--------------
+https://www.consul.io/docs/guides/external.html
+```
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "cnode2", "Address": "192.168.85.115", "Service": {"Service": "cnode2"}}' http://172.17.0.2:8500/v1/catalog/register
 ```
