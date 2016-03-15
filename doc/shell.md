@@ -5082,3 +5082,4 @@ timedatectl set-ntp yes 设置打开NTP
 15.3更新dmidecode,ipmitool                          2015-11-11 11:38:15
 15.4更新mjson                                       2015-12-21 15:05:05
 16.1更新format                                      2016-01-20 17:41:05
+16.2更新xrandr显示分屏                              2016-03-15 23:22:55
