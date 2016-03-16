@@ -109,13 +109,39 @@ systemctl start ntpd
 git clone https://github.com/sequenceiq/docker-ambari.git
 switch to root
 source ambari-function
-amb-start-cluster 3
+amb-start-cluster 4
 amb-settings
 docker run -d --privileged --name amb2 -h amb2.service.consul hortonworks/ambari-agent:latest systemd.setenv=NAMESERVER_ADDR=172.17.0.2
 
 1. run consul docker
-2. run ambari-server docker
-3. run ambari-agent docker
+run ambari-server docker
+run ambari-agent docker
+
+
+2. use consul to register external IP and domain
+docker inspect consul_container_id # get consul ip
+Consul
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy", "Address": "192.168.85.83", "Service": {"Service": "kdctommy"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1.synnex.org", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1.synnex.org"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy.synnex.org", "Address": "192.168.85.83", "Service": {"Service": "kdctommy.synnex.org"}}' http://172.17.0.2:8500/v1/catalog/register
+
+3. http://172.17.0.3:8080
+ 
+4. change the repository to internal centos7 repository
+http://halo-cnode1.synnex.org/hdp_repo_rpms/centos7/HDP-UTILS-1.1.0.20/
+http://halo-cnode1.synnex.org/hdp_repo_rpms/centos7/HDP-2.4.0.0/
+
+5. docker ps   #get all current online ambari container
+NAMES: amb2   amb1  amb3 amb-server amb-consul
+
+6. input 
+amb1.service.consul
+amb2.service.consul
+amb3.service.consul
+
+7. Perform manual registration on hosts and do not use SSH
+
 ```
 
 
