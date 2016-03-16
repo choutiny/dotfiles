@@ -199,5 +199,45 @@ Default Principal: tommyx@DOMAIN.ORG
 ssh kdctommy@DOMAIN.ORG
 ```
 
+###Ambari-server
+------------------------
+refer to ambari.md
+
+###Kerberos command
+------------------------
+kadmin: ?
+```
+Available kadmin requests:
+
+add_principal, addprinc, ank
+                         Add principal
+delete_principal, delprinc
+                         Delete principal
+modify_principal, modprinc
+                         Modify principal
+rename_principal, renprinc
+                         Rename principal
+change_password, cpw     Change password
+get_principal, getprinc  Get principal
+list_principals, listprincs, get_principals, getprincs
+                         List principals
+add_policy, addpol       Add policy
+modify_policy, modpol    Modify policy
+delete_policy, delpol    Delete policy
+get_policy, getpol       Get policy
+list_policies, listpols, get_policies, getpols
+                         List policies
+get_privs, getprivs      Get privileges
+ktadd, xst               Add entry(s) to a keytab
+ktremove, ktrem          Remove entry(s) from a keytab
+lock                     Lock database exclusively (use with extreme caution!)
+unlock                   Release exclusive database lock
+purgekeys                Purge previously retained old keys from a principal
+get_strings, getstrs     Show string attributes on a principal
+set_string, setstr       Set a string attribute on a principal
+del_string, delstr       Delete a string attribute on a principal
+list_requests, lr, ?     List available requests.
+quit, exit, q            Exit program.
+```
 
 
