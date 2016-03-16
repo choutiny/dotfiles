@@ -1550,9 +1550,10 @@ mkfs -t vfat /dev/hda6 //将移动硬盘里面的一个分区格式化成vfat格
     mkfs.ext4 /dev/sdb1 -L ULTRA    //格式化一个U盘为ext4,并且命名卷标未ULTRA, 格式化前需要umount,可以通过blkid查看,
         重命名卷标可用e2label /dev/sdb1 new_volumn_tagname或者tune2fs -L new_volumn_tagname /dev/sdb1 
     df -H 首先查看盘符, 拿到/dev/sdb1 是否真实挂载到U盘
-    apt-get install exfat-utils 安装exfat扩展来支持exfat
+    apt-get install exfat-fuse exfat-utils 安装exfat扩展来支持exfat
     mkfs.exfat -n CORSAIR /dev/sdb1 格式为exfat格式
     mkdir /media/exfat && cd /media && mount -t exfat /dev/sdb1 exfat
+    unmount /dev/sdb1
 
 mount /dev/cdrom /media/cdrom //挂载cdrom, 要挂在的设备, 挂在的目录
 getent group 532 //通过组ID,来查找组信息
