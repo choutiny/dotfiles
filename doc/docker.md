@@ -941,6 +941,8 @@ docker tag  2.11.6 cdcbi.domain.org:5000/scala
 docker tag  williamyeh/scala 192.168.85.116:5000/scala
 docker push cdcbi.domain.org:5000/scala
 
+docker pull cdcbi.domain.org:5000/scala:2.11.6 #default latest
+
 docker search private registry
 v2 registry
 curl -k https://cdcbi.domain.org:5000/v2/_catalog 
