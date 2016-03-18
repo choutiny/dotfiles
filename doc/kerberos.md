@@ -246,4 +246,53 @@ list_requests, lr, ?     List available requests.
 quit, exit, q            Exit program.
 ```
 
+###Kerberos configuration
+------------------------
+server 
+1. /var/kerberos/krb5kdc/kadm5.acl
+```
+*/admin@DOMAIN.ORG    *
+```
+
+2. /var/Kerberos/krb5kdc/kdc.conf
+```
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+
+[realms]
+ DOMAIN.ORG  = {
+  #master_key_type = aes256-cts
+  acl_file = /var/kerberos/krb5kdc/kadm5.acl
+  dict_file = /usr/share/dict/words
+  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+ }
+```
+
+3. restart krb5kdc, kadmin
+```
+systemctl restart krb5kdc
+systemctl restart kadmin
+```
+
+client
+```
+yum install -y pam_krb5
+systemctl restart krb5kdc
+systemctl restart kadmin
+
+```
+
+###QA
+------------------------
+```
+kadmin:  addprinc -randkey host/cdkdc.domain.org
+WARNING: no policy specified for host/cdkdc.domain.org@DOMAIN.ORG; defaulting to no policy
+add_principal: Operation requires ``add'' privilege while creating "host/cdkdc.domain.org@DOMAIN.ORG".
+
+make sure kdc.conf exists in /var/kerberos/krb5kdc
+
+```
+
 
