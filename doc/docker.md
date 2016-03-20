@@ -979,3 +979,49 @@ or
 systemctl restart docker
 systemctl daemon-reload
 ```
+
+# Docker simple
+----------------------
+```
+docker简单操作
+1. 查看
+1.1 当前容器 docker ps / docker ps -a
+1.2 当前镜像 docker images
+1.3 某容器具体情况 docker inspect 719d98db9d43
+1.4 某容器的内部情况 docker top 719d98db9d43
+2. 建立/启动/关闭容器
+1.1 建立 docker run -d ubuntu [-name XXXX]
+1.2 关闭 docker stop 719d98db9d43
+1.3 启动 docker start 719d98db9d43
+1.4 重启 docker restart 719d98db9d43
+1.5 删除 docker rm 719d98db9d43
+1.6 删除一个镜像 docker rmi ubuntu
+1.7 修改容器名称 docker rename amb1 amba
+3. 进入容器
+3.1 建立同时进入 docker run -ti -d ubuntu /bin/bash
+3.2 标准进入 docker attach ubuntu
+3.2.1 出来 ctrl p + ctrl q
+3.3 直接运行 docker exec ubuntu ls
+3.3.1 另一种进入方式 docker exec -it 3c7579fabe0a /bin/bash
+3.4 复制容器中的文件或文件夹到主机系统中 docker cp 23ad234:~/test.txt ./test.txt
+4. 备份回滚
+4.1 将容器导出为tar包 docker export 23ad234 > mytest.docker.tar
+4.2 创建一个空容器并导入tar包 docker import ./mytest.docker.tar
+4.3 将容器改动提交到镜像中 docker commit 23ad234 mytest
+4.4 导出镜像 docker save -o a.tar amb1
+5. 编译镜像
+5.1 docker build ./mydir/
+6. dockerfile 写法
+6.1 基本上, 在基础镜像上改吧, 有些东西太难测了
+6.2 具体的指令, 只需要在基础盘上, 明白
+6.2.1 FROM 基础os盘
+6.2.2 RUN 跑指令, 并保存变动, 在build时运行
+6.2.3 COPY 将外部文件拷贝入镜像
+6.2.4 EXPOSE 暴露端口
+6.2.5 ENV 设置环境变量
+6.2.6 ENTRYPOINT 容器启动后运行什么, 不会被命令行覆盖
+6.2.7 CMD 容器启动后运行什么, 会被命令行覆盖. CMD和ENTRYPOINT只有最后一个生效
+7. docker网站
+docker search, pull, login, and push
+```
+

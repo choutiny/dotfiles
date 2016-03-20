@@ -2357,6 +2357,10 @@ git config --global user.email "rainysia@gmail.com"
 git commit --amend --allow-empty --reset-author
 对提交修补 允许空 将作者ID同步修改,会重置uthorDate
 
+
+touch -d "20 hours ago" test.file
+git commit --date="$(stat -c %y test)" -m "test" ./   #用20小时前的文件来提交到github
+
 git config --global alisa.ci "commit -s" 别名可以带参数
 -s 参数,会在提交说明中自动添加上包含提交者姓名和邮件地址的签名标识
 like: Signed-off-by: UserName <email@address>
