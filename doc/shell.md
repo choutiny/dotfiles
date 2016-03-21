@@ -1613,6 +1613,7 @@ mirror -R /mysql //上传mysql目录
 rmmod pcspkr //关掉tab提示音
 modprobe pcspkr //开启tab提示音
 readlink的读取了链接内容
+dd if=/filepath/linux.iso of=/dev/sdb bs=1M #创建系统镜像盘
 dd if=/dev/zero of=/virtual/ubuntu.virt.img bs=1M count=4096 //创建一个4G的IMG镜像
 dd if=/dev/zero of=./test.dat bs=4k count=1M 测试磁盘的写速率。
 dd如果不带fsync那么就是写入到了缓存中后就会立刻返回，所以得出的写入速度不准，带上fsync之后是数据写入到了硬盘后才返回，这个时候显示的速度就是硬盘实际写入速度
