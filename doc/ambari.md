@@ -1,5 +1,81 @@
 ambari
 ========
+###Install Flow
+----------------------
+1. Install centos7 on 3 server or more, centos7 ISO in http://192.168.85.133/
+2. Fetch IP address and Hostname. named 'node1, node2, node3' etc.
+3. `yum install ntpdate`
+
+   `ntpdate pool.ntp.org` to sync time
+4. `ssh-keygen` to generate ssh public key.
+
+   `ssh-copy-id -i ~/.ssh/id_rsa.pub root@node1`,node2,node3 to send the public key to others server
+5. Configure centos repository
+6. Configure centos `ulimit -n`   # `cat /proc/sys/fs/file-max` , `vi /etc/security/limits.conf`  add the
+   below content into the file then restart server
+    ```
+    * soft nofile 102400
+    * hard nofile 102400
+    ```
+   If server can't restart, check centos network initial start when reboot
+    ```
+    cat /etc/sysconfig/network-scripts/ifcfg-enp2s0
+    ONBOOT="yes"
+    ```
+   Close selinux and iptables
+    ```
+    vim /etc/selinux/config
+    setenforce 0
+    systemctl disable firewalld
+    service firewalld stop
+    ```
+7. Create centos repo, see centos.md 
+8. Use local centos repository, copy the below content into /etc/yum.repos.d/
+
+    ```
+    #ambari.repo
+    ================= start ================
+    #VERSION_NUMBER=2.2.1.00
+
+    [Updates-ambari-2.2.1.0]
+    name=ambari-2.2.1.0 - Updates
+    baseurl=http://halo-cnode1.domain.org/ambari_repo_rpms/centos7/Updates-ambari-2.2.1.0
+    gpgcheck=0
+    gpgkey=http://public-repo-1.hortonworks.com/ambari/centos7/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    enabled=1
+    priority=1
+    =================  end  ================
+    #HDP.repo
+    ================= start ================
+    [HDP-2.4]
+    name=HDP-2.4
+    baseurl=http://halo-cnode1.domain.org/hdp_repo_rpms/centos7/HDP-2.4.0.0/
+
+    path=/
+    enabled=1
+    gpgcheck=0
+    =================  end  ================
+    #HDP-UTILS.repo
+    ================= start ================
+    [HDP-UTILS-1.1.0.20]
+    name=HDP-UTILS-1.1.0.20
+    baseurl=http://halo-cnode1.domain.org/hdp_repo_rpms/centos7/HDP-UTILS-1.1.0.20/
+
+    path=/
+    enabled=1
+    gpgcheck=0
+    =================  end  ================
+    ```
+
+9. `yum install ambari-server`
+
+    `ambari-server setup`
+
+    `ambari-server start`
+
+    Go to node1.domain.org:8080 to access ambar-server web-UI, default account/password: ``admin/admin``
+    Offical Installation Manual [Installation Documents](http://docs.hortonworks.com/HDPDocuments/Ambari/Ambari-2.2.1.1/index.html)
+
 
 ###Command
 ----------------------
@@ -123,14 +199,14 @@ docker inspect consul_container_id # get consul ip
 Consul
 curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1"}}' http://172.17.0.2:8500/v1/catalog/register
 curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy", "Address": "192.168.85.83", "Service": {"Service": "kdctommy"}}' http://172.17.0.2:8500/v1/catalog/register
-curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1.synnex.org", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1.synnex.org"}}' http://172.17.0.2:8500/v1/catalog/register
-curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy.synnex.org", "Address": "192.168.85.83", "Service": {"Service": "kdctommy.synnex.org"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "halo-cnode1.domain.org", "Address": "192.168.85.109", "Service": {"Service": "halo-cnode1.domain.org"}}' http://172.17.0.2:8500/v1/catalog/register
+curl -X PUT -d '{"Datacenter": "dc1", "Node": "kdctommy.domain.org", "Address": "192.168.85.83", "Service": {"Service": "kdctommy.domain.org"}}' http://172.17.0.2:8500/v1/catalog/register
 
 3. http://172.17.0.3:8080
  
 4. change the repository to internal centos7 repository
-http://halo-cnode1.synnex.org/hdp_repo_rpms/centos7/HDP-UTILS-1.1.0.20/
-http://halo-cnode1.synnex.org/hdp_repo_rpms/centos7/HDP-2.4.0.0/
+http://halo-cnode1.domain.org/hdp_repo_rpms/centos7/HDP-UTILS-1.1.0.20/
+http://halo-cnode1.domain.org/hdp_repo_rpms/centos7/HDP-2.4.0.0/
 
 5. docker ps   #get all current online ambari container
 NAMES: amb2   amb1  amb3 amb-server amb-consul
