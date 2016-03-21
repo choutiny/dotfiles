@@ -253,6 +253,19 @@ HDFS集群以Master-Slave模式运行，主要有两类节点：一个Namenode(�
 Namenode 管理者文件系统的Namespace。它维护着文件系统树(filesystem tree)以及文件树中所有的文件和文件夹的元数据(metadata)
 Datanode是文件系统的工作节点，他们根据客户端或者是namenode的调度存储和检索数据，并且定期向namenode发送他们所存储的块(block)的列表。
 
+###JCE
+---------------
+JCE = Java Cryptography Extension。可以理解成包含一堆加密/解密算法的库。由于美国出口的限制，这个库不能随JDK一起分发。必须到oracle的网站上单独下载。下载后解压并替换$JAVA_HOME/jre/lib/security中的同名文件。
+
+###Jenkins
+---------------
+Jenkins是基于Java开发的一种持续集成工具，用于监控持续重复的工作，功能包括：
+1、持续的软件版本发布/测试项目。
+2、监控外部调用执行的工作。
+
+###
+---------------
+
 ###
 ---------------
 

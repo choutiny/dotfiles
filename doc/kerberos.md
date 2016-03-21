@@ -302,5 +302,39 @@ klist 显示 Kerberos 凭证高速缓存或密钥表的内容。
 kdestroy 破坏 Kerberos 凭证高速缓存。
 help kerberos
 
+另外kinit获取的ticket是有时间限制的。在我们的KDC配置中是10小时。快要过期之前可以kinit -R刷新下，就会又有10小时的有效期。最长可以延长到7天。
+但超过7天、或者快到10小时没能及时kinit -R，ticket会过期，就必须要重新获取了。
+kinit -R是否有效似乎取决于服务端的配置，有些ticket是不能renew的，我不是很熟。
+可以用klist命令查看当前ticket的剩余时间、renew的期限。
 
 
+这里指的只是客户端。比如我们在提交job时，如何通过kerberos认证？
+
+两种方式：
+
+在命令行中用kinit命令。比如kinit -kt xxx.keytab yyy/zzz。kinit成功后，就可以像平常一样用hadoop jar提交job了。job的代码不用做任何改变。原理：kinit获取ticket后会缓存在一个临时文件中。java可以读取这个文件并获取kerberos认证相关信息。前提是替换过JCE相关jar。
+用java代码获取ticket。hadoop提供了一个类UserGroupInformation，可以用以下代码获取ticket：
+1
+2
+3
+4
+5
+6
+7
+8
+9
+// 如果core-site.xml在classpath里，会自动加载，就不用手动设置属性了
+Configuration conf = new Configuration();
+// 只是举个例子，kerberos认证的时候只有下面两个属性是必须的
+conf.setBoolean("hadoop.security.authorization", true);
+conf.set("hadoop.security.authentication", "kerberos");
+UserGroupInformation.setConfiguration(conf);
+// 如果认证成功会有日志输出
+UserGroupInformation.loginUserFromKeytab("yyy/zzz","E:/Documents/TEMP/xxx.keytab");
+// 接下来就可以做其他操作了，比如操作FileSystem、提交job等
+方法1不用改代码，但是如果一个linux用户要用不同的keytab进行认证，会互相冲突。原因在于默认情况下，对同一个linux用户而言，ticket文件的缓存和kerberos的配置文件都只能有一个。可以通过一些环境变量来设置。
+方法2要改些代码，但比较灵活。loginUserFromKeytab一次之后，同一个JVM内所有线程都可以用。不同JVM之间不会互相影响。而且UserGroupInformation提供了其他一些方便的方法，比如ticket快要过期时自动更新、代理执行等等。具体去看javadoc吧。
+
+我现在更喜欢用方法2。
+
+方法2要注意代码执行的顺序。loginUserFromKeytab方法必须在其他代码（访问hdfs、提交job之类）之前执行。
