@@ -56,8 +56,8 @@ alias cdg='cd /home/vc/git/'
 alias cdgd='cd /home/vc/git/dotfiles/'
 alias cdgv='cd /home/vc/git/vimrc/'
 
-alias shl='sh /home/sh/log.sh'
 
+alias shl='sh /home/sh/log.sh'
 alias gvimlog='gvim /var/log/php_errors.log'
 alias vimlog='vim /var/log/php_errors.log'
 alias taillog='tail -f /var/log/php_errors.log'
