@@ -295,4 +295,12 @@ make sure kdc.conf exists in /var/kerberos/krb5kdc
 
 ```
 
+###Command
+------------------------
+kinit 用户名 获得或更新 Kerberos 票据授权票据。
+klist 显示 Kerberos 凭证高速缓存或密钥表的内容。
+kdestroy 破坏 Kerberos 凭证高速缓存。
+help kerberos
+
+
 
