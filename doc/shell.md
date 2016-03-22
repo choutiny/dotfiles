@@ -5059,6 +5059,17 @@ timedatectl list-timezones
 timedatectl set-timezone time_zone
 timedatectl set-ntp yes 设置打开NTP
 
+123.Generate passwd by shell
+```
+date +%s | sha256sum | base64 | head -c 32 ; echo
+< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;
+openssl rand -base64 32
+tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1
+strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo
+< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c6
+date | md5sum
+```
+
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
