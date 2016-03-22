@@ -444,6 +444,19 @@ docker save -o ubuntu.tar ubuntu:14.04
 docker load --input package_name.tar
 docker load < packge_name.tar
 
+改名镜像
+docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+192.168.85.116:5000/nginx         latest              3ea8fdece1c5        3 months ago        244.2 MB
+
+docker tag 192.168.85.116:5000/nginx nginx/latest  # old new/version, or use docker tag `IMAGE_ID` new_name:tag_version
+docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+192.168.85.116:5000/nginx         latest              3ea8fdece1c5        3 months ago        244.2 MB
+nginx/latest                      latest              3ea8fdece1c5        3 months ago        244.2 MB
+docker rmi 192.168.85.116:5000/nginx
+
+
 清理所有未打过标签的本地镜像
 docker rmi $(docker images --quiet --filter "dangling=true")
 

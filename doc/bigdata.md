@@ -205,6 +205,7 @@ Alluxio是一个分布式内存文件系统，它在减轻Spark内存压力的�
 ###Sqoop
 ---------------
 Sqoop: 是一个用来将Hadoop和关系型数据库中的数据相互转移的工具，可以将一个关系型数据库（MySQL ,Oracle ,Postgres等）中的数据导进到Hadoop的HDFS中，也可以将HDFS的数据导进到关系型数据库中。
+Sqoop用于将关系形数据库（如mysql）或者其它结构化的数据导入到hadoop的生态系统中（HDFS，Hive ， HBase），反过来也可以将hadoop的数据导出为对应的结构形式。
 
 ###Mahout
 ---------------
@@ -233,10 +234,13 @@ Hama: 是一个基于HDFS的BSP（Bulk Synchronous Parallel)并行计算框架, 
 ###Flume
 ---------------
 Flume: 是一个分布的、可靠的、高可用的海量日志聚合的系统，可用于日志数据收集，日志数据处理，日志数据传输。
+Flume是一个类似facebook的scribe的分布式，高可靠，高可用，高效的数据收集器，一般用于聚合众多服务器上面的大量日志到某一个数据中心。
 
 ###Oozie
 ---------------
 Oozie: 是一个工作流引擎服务器, 用于管理和协调运行在Hadoop平台上（HDFS、Pig和MapReduce）的任务。
+Oozie是可扩展可伸缩的工作流协调管理器。Oozie协调的作业属于一次性的非循环作业，例如MapReduce, Streaming, Pipes, Pig, Hive, Sqoop等等都是。Oozie将要调度的作业作为一个单一的作业来管理。Oozie的
+调度基于时间跟数据可用性。具有数据感知功能，可以协调作业之间的依赖关系.
 
 ###Bigtop
 ---------------
@@ -245,6 +249,7 @@ Bigtop: 是一个对Hadoop及其周边生态进行打包，分发和测试的工
 ###Cloudera Hue
 ---------------
 Cloudera Hue: 是一个基于WEB的监控和管理系统，实现对HDFS，MapReduce/YARN, HBase, Hive, Pig的web化操作和管理。
+Hue是cdh专门的一套web管理器，它包括3个部分hue ui，hue server，hue db。hue提供所有的cdh组件的shell界面的接口。你可以在hue编写mr，查看修改hdfs的文件，管理hive的元数据，运行Sqoop，编写Oozie工作流等大量工作。
 
 ###HDFS
 ---------------
@@ -262,6 +267,17 @@ JCE = Java Cryptography Extension。可以理解成包含一堆加密/解密算�
 Jenkins是基于Java开发的一种持续集成工具，用于监控持续重复的工作，功能包括：
 1、持续的软件版本发布/测试项目。
 2、监控外部调用执行的工作。
+
+###HttpFS
+---------------
+HttpFS提供REST HTTP API来读写hdfs。
+
+###Snappy
+---------------
+Snappy是压缩跟解压缩工具，它的应用包括将mr的最终输出结果压缩起来，Sqoop导入数据的时候也可以使用这个压缩引擎.
+
+###
+---------------
 
 ###
 ---------------
