@@ -4817,10 +4817,22 @@ for n in {1..1000}; do echo -e "\033[32m $n\033[0m" \; `rpm -qa | grep hyve`; do
 循环一组数据到file然后输出
 
 1.txt 2.txt 3.txt 4.txt => 001.txt 002.txt 003.txt 004.txt
+
 for i in *.txt;do echo "00"$i ;done;
+folder="./"; for i in ${folder}/*.txt; do tmp_file=`basename $i`; tmp_name=${tmp_file%.*}; printf "%02d"$tmp_name".txt\n"; done; 
+for i in *.txt;do printf "%02d"$i"\n" ;done;  
 
 printf "%04d\n" 12 对12补齐00 , 12=>0012
 echo 12|awk '{printf("%03d\n", $0)}'
+
+提取文件名或者文件后缀
+var=/tmp/test/1.txt
+echo ${var##*/}     #文件名 1.txt
+echo ${var##*/}     #后缀 txt
+tmp=${var##*/} echo ${tmp%.*}  #提取文件名 1
+echo ${var%/*}      #提取目录 /tmp/test
+basename $var       #提取文件名
+dirname $var        #提取路径 
 ```
 
 112.查看硬件相关信息
