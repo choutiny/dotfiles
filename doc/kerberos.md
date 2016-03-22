@@ -365,7 +365,7 @@ xst -norandkey -k mapred.keytab mapred/fully.qualified.domain.name host/fully.qu
 注意：
 上面的方法使用了xst的norandkey参数，有些kerberos不支持该参数。
 当不支持该参数时有这样的提示：Principal -norandkey does not exist.，需要使用下面的方法来生成keytab文件。
-在 cdh1 节点，即 KDC server 节点上执行下面命令：
+在 KDC server 节点上执行下面命令(cdkdc.domain.org)：
 
 $ cd /var/kerberos/krb5kdc/
 
