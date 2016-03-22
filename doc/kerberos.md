@@ -203,6 +203,22 @@ klist
 Ticket cache: FILE:/tmp/krb5cc_0
 Default Principal: tommyx@DOMAIN.ORG
 ssh kdctommy@DOMAIN.ORG
+
+
+Client
+kinit root/admin
+kadmin -q "addprinc flume/halo-cnode3.domain.org@SYNNEX.ORG"
+
+创建keytab文件
+keytab 是包含 principals 和加密 principal key 的文件。
+keytab 文件对于每个 host 是唯一的，因为 key 中包含 hostname。keytab 文件用于不需要人工交互和保存纯文本密码，实现到 kerberos 上验证一个主机上的 principal。
+因为服务器上可以访问 keytab 文件即可以以 principal 的身份通过 kerberos 的认证，所以，keytab 文件应该被妥善保存，应该只有少数的用户可以访问
+
+创建包含 hdfs principal 和 host principal 的 hdfs keytab：
+xst -norandkey -k hdfs.keytab hdfs/fully.qualified.domain.name host/fully.qualified.domain.name
+
+创建包含 mapred principal 和 host principal 的 mapred keytab：
+xst -norandkey -k mapred.keytab mapred/fully.qualified.domain.name host/fully.qualified.domain.name
 ```
 
 ###Ambari-server
@@ -314,15 +330,7 @@ kinit -R是否有效似乎取决于服务端的配置，有些ticket是不能ren
 
 在命令行中用kinit命令。比如kinit -kt xxx.keytab yyy/zzz。kinit成功后，就可以像平常一样用hadoop jar提交job了。job的代码不用做任何改变。原理：kinit获取ticket后会缓存在一个临时文件中。java可以读取这个文件并获取kerberos认证相关信息。前提是替换过JCE相关jar。
 用java代码获取ticket。hadoop提供了一个类UserGroupInformation，可以用以下代码获取ticket：
-1
-2
-3
-4
-5
-6
-7
-8
-9
+
 // 如果core-site.xml在classpath里，会自动加载，就不用手动设置属性了
 Configuration conf = new Configuration();
 // 只是举个例子，kerberos认证的时候只有下面两个属性是必须的
@@ -338,3 +346,93 @@ UserGroupInformation.loginUserFromKeytab("yyy/zzz","E:/Documents/TEMP/xxx.keytab
 我现在更喜欢用方法2。
 
 方法2要注意代码执行的顺序。loginUserFromKeytab方法必须在其他代码（访问hdfs、提交job之类）之前执行。
+
+
+###Kerberos Keytab
+------------------------
+```
+创建keytab文件
+keytab 是包含 principals 和加密 principal key 的文件。
+keytab 文件对于每个 host 是唯一的，因为 key 中包含 hostname。keytab 文件用于不需要人工交互和保存纯文本密码，实现到 kerberos 上验证一个主机上的 principal。
+因为服务器上可以访问 keytab 文件即可以以 principal 的身份通过 kerberos 的认证，所以，keytab 文件应该被妥善保存，应该只有少数的用户可以访问
+
+创建包含 hdfs principal 和 host principal 的 hdfs keytab：
+xst -norandkey -k hdfs.keytab hdfs/fully.qualified.domain.name host/fully.qualified.domain.name
+
+创建包含 mapred principal 和 host principal 的 mapred keytab：
+xst -norandkey -k mapred.keytab mapred/fully.qualified.domain.name host/fully.qualified.domain.name
+
+注意：
+上面的方法使用了xst的norandkey参数，有些kerberos不支持该参数。
+当不支持该参数时有这样的提示：Principal -norandkey does not exist.，需要使用下面的方法来生成keytab文件。
+在 cdh1 节点，即 KDC server 节点上执行下面命令：
+
+$ cd /var/kerberos/krb5kdc/
+
+$ kadmin.local -q "xst  -k hdfs-unmerged.keytab  hdfs/cdh1@DOMAIN.ORG"
+$ kadmin.local -q "xst  -k hdfs-unmerged.keytab  hdfs/cdh2@DOMAIN.ORG"
+$ kadmin.local -q "xst  -k hdfs-unmerged.keytab  hdfs/cdh3@DOMAIN.ORG"
+
+$ kadmin.local -q "xst  -k HTTP.keytab  HTTP/cdh1@DOMAIN.ORG"
+$ kadmin.local -q "xst  -k HTTP.keytab  HTTP/cdh2@DOMAIN.ORG"
+$ kadmin.local -q "xst  -k HTTP.keytab  HTTP/cdh3@DOMAIN.ORG"
+这样，就会在 /var/kerberos/krb5kdc/ 目录下生成 hdfs-unmerged.keytab 和 HTTP.keytab 两个文件，接下来使用 ktutil 合并者两个文件为 hdfs.keytab。
+
+$ cd /var/kerberos/krb5kdc/
+
+$ ktutil
+ktutil: rkt hdfs-unmerged.keytab
+ktutil: rkt HTTP.keytab
+ktutil: wkt hdfs.keytab
+使用 klist 显示 hdfs.keytab 文件列表：
+
+$ klist -ket  hdfs.keytab
+Keytab name: FILE:hdfs.keytab
+KVNO Timestamp         Principal
+---- ----------------- --------------------------------------------------------
+   2 11/13/14 10:40:18 hdfs/cdh1@DOMAIN.ORG (des3-cbc-sha1)
+   2 11/13/14 10:40:18 hdfs/cdh1@DOMAIN.ORG (arcfour-hmac)
+   2 11/13/14 10:40:18 hdfs/cdh1@DOMAIN.ORG (des-hmac-sha1)
+   2 11/13/14 10:40:18 hdfs/cdh1@DOMAIN.ORG (des-cbc-md5)
+   4 11/13/14 10:40:18 hdfs/cdh2@DOMAIN.ORG (des3-cbc-sha1)
+   4 11/13/14 10:40:18 hdfs/cdh2@DOMAIN.ORG (arcfour-hmac)
+   4 11/13/14 10:40:18 hdfs/cdh2@DOMAIN.ORG (des-hmac-sha1)
+   4 11/13/14 10:40:18 hdfs/cdh2@DOMAIN.ORG (des-cbc-md5)
+   4 11/13/14 10:40:18 hdfs/cdh3@DOMAIN.ORG (des3-cbc-sha1)
+   4 11/13/14 10:40:18 hdfs/cdh3@DOMAIN.ORG (arcfour-hmac)
+   4 11/13/14 10:40:18 hdfs/cdh3@DOMAIN.ORG (des-hmac-sha1)
+   4 11/13/14 10:40:18 hdfs/cdh3@DOMAIN.ORG (des-cbc-md5)
+   3 11/13/14 10:40:18 HTTP/cdh1@DOMAIN.ORG (des3-cbc-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh1@DOMAIN.ORG (arcfour-hmac)
+   3 11/13/14 10:40:18 HTTP/cdh1@DOMAIN.ORG (des-hmac-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh1@DOMAIN.ORG (des-cbc-md5)
+   3 11/13/14 10:40:18 HTTP/cdh2@DOMAIN.ORG (des3-cbc-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh2@DOMAIN.ORG (arcfour-hmac)
+   3 11/13/14 10:40:18 HTTP/cdh2@DOMAIN.ORG (des-hmac-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh2@DOMAIN.ORG (des-cbc-md5)
+   3 11/13/14 10:40:18 HTTP/cdh3@DOMAIN.ORG (des3-cbc-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh3@DOMAIN.ORG (arcfour-hmac)
+   3 11/13/14 10:40:18 HTTP/cdh3@DOMAIN.ORG (des-hmac-sha1)
+   3 11/13/14 10:40:18 HTTP/cdh3@DOMAIN.ORG (des-cbc-md5)
+验证是否正确合并了key，使用合并后的keytab，分别使用hdfs和host principals来获取证书。
+
+$ kinit -k -t hdfs.keytab hdfs/cdh1@DOMAIN.ORG
+$ kinit -k -t hdfs.keytab HTTP/cdh1@DOMAIN.ORG
+如果出现错误：kinit: Key table entry not found while getting initial credentials，
+则上面的合并有问题，重新执行前面的操作。
+
+4.3 部署kerberos keytab文件
+拷贝 hdfs.keytab 文件到其他节点的 /etc/hadoop/conf 目录
+
+$ cd /var/kerberos/krb5kdc/
+
+$ scp hdfs.keytab cdh1:/etc/hadoop/conf
+$ scp hdfs.keytab cdh2:/etc/hadoop/conf
+$ scp hdfs.keytab cdh3:/etc/hadoop/conf
+并设置权限，分别在 cdh1、cdh2、cdh3 上执行：
+
+$ ssh cdh1 "chown hdfs:hadoop /etc/hadoop/conf/hdfs.keytab ;chmod 400 /etc/hadoop/conf/hdfs.keytab"
+$ ssh cdh2 "chown hdfs:hadoop /etc/hadoop/conf/hdfs.keytab ;chmod 400 /etc/hadoop/conf/hdfs.keytab"
+$ ssh cdh3 "chown hdfs:hadoop /etc/hadoop/conf/hdfs.keytab ;chmod 400 /etc/hadoop/conf/hdfs.keytab"
+由于 keytab 相当于有了永久凭证，不需要提供密码(如果修改kdc中的principal的密码，则该keytab就会失效)，所以其他用户如果对该文件有读权限，就可以冒充 keytab 中指定的用户身份访问 hadoop，所以 keytab 文件需要确保只对 owner 有读权限(0400)
+```
