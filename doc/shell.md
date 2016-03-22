@@ -4815,6 +4815,12 @@ for i in $(seq 1 $END); do echo $i; done
 for i in {1..5}; do echo $i; done
 for n in {1..1000}; do echo -e "\033[32m $n\033[0m" \; `rpm -qa | grep hyve`; done;
 循环一组数据到file然后输出
+
+1.txt 2.txt 3.txt 4.txt => 001.txt 002.txt 003.txt 004.txt
+for i in *.txt;do echo "00"$i ;done;
+
+printf "%04d\n" 12 对12补齐00 , 12=>0012
+echo 12|awk '{printf("%03d\n", $0)}'
 ```
 
 112.查看硬件相关信息
