@@ -1,20 +1,20 @@
 Dodcker manual
 ==============
 
-#Basic Config
-
 ###Install on different system
 -----------
-docker hosts
-    54.234.135.251  get.docker.io
-    54.234.135.251  cdn-registry-1.docker.io
+1, Docker hosts
+
 ```
-#Debian8
-need kernel > 3.8, add the below content into sources.list
-    deb http://http.debian.net/debian jessie-backports main
+54.234.135.251  get.docker.io
+54.234.135.251  cdn-registry-1.docker.io
+```
+2, Debian8
+
+```
+deb http://http.debian.net/debian jessie-backports main
 apt-get purge docker.io
-    有docker 的用户组, 为了避免使用sudo, 需要把当前用户加入到docker组,
-usermod -aG docker your_username
+usermod -aG docker your_username #有docker 的用户组, 为了避免使用sudo, 需要把当前用户加入到docker组,
 apt-get install apt-transport-https ca-certificates
 apt-get update
 vim /etc/apt/sources.list
@@ -29,12 +29,12 @@ apt-get purge docker-io
     or
 apt-get autoremove --purge docker-io
 rm -rf /var/lib/docker
-
-#Centos7
+```
+3, Centos7
+```
 yum install docker
 systemctl start docker
 systemctl enable docker
-
 ```
 
 ###Verify Installation
@@ -201,7 +201,7 @@ EXPOSE 80                                   #指定打开80端口
 $sudo docker build -t="rainysia/static_web" .
 
 ------------------------------------------------
-sudo docker build -t="rainysia/static_web" .
+docker build -t="rainysia/static_web" .
 Sending build context to Docker daemon 2.048 kB
 Sending build context to Docker daemon 
 Step 0 : FROM learn/ping:latest
@@ -298,7 +298,6 @@ docker images
 docker images
     REPOSITORY            TAG                 IMAGE ID            CREATED              VIRTUAL SIZE
     rainysia/static_web   latest              9987527a0059        19 minutes ago       196.2 MB
-    <none>                <none>              30d0c78c67c9        31 minutes ago       168.8 MB
     rainysia/learn        test                7dee5de20590        43 minutes ago       139.9 MB
     rainysia/learn        latest              b7f12b9b4b29        44 minutes ago       139.9 MB
     learn/ping            latest              9e8823ddedf9        24 hours ago         139.9 MB
@@ -333,7 +332,6 @@ docker ps -a
 docker stop Container_xxxxid
 docker rm Container_xxxxid/Name
 docker start new_xxxxid
-
 docker rmi image_id 根据image_id删除镜像
 
 Dockerfile 的命令
@@ -428,6 +426,40 @@ docker run -d -p 80 --name website \
 docker run -d -p 127.0.0.1:44444:80 --name test_web \
 -v $PWD/website:/var/www/html:ro \
 rainysia/nginx nginx
+
+
+导出本地镜像到本地文件
+docker save
+
+[root@cdkdc]/# docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+registry                          latest              061610023430        7 weeks ago         422.8 MB
+halo                              latest              dfb06ee74ae2        11 weeks ago        679 MB
+ubuntu                            14.04               123456788990        1 hours ago         300 MB
+
+docker save -o package_name.tar halo:latest
+docker save -o ubuntu.tar ubuntu:14.04
+
+载入镜像
+docker load --input package_name.tar
+docker load < packge_name.tar
+
+清理所有未打过标签的本地镜像
+docker rmi $(docker images --quiet --filter "dangling=true")
+
+导出容器
+docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                    PORTS               NAMES
+7691a814370e        ubuntu:14.04        "/bin/bash"         36 hours ago        Exited (0) 21 hours ago                       test
+docker export 7691a814370e > ubuntu.tar
+
+导入容器快照
+docker import - test/ubuntu:v1.0
+docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              VIRTUAL SIZE
+test/ubuntu         v1.0                9d37a6082e97        About a minute ago   171.3 MB
+
+ocker import http://example.com/exampleimage.tgz example/imagerepo  #从网络导入
 
 ```
 
@@ -691,18 +723,6 @@ end
 ```
 docker port CONTAINER $CONTAINERPORT
 ```
-
-## 最佳实践
-
-这里有一些最佳实践的总结，以及一些讨论:
-
-* [The Rabbit Hole of Using Docker in Automated Tests](http://gregoryszorc.com/blog/2014/10/16/the-rabbit-hole-of-using-docker-in-automated-tests/)
-* [Bridget Kromhout](https://twitter.com/bridgetkromhout) has a useful blog post on [running Docker in production](http://sysadvent.blogspot.co.uk/2014/12/day-1-docker-in-production-reality-not.html) at Dramafever.  
-* There's also a best practices [blog post](http://developers.lyst.com/devops/2014/12/08/docker/) from Lyst.
-* [A Docker Dev Environment in 24 Hours!](https://engineering.salesforceiq.com/2013/11/05/a-docker-dev-environment-in-24-hours-part-2-of-2.html)
-* [Building a Development Environment With Docker](https://tersesystems.com/2013/11/20/building-a-development-environment-with-docker/)
-* [Discourse in a Docker Container](https://samsaffron.com/archive/2013/11/07/discourse-in-a-docker-container)
-
 ## 安全(Security)
 
 这节准备讨论一些关于 Docker 安全性的问题。[安全](https://docs.docker.com/engine/articles/security/)这章讲述了更多细节。
@@ -711,17 +731,8 @@ docker port CONTAINER $CONTAINERPORT
 
 ### 安全提示
 
-为了最大的安全性，你应该会希望在一台虚拟机上，或在托管主机上运行 Docker 。这是直接从 Docker 安全团队拿来的资料 -- [slides](http://www.slideshare.net/jpetazzo/linux-containers-lxc-docker-and-security) / [notes](http://www.projectatomic.io/blog/2014/08/is-it-safe-a-look-at-docker-and-security-from-linuxcon/)。然后，可以使用 AppArmor / seccomp / SELinux / grsec 之类的来[限制容器的权限](http://linux-audit.com/docker-security-best-practices-for-your-vessel-and-containers/)。
-
 Docker 镜像 id 属于[敏感信息](https://medium.com/@quayio/your-docker-image-ids-are-secrets-and-its-time-you-treated-them-that-way-f55e9f14c1a4) 所以它不应该向外界公开。你应该把他们当成密码来对待。
 
-参考 [Docker Security Cheat Sheet](https://github.com/konstruktoid/Docker/blob/master/Security/CheatSheet.md)中 - 作者是 [Thomas Sjögren](https://github.com/konstruktoid) - 关于如何提高容器安全的建议。
-
-下载[docker 安全测试脚本](https://github.com/docker/docker-bench-security)，下载[白皮书](https://blog.docker.com/2015/05/understanding-docker-security-and-best-practices/) 以及订阅[邮件列表](https://www.docker.com/docker-security) (不幸的是 Docker 并没有独立的邮件列表，只有 dev / user)。
-
-你应该远离那些使用编译版本 grsecurity / pax 的不稳定内核，比如 [Alpine Linux](https://en.wikipedia.org/wiki/Alpine_Linux)。如果在产品中用了 grsecurity ，那么你应该考虑使用有[商业支持](https://grsecurity.net/business_support.php)的[稳定版本](https://grsecurity.net/announce.php)，就像你对待 RedHat 那样。它要 $200 每月，对于你的运维预算来说不值一提。
-
-参考 [Docker Security Cheat Sheet](http://container-solutions.com/content/uploads/2015/06/15.06.15_DockerCheatSheet_A2.pdf) (它是个 PDF 版本，搞得非常难用，所以拷贝出来了) 的 [容器解決方案](http://container-solutions.com/is-docker-safe-for-production/):
 
 关闭内部进程通讯:
 
@@ -759,23 +770,6 @@ docker -c 512 -mem 512m
 RUN groupadd -r user && useradd -r -g user user
 USER user
 ```
-
-### 安全相关视频
-
-* [Using Docker Safely](https://youtu.be/04LOuMgNj9U)
-* [Securing your applications using Docker](https://youtu.be/KmxOXmPhZbk)
-* [Container security: Do containers actually contain?](https://youtu.be/a9lE9Urr6AQ)
-
-### 安全路线图
-
-Docker 的路线图提到关于[seccomp 的支持](https://github.com/docker/docker/blob/master/ROADMAP.md#11-security)。
-这里有个 AppArmor 策略生成器，叫做 [bane](https://github.com/jfrazelle/bane)，他们正在实现[安全配置文件](https://github.com/docker/docker/issues/17142)。也可以使用[刚刚成为试验特性](https://github.com/docker/docker/commit/cc63db4fd19f99372a84cc97a87a023fa9193734#diff-991890e619874cd6bb0277584bb7f7a4R632)的[用户命名空间](https://s3hh.wordpress.com/2013/07/19/creating-and-using-containers-without-privilege/)
-
-## 小贴士
-
-来源:
-
-* [15 Docker Tips in 5 minutes](http://sssslide.com/speakerdeck.com/bmorearty/15-docker-tips-in-5-minutes)
 
 ### 最后的 Ids
 
@@ -929,6 +923,7 @@ server
 docker pull registry
 docker run -d -p 5000:5000 registry
 docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry 自定义仓库地址
+docker run -d --hostname domain.com -p 5000:5000 -v /opt/data/registry:/tmp/registry registry 自定义仓库地址,和bind域名
 
 docker stop `ps -a`
  
@@ -945,7 +940,13 @@ docker pull cdcbi.domain.org:5000/scala:2.11.6 #default latest
 
 docker search private registry
 v2 registry
-curl -k https://cdcbi.domain.org:5000/v2/_catalog 
+curl -X GET http://cdkdc.domain.org:5000/v1/search
+curl -k https://cdcbi.domain.org:5000/v2/_catalog
+
+curl -X GET http://localhost:5000/v2/_catalog
+{"repositories":["ubuntu"]}
+$ curl -X GET http://localhost:5000/v2/ubuntu/tags/list
+{"name":"ubuntu","tags":["latest"]}
 
 
 error: docker user https
@@ -975,6 +976,7 @@ add the below
     DOCKER_OPTS="-D --insecure-registry cdcbi.domain.org:5000"
 or 
     OPTIONS="-D --insecure-registry cdcbi.domain.org:5000"
+    OPTIONS="-D --insecure-registry 192.168.85.116:5000 --insecure-registry cdcbi.domain.org:5000 --insecure-registry hi-docker.domain.org"
 
 systemctl restart docker
 systemctl daemon-reload
