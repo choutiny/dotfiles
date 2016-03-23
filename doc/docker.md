@@ -326,14 +326,14 @@ docker run -d -p 80:80 --name static_web rainysia/static_web \
 docker run -d -P --name static_web rainysia/static_web nginx -g "daemon off;"
 docker run -d -p 192.168.85.123:33333:80 --name static_web rainysia/static_web nginx -g "daemon off;"
 
-docker run -tid --name hue8888 --hostname halo-cnode1.domain.org -p 8888:8888 -v /usr/hdp:/hdp cdkdc.domain.org:5000/hue:latest ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+docker run -tid --name hue8888 --hostname halo-cnode1.domain.org -p 8888:8888 -v /usr/hdp:/usr/hdp cdkdc.domain.org:5000/hue:latest ./build/env/bin/hue runserver_plus 0.0.0.0:8888
     -i 标志保证容器中STDIN是开启的. 
     -t表示告诉docker要为创建的容器分配一个伪tty终端
     -d  参数会把容器放到后台运行
     --name alias_name 可以为这个docker指定一个别名, 要放前面, docker run -tid --name alias_name images:version /bin/bash
     --hostname 指定hostname, 类似--ip
     -p docker 容器的端口:外部主机的端口, 作端口映射, 来公开在dockerfile里面定义的expose的所有端口.
-    -v 挂在目录, 外部主机目录:容器内部目录
+    -v 挂在目录, 外部主机目录:容器内部目录, 多个就继续-v external_path:internal_path
 
 
 更新docker images里面的内容后. 
