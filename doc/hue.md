@@ -42,7 +42,7 @@ http://halo-cnode1.domain.org:8888
 
 运行image
 ```
-docker run -tid --name hue8888 --hostname cnode1.domain.org -p 8888:8888 -v /usr/hdp:/usr/hdp -v /etc/hadoop:/etc/hadoop -v /etc/hive:/etc/hive -v /etc/hbase:/etc/hbase c-docker.domain.org:5000/hue:latest ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+docker run -tid --name hue8888 --hostname cnode1.domain.org -p 8888:8888 -v /usr/hdp:/usr/hdp -v /etc/hadoop:/etc/hadoop -v /etc/hive:/etc/hive -v /etc/hbase:/etc/hbase -v /docker-config/pseudo-distributed.ini:/hue/desktop/conf/pseudo-distributed.ini  c-docker.domain.org:5000/hue:latest ./build/env/bin/hue runserver_plus 0.0.0.0:8888
 ```
 解释下上面的命令,
     -i 标志保证容器中STDIN是开启的
