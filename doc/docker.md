@@ -326,6 +326,16 @@ docker run -d -p 80:80 --name static_web rainysia/static_web \
 docker run -d -P --name static_web rainysia/static_web nginx -g "daemon off;"
 docker run -d -p 192.168.85.123:33333:80 --name static_web rainysia/static_web nginx -g "daemon off;"
 
+docker run -tid --name hue8888 --hostname halo-cnode1.domain.org -p 8888:8888 -v /usr/hdp:/hdp cdkdc.domain.org:5000/hue:latest ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+    -i 标志保证容器中STDIN是开启的. 
+    -t表示告诉docker要为创建的容器分配一个伪tty终端
+    -d  参数会把容器放到后台运行
+    --name alias_name 可以为这个docker指定一个别名, 要放前面, docker run -tid --name alias_name images:version /bin/bash
+    --hostname 指定hostname, 类似--ip
+    -p docker 容器的端口:外部主机的端口, 作端口映射, 来公开在dockerfile里面定义的expose的所有端口.
+    -v 挂在目录, 外部主机目录:容器内部目录
+
+
 更新docker images里面的内容后. 
 需要stop掉当前的docker, 然后rm 掉, 启新的
 docker ps -a 
@@ -419,6 +429,7 @@ docker top test_web  查看docker容器的正在运行的程序
 卷可以在容器间共享, 即使容器停止. 卷里的内容依旧存在. 适合对代码作开发和测试
     -v 参数指定了卷的源目录(本地宿主机的目录)和容器里的目的目录. 这两个目录用:分隔,目的目录不存在会自动建
         也可以在目的目录后面加上rw, ro 来指定目的目录的读写状态
+    -v host_path:docker_path
 docker run -d -p 80 --name website \
         -v $PWD/website:/var/www/html/website:ro \
         rainysia/new_project_name nginx
