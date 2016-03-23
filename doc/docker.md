@@ -107,7 +107,7 @@ docker inspect --format='{{.State.Running }}' 20f66 来限定输出
 
 docker run -i -t user/project /bin/bash 进入docker的交互式shell
     -i 标志保证容器中STDIN是开启的. -t表示告诉docker要为创建的容器分配一个伪tty终端
-    --name alias_name 可以为这个docker指定一个别名
+    --name alias_name 可以为这个docker指定一个别名, 要放前面, docker run -tid --name alias_name images:version /bin/bash
 docker rm alias_name 来删除同名容器
     #exit 退出该docker
 
@@ -409,6 +409,7 @@ docker run -d -p 127.0.0.1:44444:80 --name website \
         rainysia/nginx nginx
 
 docker run -d -p 127.0.0.1:44444:80 --name test_web rainysia/nginx nginx
+          daemon port ip:port:external_port alias_name images command_in_container
 
 docker logs -f test_web 查看docker运行的日志
 docker port test_web 80 查看docker容器的端口映射
