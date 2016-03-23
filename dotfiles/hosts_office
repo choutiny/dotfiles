@@ -4521,7 +4521,9 @@ ff02::2 ip6-allrouters
 68.232.44.251	w3schools.com
 68.232.44.251	www.w3schools.com
 # W3schools End
-# Modify hosts end
+# Modified hosts end
+
+183.60.90.82 www.v2ex.com v2ex.com *.v2ex.com
 0.0.0.0 ajax.googleapis.com
 0.0.0.0 www.googleapis.com
 0.0.0.0 google-analytics.com
