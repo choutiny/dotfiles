@@ -10,4 +10,10 @@ netstat -anp | grep 8888
 docker pull gethue/hue:latest       # >2.0G
 docker build --rm -t gethue/hue:latest
 docker run -it -d -p 8888:8888 gethue/hue:latest bash
+
+docker run -it -d --hostname halo-cnode1.domain.org -p 8888:8888 cdkdc.domain.org:5000/hue:latest bash  hue
+
+docker exec -it container_name /bin/bash
+ip addr   172.17.0.2
+http://172.17.0.2:8888/accounts/login/?next=/
 ```

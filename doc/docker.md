@@ -993,6 +993,21 @@ or
 
 systemctl restart docker
 systemctl daemon-reload
+
+
+centos7:
+vim /etc/systemd/system/docker.service
+add [Service]
+EnvironmentFile=-/etc/sysconfig/docker
+ExecStart=/usr/bin/docker daemon -H fd:// $OPTIONS
+
+vim /etc/sysconfig/docker
+add
+    OPTIONS="-D --selinux-enabled --insecure-registry 192.168.85.116:5000 --insecure-registry cdcbi.domain.org:5000 --insecure-registry hi-docker.domain.org"
+systemctl restart docker
+systemctl daemon-reload
+
+    
 ```
 
 # Docker simple
