@@ -429,7 +429,7 @@ docker top test_web  查看docker容器的正在运行的程序
 卷可以在容器间共享, 即使容器停止. 卷里的内容依旧存在. 适合对代码作开发和测试
     -v 参数指定了卷的源目录(本地宿主机的目录)和容器里的目的目录. 这两个目录用:分隔,目的目录不存在会自动建
         也可以在目的目录后面加上rw, ro 来指定目的目录的读写状态
-    -v host_path:docker_path
+    -v host_path:docker_path, 注意一定要全路径.(绝对路径)
 docker run -d -p 80 --name website \
         -v $PWD/website:/var/www/html/website:ro \
         rainysia/new_project_name nginx

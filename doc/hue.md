@@ -55,6 +55,8 @@ docker run -tid --name hue8888 --hostname cnode1.domain.org -p 8888:8888 -v /usr
     最后是要启动容器后要运行的命令 ./build/env/bin/hue runserver_plus 0.0.0.0:8888
     cnode1.domain.org 是我的一台服务器的域名. 拿来跑hue的
     c-docker.domain.org 是我的私有docker仓库. 注意这里需要在docker daemon里面加上 --insecure-registry c-docker.domain.org:5000来允许不安全的授权拉取
+
+修改相关参数后, docker restart hue8888 
 ```
 
 ###配置hue
@@ -74,8 +76,18 @@ hive_conf_dir=/etc/hive/conf
 
 hbase_clusters=(cluster1|halo-cnode2.domain.org:9090)
 hbase_conf_dir=/etc/hbase/conf
+    [[[mysql]]]
+      nice_name="Hyve-ENG UAT MySQL"
+      name=mysqldbname
+      engine=mysql
+      host=192.168.85.116
+      port=3306
+      user=tommy
+      password=p12391kfjkew
+
 ```
 
+scp pseudo-distributed.ini to cnode1 /docker-config/
 注意上面的地址 hbase_clusters 的cluster1只是hue里面显示的, 可以随便命名, cnode2.domain.org:9090 是hbase thrift 1的地址, 在ambari的主机里面用如下命令启动起来
 ```
 /usr/hdp/2.4.0.0-169/hbase/bin/hbase-daemon.sh start thrift
