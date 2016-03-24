@@ -4738,6 +4738,24 @@ systemctl is-enabled nginx  #check nginx will start when system initial
 systemctl enable mysql      #make mysql will start when system initial
 systemctl --failed          #list all failed
 systemctl status mysql      #show the mysql status
+
+Sysvinit 命令	Systemd 命令	备注
+service frobozz start	systemctl start frobozz.service	用来启动一个服务 (并不会重启现有的)
+service frobozz stop	systemctl stop frobozz.service	用来停止一个服务 (并不会重启现有的)。
+service frobozz restart	systemctl restart frobozz.service	用来停止并启动一个服务。
+service frobozz reload	systemctl reload frobozz.service	当支持时，重新装载配置文件而不中断等待操作。
+service frobozz condrestart	systemctl condrestart frobozz.service	如果服务正在运行那么重启它。
+service frobozz status	systemctl status frobozz.service	汇报服务是否正在运行。
+ls /etc/rc.d/init.d/	systemctl list-unit-files --type=service (推荐)
+ls /lib/systemd/system/*.service /etc/systemd/system/*.service	用来列出可以启动或停止的服务列表。
+chkconfig frobozz on	systemctl enable frobozz.service	在下次启动时或满足其他触发条件时设置服务为启用
+chkconfig frobozz off	systemctl disable frobozz.service	在下次启动时或满足其他触发条件时设置服务为禁用
+chkconfig frobozz	systemctl is-enabled frobozz.service	用来检查一个服务在当前环境下被配置为启用还是禁用。
+chkconfig --list	systemctl list-unit-files --type=service (推荐)
+ls /etc/systemd/system/*.wants/	输出在各个运行级别下服务的启用和禁用情况
+chkconfig frobozz --list	ls /etc/systemd/system/*.wants/frobozz.service	用来列出该服务在哪些运行级别下启用和禁用。
+chkconfig frobozz --add	systemctl daemon-reload	当您创建新服务文件或者变更设置时使用。
+
 ```
 
 105.mysql perfermance
