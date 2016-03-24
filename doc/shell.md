@@ -224,6 +224,8 @@ tail -f /tmp/log | sed -u 's/^/key=791f28\&content=/' | sed -u 's/"/-@-/g' | sed
     ls -d */ 
     ls -F | grep "/$"
     ls -l | grep "^d"
+
+stat -c "%U %G" filename 也可以查看用户和组
 ```
 
 8.pushd popd 快速定位
