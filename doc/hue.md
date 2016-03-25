@@ -85,6 +85,16 @@ hbase_conf_dir=/etc/hbase/conf
       user=tommy
       password=p12391kfjkew
 
+    [[[mysql2]]]
+      nice_name="Hyve-ENG UAT MySQL"
+      name=mysqldbname2
+      engine=mysql
+      host=192.168.85.116
+      port=3306
+      user=tommy
+      password=p12391kfjkew
+      options={ "init_command":"SET NAMES 'utf8'"}
+
 ```
 
 scp pseudo-distributed.ini to cnode1 /docker-config/
