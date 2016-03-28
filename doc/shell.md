@@ -707,6 +707,8 @@ killall process_name 杀死一组命令 = killall -9
 killall -u username process_name 杀死用户的指定进程 如果需要确认 -i
 pkill process_name 
 pkill -s signal process_name
+pkill -kill -t pts/0 踢掉tty/0的用户,踢下线
+
 
 trap 捕捉并相应信号
 trap 'signal_handler_function_name' signal list 其中signal list以空格分隔,可以是信号数字或者信号名称
