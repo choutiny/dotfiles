@@ -384,7 +384,7 @@ $ ktutil
 ktutil: rkt hdfs-unmerged.keytab
 ktutil: rkt HTTP.keytab
 ktutil: wkt hdfs.keytab
-使用 klist 显示 hdfs.keytab 文件列表：
+使用 klist 显示 hdfs.keytab 文件列表, (合并的作用是让多个keytab存在一个keytab文件中)
 
 $ klist -ket  hdfs.keytab
 Keytab name: FILE:hdfs.keytab
