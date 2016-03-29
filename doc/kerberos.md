@@ -158,6 +158,7 @@ tommyx@EXAMPLE.ORG
 配置 Kerberos Client
 安装相关模块
 yum install -y krb5-libs krb5-workstation pam_krb5
+apt-get install krb5-user libpam-krb5
 配置文件
 将 Server 上的 /etc/krb5.conf 直接 copy 过来即可
 向 Kerberos 数据库中添加 Client 的域名
