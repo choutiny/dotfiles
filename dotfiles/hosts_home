@@ -4495,7 +4495,9 @@ ff02::2 ip6-allrouters
 # Travis CI fastly CDN End
 
 # Github start
-192.30.252.141	gist.github.com
+#192.30.252.141    gist.github.com
+192.30.252.129    github.com
+192.30.252.131    github.com
 # Github end
 
 # W3schools Start
