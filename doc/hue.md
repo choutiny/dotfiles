@@ -123,6 +123,23 @@ beeswax	hive_server_host	192.168.85.119	Hive所在节点主机名/IP
 beeswax	hive_server_port	10000	HiveServer2服务端口号
 beeswax	hive_conf_dir	/usr/local/hive/conf	Hive配置文件目录
 ```
+kerberos for HUE
+```
+addprinc -randkey hue/hue.server.fully.qualified.domain.name@DOMAIN.ORG
+kadmin.local -q "xst -norandkey -k hue.keytab hue/fully.qualified.domain.name host/fully.qualified.domain.name"
+kinit -k -t ./hue.keytab hue/halo-cnode1.domain.org@DOMAIN.ORG
+klist -ket ./hue.keytab
+vim /etc/hue/hue.ini
+Replace the kinit_path value, /usr/kerberos/bin/kinit
+
+ [[kerberos]]
+ # Path to Hue's Kerberos keytab file
+ hue_keytab=/etc/hue/hue.keytab
+ # Kerberos principal name for Hue
+ hue_principal=hue/FQDN@REALM
+ # add kinit path for non root users
+ kinit_path=/usr/kerberos/bin/kinit
+```
 
 ###参考
 -----------

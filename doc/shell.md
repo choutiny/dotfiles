@@ -707,6 +707,8 @@ killall process_name 杀死一组命令 = killall -9
 killall -u username process_name 杀死用户的指定进程 如果需要确认 -i
 pkill process_name 
 pkill -s signal process_name
+pkill -kill -t pts/0 踢掉tty/0的用户,踢下线
+
 
 trap 捕捉并相应信号
 trap 'signal_handler_function_name' signal list 其中signal list以空格分隔,可以是信号数字或者信号名称
@@ -1449,6 +1451,35 @@ dig pool.ntp.org
 ntpdate 67.213.74.13
 ntpdate 0.ubuntu.pool.ntp.org
 ntpdate timeserver2.domain.org
+
+ntpd在实际同步时间时是一点点的校准过来时间的，最终把时间慢慢的校正对。而ntpdate不会考虑其他程序是否会阵痛，直接调整时间。
+vi /etc/ntp.conf
+`http://support.ntp.org/bin/view/Servers/NTPPoolServers`
+server asia.pool.ntp.org iburst 
+
+`centos7`
+yum install ntp
+systemctl enable ntpd
+systemctl start ntpd
+ntpstat 查看是否更新
+`debian8`
+systemctl enable ntp
+systemctl start ntp
+
+ntpd -pn 查看状态
+      remote            refid       st t when poll reach    delay    offset   jitter
+==============================================================================
+ 64.25.87.54      128.118.25.5      2 u    10    64    17    79.194   -542.89    1.942
+ 64.72.116.51     129.7.1.66        2 u     9    64    17    51.569   -532.23    1.803
+ 64.72.116.50     129.7.1.66        2 u    11    64    17    51.417   -516.70    1.417
+ 64.72.116.45     129.7.1.66        2 u     7    64    17    51.586   -532.36    1.135
+*127.127.1.0      LOCAL(0)         10 l     3    64    17     0.000     0.000    0.001
+st 这列显示自动选的四个 NTP 服务器都是 Stratum = 2。最后一个是本地时钟。前四行的 offset 显示本地时钟和四个 NTP 服务器都有大概 500 毫秒的差距。ntpstat 显示目前只和本地时钟同步：
+
+
+iburst选项,如果第一次尝试无法建立连接，程序会发送一系列的包。burst 选项则总是发送一系列的包，即使第一次也是这样。如果没有明确的允许的话不要使用 burst 选项，有可能被封禁
+
+
 ```
 
 55.System index
@@ -1624,6 +1655,7 @@ top 后 在shift + M 所占内存的排序显示 memory
 
 iptraf -g //查看各个接口的流量
 iostat -d -x /dev/sda2 2 //用iostat查看磁盘/dev/sda2的磁盘i/o情况,每两秒刷新一次
+iostat -d -x -k 1 命令，查看硬盘的操作
  paste -sd '|||\n' test //文件的每4行转换成1行,并用|隔开.
 lsof -i :22 //知道22端口现在运行什么程序
 lsof -c abc //显示abc进程现在打开的文件
