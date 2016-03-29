@@ -6,9 +6,8 @@ P-ssh
 ### Installation
 ------------------
 ```
-pip install parallel-ssh
-or 
-python setup.py install
+git clone git@github.com:robinbowes/pssh.git
+cd pssh && python setup.py install
 ```
 
 ### Command
