@@ -974,6 +974,10 @@ $ curl -X GET http://localhost:5000/v2/ubuntu/tags/list
 {"name":"ubuntu","tags":["latest"]}
 
 
+对container
+docker commit container_id new_image_name  #container_id 来自docker ps -l, 这样会暂停docker容器的运行,并且保存为一个image
+
+
 error: docker user https
 因为Docker从1.3.X之后，与docker registry交互默认使用的是https，然而此处搭建的私有仓库只提供http服务，所以当与私有仓库交互时就会报上面的错误。为了解决这个问题需要在启动docker server时增加启动参数为默认使用http访问。修改docker启动配置文件
 vim /etc/init/docker.conf
