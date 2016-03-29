@@ -1458,6 +1458,7 @@ vi /etc/ntp.conf
 server asia.pool.ntp.org iburst 
 
 `centos7`
+yum install ntp
 systemctl enable ntpd
 systemctl start ntpd
 ntpstat 查看是否更新
@@ -1654,6 +1655,7 @@ top 后 在shift + M 所占内存的排序显示 memory
 
 iptraf -g //查看各个接口的流量
 iostat -d -x /dev/sda2 2 //用iostat查看磁盘/dev/sda2的磁盘i/o情况,每两秒刷新一次
+iostat -d -x -k 1 命令，查看硬盘的操作
  paste -sd '|||\n' test //文件的每4行转换成1行,并用|隔开.
 lsof -i :22 //知道22端口现在运行什么程序
 lsof -c abc //显示abc进程现在打开的文件
