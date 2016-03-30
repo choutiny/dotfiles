@@ -188,6 +188,14 @@ e.g.: drop 'table_name'
 ```
 e.g.: delete 'table_name', 'rowkey', 'col:qual'
 >delete 'testtable','myrow-2','colfam1:q2'
+
+hbase(main):004:0> scan "ambarismoketest"
+ROW                                                          COLUMN+CELL                                                                                                                                                                     
+ row01                                                       column=family:col01, timestamp=1458288344632, value=ida8c07755_date051816                                                                                                       
+1 row(s) in 0.0170 seconds
+
+hbase(main):005:0> delete "ambarismoketest", 'row01', 'family:col01'
+0 row(s) in 0.0180 seconds
 ```
 
 7  All command
@@ -764,7 +772,6 @@ Offline
 ```
 
 ```
-```
 快照:
    hbase> snapshot 'myTable','myTableSnapshot-122112'
 列出当前所有得快照: 
@@ -799,3 +806,32 @@ ambari-hbase thrift
 thrift默认的监听端口是9090，可以用netstat -nl | grep 9090
 ```
 
+# HBase backup
+----------------------
+[hbase backup](http://hbase.apache.org/book.html#ops.backup)
+
+1. 完全停掉hbase备份
+    stop hbase and distcp, then restore
+
+2. 在线对hbase集群复制备份
+    replication, CopyTable, Export
+    `$ bin/hbase org.apache.hadoop.hbase.mapreduce.Export <tablename> <outputdir> [<versions> [<starttime> [<endtime>]]]`
+    `$ bin/hbase org.apache.hadoop.hbase.mapreduce.Import <tablename> <inputdir>`
+inputdir指的是HDFS上的路径，建议使用绝对路径(hdfs://halo-cnode1:8020),  table的结构必须事先已经存在。
+当导出数据的HBase版本和需要导入数据的HBase版本不一致时，在数据导入时可以指定备份文件是从哪个版本的HBase中导出来的，如果是从0.94版本的HBase导出来的，则命令如下：
+    `$ bin/hbase -Dhbase.import.version=0.94 org.apache.hadoop.hbase.mapreduce.Driver import <tablename> <inputdir>`
+```
+hbase shell
+list #get table.name
+
+[root@halo-cnode1 backup]# hbase org.apache.hadoop.hbase.mapreduce.Export "ambarismoketest" /home/hdfs/backup
+
+Exception in thread "main" org.apache.hadoop.security.AccessControlException: Permission denied: user=root, access=WRITE^C
+
+[root@halo-cnode1 usr]# sudo -u hdfs hadoop fs -mkdir /user/root
+[root@halo-cnode1 usr]# sudo -u hdfs hadoop fs -chown root:root /user/root
+
+hadoop fs -copyToLocal /hbase/input ~/Documents/output_name
+After that, I copied that data back to another hbase (other system) by following command
+hadoop fs -copyFromLocal ~/Documents/input /hbase/mydata
+```
