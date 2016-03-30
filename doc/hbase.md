@@ -345,6 +345,34 @@ delete 'scores','Jim'
 
 删除数据命令也没太多变化,只有一个:
 hbase> delete 't1', 'r1', 'c1', ts1
+
+hbase(main):070:0> scan "test.domain"
+ROW                                                          COLUMN+CELL                                                                                                                                                                     
+ r1                                                          column=info:email, timestamp=1457599507962, value=tommyx@domain.com                                                                                                             
+ r1                                                          column=info:name, timestamp=1457599498601, value=tommy                                                                                                                          
+ r2                                                          column=info:email, timestamp=1457599523633, value=susanl@domain.com                                                                                                             
+ r2                                                          column=info:name, timestamp=1457599531716, value=susanl                
+
+hbase(main):071:0> delete "test.domain","r1","info:email"
+0 row(s) in 0.4870 seconds
+
+hbase(main):072:0> scan "test.domain"
+ROW                                                          COLUMN+CELL                                                                                                                                                                     
+ r1                                                          column=info:name, timestamp=1457599498601, value=tommy                                                                                                                          
+ r2                                                          column=info:email, timestamp=1457599523633, value=susanl@domain.com                                                                                                             
+ r2                                                          column=info:name, timestamp=1457599531716, value=susanl                                                                                                                         
+2 row(s) in 1.1770 seconds
+
+
+hbase(main):013:0> deleteall "test.domain","r2"
+0 row(s) in 0.0250 seconds
+
+hbase(main):014:0> scan 'test.domain'
+ROW                                                          COLUMN+CELL                                                                                                                                                                     
+0 row(s) in 0.7280 seconds
+
+
+
 另外有一个deleteall命令,可以进行整行的范围的删除操作,慎用！
 如果需要进行全表删除操作,就使用truncate命令,其实没有直接的全表删除命令,这个命令也是disable,drop,create三个命令组合出来的.
 ```
@@ -824,8 +852,11 @@ inputdir指的是HDFS上的路径，建议使用绝对路径(hdfs://halo-cnode1:
 hbase shell
 list #get table.name
 
-[root@halo-cnode1 backup]# hbase org.apache.hadoop.hbase.mapreduce.Export "ambarismoketest" /home/hdfs/backup
+[root@halo-cnode1 backup]# sudo -u hdfs hadoop fs -mkdir /tommyx
+[root@halo-cnode1 backup]# sudo -u hdfs hadoop fs -chown root:root /tommyx
+[root@halo-cnode1 backup]# hbase org.apache.hadoop.hbase.mapreduce.Export "test.domain" /tommyx/test.domain
 
+[root@halo-cnode1 backup]# hbase org.apache.hadoop.hbase.mapreduce.Export "ambarismoketest" /home/hdfs/backup
 Exception in thread "main" org.apache.hadoop.security.AccessControlException: Permission denied: user=root, access=WRITE^C
 
 [root@halo-cnode1 usr]# sudo -u hdfs hadoop fs -mkdir /user/root
@@ -834,4 +865,10 @@ Exception in thread "main" org.apache.hadoop.security.AccessControlException: Pe
 hadoop fs -copyToLocal /hbase/input ~/Documents/output_name
 After that, I copied that data back to another hbase (other system) by following command
 hadoop fs -copyFromLocal ~/Documents/input /hbase/mydata
+
+hadoop fs -rm -r /user   #需要切换到该user下, 或者看http://halo-cnode1:50070/explorer.html#/ 里面的目录文件权限
+
+hbase shell> deleteall 'test.synnex', 'r1'
+hbase shell> deleteall 'test.synnex', 'r2'
+hbase org.apache.hadoop.hbase.mapreduce.Import test.synnex /tommyx/test.synnex
 ```
