@@ -774,6 +774,20 @@ RegionServer(RS)
             </value>
             </property>
 
+hbase修改table压缩格式
+disable 'table_name'
+alter 'table_name', NAME => 'column family', COMPRESSION => 'snappy'    #alter apData,{NAME=>'cf1',COMPRESSION=>'snappy'}
+如果输错cf, 会创建一个新的列族,需要删除掉 alter 'table_name', {NAME => 'cf', METHOD => 'delete'}
+enable 'table_name'
+enable表后，HBase表的压缩格式并没有生效，还需要一个动作，即HBase major_compact
+major_compact 'table_name'  #动作耗时较长，会对服务有很大影响，可以选择在一个服务不忙的时间来做。
+通过hadoop fs -du -s -h /hbase/table_name 可以知道通过major_compact后的数据大小
+
+测试是否安装了snappy, hbase org.apache.hadoop.hbase.util.CompressionTest hdfs://host/path/to/hbase snappy
+
+
+
+
 Regions是由每个Column Family的Store组成.
 
 Region大小
@@ -848,6 +862,19 @@ thrift默认的监听端口是9090，可以用netstat -nl | grep 9090
 inputdir指的是HDFS上的路径，建议使用绝对路径(hdfs://halo-cnode1:8020),  table的结构必须事先已经存在。
 当导出数据的HBase版本和需要导入数据的HBase版本不一致时，在数据导入时可以指定备份文件是从哪个版本的HBase中导出来的，如果是从0.94版本的HBase导出来的，则命令如下：
     `$ bin/hbase -Dhbase.import.version=0.94 org.apache.hadoop.hbase.mapreduce.Driver import <tablename> <inputdir>`
+
+$ hbase org.apache.hadoop.hbase.mapreduce.Export backup_table file:///opt/backup_table   
+使用单机版做此操作是没有问题的，但是当使用多机版的hbase的时候，如果你的系统中有多个mapreduce的tasktracker。那么数据会被导出到多台机器（每个tasktracker）的local目录。
+所以在使用export 命令在进行导出操作时，建议现将数据导出到hdfs中，然后再将数据从hdfs中获取下来
+ 默认不写file://的时候就是导出到hdfs上了  
+hbase org.apache.hadoop.hbase.mapreduce.Export backup_table /tmp/backup_table   
+hadoop dfs -get /tmp/backup_table /opt/backup_table  
+如果在hbase中的一个row出现大量的数据，那么导出时会报出ScannerTimeoutException的错误。
+这时候需要设置hbase.export.scaaner.batch 这个参数。这样导出时的错误就可以避免了。
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dhbase.export.scanner.batch=2000 backup_table /tmp/backup_table   
+为了节省空间可以使用compress选项
+hbase的数据导出的时候，如果不适用compress的选项，数据量的大小可能相差5倍。因此使用compress的选项，备份数据的时候是可以节省不少空间的
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dhbase.export.scanner.batch=2000 -D mapred.output.compress=true backup_table /tmp/backup_table  
 ```
 hbase shell
 list #get table.name
@@ -868,7 +895,344 @@ hadoop fs -copyFromLocal ~/Documents/input /hbase/mydata
 
 hadoop fs -rm -r /user   #需要切换到该user下, 或者看http://halo-cnode1:50070/explorer.html#/ 里面的目录文件权限
 
-hbase shell> deleteall 'test.synnex', 'r1'
-hbase shell> deleteall 'test.synnex', 'r2'
-hbase org.apache.hadoop.hbase.mapreduce.Import test.synnex /tommyx/test.synnex
+hbase shell> deleteall 'test.domain', 'r1'
+hbase shell> deleteall 'test.domain', 'r2'
+hbase org.apache.hadoop.hbase.mapreduce.Import test.domain /tommyx/test.domain
+```
+
+
+### Hbase Configuration
+----------------------
+```
+zookeeper.session.timeout
+默认值：3分钟（180000ms）
+说明：RegionServer与Zookeeper间的连接超时时间。当超时时间到后，ReigonServer会被Zookeeper从RS集群清单中移除，HMaster收到移除通知后，会对这台server负责的regions重新balance，让其他存活的RegionServer接管.
+调优：
+这个timeout决定了RegionServer是否能够及时的failover。设置成1分钟或更低，可以减少因等待超时而被延长的failover时间。
+不过需要注意的是，对于一些Online应用，RegionServer从宕机到恢复时间本身就很短的（网络闪断，crash等故障，运维可快速介入），如果调低timeout时间，反而会得不偿失。因为当ReigonServer被正式从RS集群中移除时，HMaster就开始做balance了（让其他RS根据故障机器记录的WAL日志进行恢复）。当故障的RS在人工介入恢复后，这个balance动作是毫无意义的，反而会使负载不均匀，给RS带来更多负担。特别是那些固定分配regions的场景。
+hbase.zookeeper.quorum
+默认值：localhost
+说明：hbase所依赖的zookeeper部署
+调优：
+部署的zookeeper越多，可靠性就越高，但是部署只能部署奇数个，主要为了便于选出leader。最好给每个zookeeper 1G的内存和独立的磁盘，可以确保高性能。hbase.zookeeper.property.dataDir可以修改zookeeper保存数据的路径。
+hbase.regionserver.handler.count
+默认值：10
+说明：RegionServer的请求处理IO线程数。
+调优：
+这个参数的调优与内存息息相关。
+较少的IO线程，适用于处理单次请求内存消耗较高的Big PUT场景（大容量单次PUT或设置了较大cache的scan，均属于Big PUT）或ReigonServer的内存比较紧张的场景。
+较多的IO线程，适用于单次请求内存消耗低，TPS要求非常高的场景。设置该值的时候，以监控内存为主要参考。
+这里需要注意的是如果server的region数量很少，大量的请求都落在一个region上，因快速充满memstore触发flush导致的读写锁会影响全局TPS，不是IO线程数越高越好。
+压测时，开启Enabling RPC-level logging，可以同时监控每次请求的内存消耗和GC的状况，最后通过多次压测结果来合理调节IO线程数。
+这里是一个案例?Hadoop and HBase Optimization for Read Intensive Search Applications，作者在SSD的机器上设置IO线程数为100，仅供参考。
+hbase.hregion.max.filesize
+默认值：256M
+说明：在当前ReigonServer上单个Reigon的最大存储空间，单个Region超过该值时，这个Region会被自动split成更小的region。
+调优：
+小region对split和compaction友好，因为拆分region或compact小region里的storefile速度很快，内存占用低。缺点是split和compaction会很频繁。
+特别是数量较多的小region不停地split, compaction，会导致集群响应时间波动很大，region数量太多不仅给管理上带来麻烦，甚至会引发一些Hbase的bug。
+一般512以下的都算小region。
+大region，则不太适合经常split和compaction，因为做一次compact和split会产生较长时间的停顿，对应用的读写性能冲击非常大。此外，大region意味着较大的storefile，compaction时对内存也是一个挑战。
+当然，大region也有其用武之地。如果你的应用场景中，某个时间点的访问量较低，那么在此时做compact和split，既能顺利完成split和compaction，又能保证绝大多数时间平稳的读写性能。
+既然split和compaction如此影响性能，有没有办法去掉？
+compaction是无法避免的，split倒是可以从自动调整为手动。
+只要通过将这个参数值调大到某个很难达到的值，比如100G，就可以间接禁用自动split（RegionServer不会对未到达100G的region做split）。
+再配合RegionSplitter这个工具，在需要split时，手动split。
+手动split在灵活性和稳定性上比起自动split要高很多，相反，管理成本增加不多，比较推荐online实时系统使用。
+内存方面，小region在设置memstore的大小值上比较灵活，大region则过大过小都不行，过大会导致flush时app的IO wait增高，过小则因store file过多影响读性能。
+hbase.regionserver.global.memstore.upperLimit/lowerLimit
+默认值：0.4/0.35
+upperlimit说明：hbase.hregion.memstore.flush.size 这个参数的作用是当单个Region内所有的memstore大小总和超过指定值时，flush该region的所有memstore。RegionServer的flush是通过将请求添加一个队列，模拟生产消费模式来异步处理的。那这里就有一个问题，当队列来不及消费，产生大量积压请求时，可能会导致内存陡增，最坏的情况是触发OOM。
+这个参数的作用是防止内存占用过大，当ReigonServer内所有region的memstores所占用内存总和达到heap的40%时，HBase会强制block所有的更新并flush这些region以释放所有memstore占用的内存。
+lowerLimit说明： 同upperLimit，只不过lowerLimit在所有region的memstores所占用内存达到Heap的35%时，不flush所有的memstore。它会找一个memstore内存占用最大的region，做个别flush，此时写更新还是会被block。lowerLimit算是一个在所有region强制flush导致性能降低前的补救措施。在日志中，表现为 “** Flush thread woke up with memory above low water.”
+调优：这是一个Heap内存保护参数，默认值已经能适用大多数场景。
+参数调整会影响读写，如果写的压力大导致经常超过这个阀值，则调小读缓存hfile.block.cache.size增大该阀值，或者Heap余量较多时，不修改读缓存大小。
+如果在高压情况下，也没超过这个阀值，那么建议你适当调小这个阀值再做压测，确保触发次数不要太多，然后还有较多Heap余量的时候，调大hfile.block.cache.size提高读性能。
+还有一种可能性是?hbase.hregion.memstore.flush.size保持不变，但RS维护了过多的region，要知道 region数量直接影响占用内存的大小。
+hfile.block.cache.size
+默认值：0.2
+说明：storefile的读缓存占用Heap的大小百分比，0.2表示20%。该值直接影响数据读的性能。
+调优：当然是越大越好，如果写比读少很多，开到0.4-0.5也没问题。如果读写较均衡，0.3左右。如果写比读多，果断默认吧。设置这个值的时候，你同时要参考?hbase.regionserver.global.memstore.upperLimit?，该值是memstore占heap的最大百分比，两个参数一个影响读，一个影响写。如果两值加起来超过80-90%，会有OOM的风险，谨慎设置。
+hbase.hstore.blockingStoreFiles
+默认值：7
+说明：在flush时，当一个region中的Store（Coulmn Family）内有超过7个storefile时，则block所有的写请求进行compaction，以减少storefile数量。
+调优：block写请求会严重影响当前regionServer的响应时间，但过多的storefile也会影响读性能。从实际应用来看，为了获取较平滑的响应时间，可将值设为无限大。如果能容忍响应时间出现较大的波峰波谷，那么默认或根据自身场景调整即可。
+hbase.hregion.memstore.block.multiplier
+默认值：2
+说明：当一个region里的memstore占用内存大小超过hbase.hregion.memstore.flush.size两倍的大小时，block该region的所有请求，进行flush，释放内存。
+虽然我们设置了region所占用的memstores总内存大小，比如64M，但想象一下，在最后63.9M的时候，我Put了一个200M的数据，此时memstore的大小会瞬间暴涨到超过预期的hbase.hregion.memstore.flush.size的几倍。这个参数的作用是当memstore的大小增至超过hbase.hregion.memstore.flush.size 2倍时，block所有请求，遏制风险进一步扩大。
+调优： 这个参数的默认值还是比较靠谱的。如果你预估你的正常应用场景（不包括异常）不会出现突发写或写的量可控，那么保持默认值即可。如果正常情况下，你的写请求量就会经常暴长到正常的几倍，那么你应该调大这个倍数并调整其他参数值，比如hfile.block.cache.size和hbase.regionserver.global.memstore.upperLimit/lowerLimit，以预留更多内存，防止HBase server OOM。
+hbase.hregion.memstore.mslab.enabled
+默认值：true
+说明：减少因内存碎片导致的Full GC，提高整体性能。
+调优：
+hbase.client.scanner.caching
+默认值：1
+说明：scanner调用next方法一次获取的数据条数
+调优：少的RPC是提高hbase执行效率的一种方法，理论上一次性获取越多数据就会越少的RPC，也就越高效。但是内存是最大的障碍。设置这个值的时候要选择合适的大小，一面一次性获取过多数据占用过多内存，造成其他程序使用内存过少。或者造成程序超时等错误（这个超时与hbase.regionserver.lease.period相关）。
+hbase.regionserver.lease.period
+默认值：60000
+说明：客户端租用HRegion server 期限，即超时阀值。
+调优：
+这个配合hbase.client.scanner.caching使用，如果内存够大，但是取出较多数据后计算过程较长，可能超过这个阈值，适当可设置较长的响应时间以防被认为宕机。
+
+hbase.rootdir
+这 个目录是region server的共享目录，用来持久化Hbase。URL需要是'完全正确'的，还要包含文件系统的scheme。例如，要表示hdfs中的 '/hbase'目录，namenode 运行在namenode.example.org的9090端口。则需要设置为hdfs://namenode.example.org:9000 /hbase。默认情况下Hbase是写到/tmp的。不改这个配置，数据会在重启的时候丢失。
+默认: file:///tmp/hbase-${user.name}/hbase
+ hbase.master.port
+Hbase的Master的端口.
+默认: 60000
+ hbase.cluster.distributed
+Hbase的运行模式。false是单机模式，true是分布式模式。若为false,Hbase和Zookeeper会运行在同一个JVM里面。
+默认: false
+ hbase.tmp.dir
+本地文件系统的临时文件夹。可以修改到一个更为持久的目录上。(/tmp会在重启时清楚)
+默认: /tmp/hbase-${user.name}
+ hbase.master.info.port
+HBase Master web 界面端口. 设置为-1 意味着你不想让他运行。
+默认: 60010
+ hbase.master.info.bindAddress
+HBase Master web 界面绑定的端口
+默认: 0.0.0.0
+ hbase.client.write.buffer
+HTable 客户端的写缓冲的默认大小。这个值越大，需要消耗的内存越大。因为缓冲在客户端和服务端都有实例，所以需要消耗客户端和服务端两个地方的内存。得到的好处 是，可以减少RPC的次数。可以这样估算服务器端被占用的内存： hbase.client.write.buffer * hbase.regionserver.handler.count
+默认: 2097152
+ hbase.regionserver.port
+HBase RegionServer绑定的端口
+默认: 60020
+ hbase.regionserver.info.port
+HBase RegionServer web 界面绑定的端口 设置为 -1 意味这你不想与运行 RegionServer 界面.
+默认: 60030
+ hbase.regionserver.info.port.auto
+Master或RegionServer是否要动态搜一个可以用的端口来绑定界面。当hbase.regionserver.info.port已经被占用的时候，可以搜一个空闲的端口绑定。这个功能在测试的时候很有用。默认关闭。
+默认: false
+ hbase.regionserver.info.bindAddress
+HBase RegionServer web 界面的IP地址
+默认: 0.0.0.0
+ hbase.regionserver.class
+RegionServer 使用的接口。客户端打开代理来连接region server的时候会使用到。
+默认: org.apache.hadoop.hbase.ipc.HRegionInterface
+ hbase.client.pause
+通常的客户端暂停时间。最多的用法是客户端在重试前的等待时间。比如失败的get操作和region查询操作等都很可能用到。
+默认: 1000
+ hbase.client.retries.number
+最大重试次数。例如 region查询，Get操作，Update操作等等都可能发生错误，需要重试。这是最大重试错误的值。
+默认: 10
+ hbase.client.scanner.caching
+当 调用Scanner的next方法，而值又不在缓存里的时候，从服务端一次获取的行数。越大的值意味着Scanner会快一些，但是会占用更多的内存。当 缓冲被占满的时候，next方法调用会越来越慢。慢到一定程度，可能会导致超时。例如超过了 hbase.regionserver.lease.period。
+默认: 1
+ hbase.client.keyvalue.maxsize
+一 个KeyValue实例的最大size.这个是用来设置存储文件中的单个entry的大小上界。因为一个KeyValue是不能分割的，所以可以避免因为 数据过大导致region不可分割。明智的做法是把它设为可以被最大region size整除的数。如果设置为0或者更小，就会禁用这个检查。默认10MB。
+默认: 10485760
+ hbase.regionserver.lease.period
+客户端租用HRegion server 期限，即超时阀值。单位是毫秒。默认情况下，客户端必须在这个时间内发一条信息，否则视为死掉。
+默认: 60000
+ hbase.regionserver.handler.count
+RegionServers受理的RPC Server实例数量。对于Master来说，这个属性是Master受理的handler数量
+默认: 10
+ hbase.regionserver.msginterval
+RegionServer 发消息给 Master 时间间隔，单位是毫秒
+默认: 3000
+ hbase.regionserver.optionallogflushinterval
+将Hlog同步到HDFS的间隔。如果Hlog没有积累到一定的数量，到了时间，也会触发同步。默认是1秒，单位毫秒。
+默认: 1000
+ hbase.regionserver.regionSplitLimit
+region的数量到了这个值后就不会在分裂了。这不是一个region数量的硬性限制。但是起到了一定指导性的作用，到了这个值就该停止分裂了。默认是MAX_INT.就是说不阻止分裂。
+默认: 2147483647
+ hbase.regionserver.logroll.period
+提交commit log的间隔，不管有没有写足够的值。
+默认: 3600000
+ hbase.regionserver.hlog.reader.impl
+HLog file reader 的实现.
+默认: org.apache.hadoop.hbase.regionserver.wal.SequenceFileLogReader
+ hbase.regionserver.hlog.writer.impl
+HLog file writer 的实现.
+默认: org.apache.hadoop.hbase.regionserver.wal.SequenceFileLogWriter
+ hbase.regionserver.thread.splitcompactcheckfrequency
+region server 多久执行一次split/compaction 检查.
+默认: 20000
+ hbase.regionserver.nbreservationblocks
+储备的内存block的数量(译者注:就像石油储备一样)。当发生out of memory 异常的时候，我们可以用这些内存在RegionServer停止之前做清理操作。
+默认: 4
+ hbase.zookeeper.dns.interface
+当使用DNS的时候，Zookeeper用来上报的IP地址的网络接口名字。
+默认: default
+ hbase.zookeeper.dns.nameserver
+当使用DNS的时候，Zookeepr使用的DNS的域名或者IP 地址，Zookeeper用它来确定和master用来进行通讯的域名.
+默认: default
+ hbase.regionserver.dns.interface
+当使用DNS的时候，RegionServer用来上报的IP地址的网络接口名字。
+默认: default
+ hbase.regionserver.dns.nameserver
+当使用DNS的时候，RegionServer使用的DNS的域名或者IP 地址，RegionServer用它来确定和master用来进行通讯的域名.
+默认: default
+ hbase.master.dns.interface
+当使用DNS的时候，Master用来上报的IP地址的网络接口名字。
+默认: default
+ hbase.master.dns.nameserver
+当使用DNS的时候，RegionServer使用的DNS的域名或者IP 地址，Master用它来确定用来进行通讯的域名.
+默认: default
+ hbase.balancer.period
+    
+Master执行region balancer的间隔。
+默认: 300000
+ hbase.regions.slop
+当任一regionserver有average + (average * slop)个region是会执行Rebalance
+默认: 0
+ hbase.master.logcleaner.ttl
+Hlog存在于.oldlogdir 文件夹的最长时间, 超过了就会被 Master 的线程清理掉.
+默认: 600000
+ hbase.master.logcleaner.plugins
+LogsCleaner 服务会执行的一组LogCleanerDelegat。值用逗号间隔的文本表示。这些WAL/HLog cleaners会按顺序调用。可以把先调用的放在前面。你可以实现自己的LogCleanerDelegat，加到Classpath下，然后在这里写 下类的全称。一般都是加在默认值的前面。
+默认: org.apache.hadoop.hbase.master.TimeToLiveLogCleaner
+ hbase.regionserver.global.memstore.upperLimit
+单个region server的全部memtores的最大值。超过这个值，一个新的update操作会被挂起，强制执行flush操作。
+默认: 0.4
+ hbase.regionserver.global.memstore.lowerLimit
+当强制执行flush操作的时候，当低于这个值的时候，flush会停止。默认是堆大小的 35% . 如果这个值和 hbase.regionserver.global.memstore.upperLimit 相同就意味着当update操作因为内存限制被挂起时，会尽量少的执行flush(译者注:一旦执行flush，值就会比下限要低，不再执行)
+默认: 0.35
+ hbase.server.thread.wakefrequency
+service工作的sleep间隔，单位毫秒。 可以作为service线程的sleep间隔，比如log roller.
+默认: 10000
+ hbase.hregion.memstore.flush.size
+当memstore的大小超过这个值的时候，会flush到磁盘。这个值被一个线程每隔hbase.server.thread.wakefrequency检查一下。
+默认: 67108864
+ hbase.hregion.preclose.flush.size
+当一个region中的memstore的大小大于这个值的时候，我们又触发了close.会先运行“pre-flush”操作，清理这个需要关闭的 memstore，然后将这个region下线。当一个region下线了，我们无法再进行任何写操作。如果一个memstore很大的时候，flush 操作会消耗很多时间。"pre-flush"操作意味着在region下线之前，会先把memstore清空。这样在最终执行close操作的时 候，flush操作会很快。
+默认: 5242880
+ hbase.hregion.memstore.block.multiplier
+如果memstore有hbase.hregion.memstore.block.multiplier倍数的 hbase.hregion.flush.size的大小，就会阻塞update操作。这是为了预防在update高峰期会导致的失控。如果不设上 界，flush的时候会花很长的时间来合并或者分割，最坏的情况就是引发out of memory异常。(译者注:内存操作的速度和磁盘不匹配，需要等一等。原文似乎有误)
+默认: 2
+ hbase.hregion.memstore.mslab.enabled
+体验特性：启用memStore分配本地缓冲区。这个特性是为了防止在大量写负载的时候堆的碎片过多。这可以减少GC操作的频率。(GC有可能会Stop the world)(译者注：实现的原理相当于预分配内存，而不是每一个值都要从堆里分配)
+默认: false
+ hbase.hregion.max.filesize
+最大HStoreFile大小。若某个Column families的HStoreFile增长达到这个值，这个Hegion会被切割成两个。 Default: 256M.
+默认: 268435456
+ hbase.hstore.compactionThreshold
+当一个HStore含有多于这个值的HStoreFiles(每一个memstore flush产生一个HStoreFile)的时候，会执行一个合并操作，把这HStoreFiles写成一个。这个值越大，需要合并的时间就越长。
+默认: 3
+ hbase.hstore.blockingStoreFiles
+当一个HStore含有多于这个值的HStoreFiles(每一个memstore flush产生一个HStoreFile)的时候，会执行一个合并操作，update会阻塞直到合并完成，直到超过了hbase.hstore.blockingWaitTime的值
+默认: 7
+ hbase.hstore.blockingWaitTime
+hbase.hstore.blockingStoreFiles所限制的StoreFile数量会导致update阻塞，这个时间是来限制阻塞时间的。当超过了这个时间，HRegion会停止阻塞update操作，不过合并还有没有完成。默认为90s.
+默认: 90000
+ hbase.hstore.compaction.max
+每个“小”合并的HStoreFiles最大数量。
+默认: 10
+ hbase.hregion.majorcompaction
+一个Region中的所有HStoreFile的major compactions的时间间隔。默认是1天。 设置为0就是禁用这个功能。
+默认: 86400000
+ hbase.mapreduce.hfileoutputformat.blocksize
+MapReduce 中HFileOutputFormat可以写 storefiles/hfiles. 这个值是hfile的blocksize的最小值。通常在Hbase写Hfile的时候，bloocksize是由table schema(HColumnDescriptor)决定的，但是在mapreduce写的时候，我们无法获取schema中blocksize。这个值 越小，你的索引就越大，你随机访问需要获取的数据就越小。如果你的cell都很小，而且你需要更快的随机访问，可以把这个值调低。
+默认: 65536
+ hfile.block.cache.size
+分配给HFile/StoreFile的block cache占最大堆(-Xmx setting)的比例。默认是20%，设置为0就是不分配。
+默认: 0.2
+ hbase.hash.type
+哈希函数使用的哈希算法。可以选择两个值:: murmur (MurmurHash) 和 jenkins (JenkinsHash). 这个哈希是给 bloom filters用的.
+默认: murmur
+ hbase.master.keytab.file
+HMaster server验证登录使用的kerberos keytab 文件路径。(译者注：Hbase使用Kerberos实现安全)
+默认:
+ hbase.master.kerberos.principal
+例 如. "hbase/_HOST@EXAMPLE.COM". HMaster运行需要使用 kerberos principal name. principal name 可以在: user/hostname@DOMAIN 中获取. 如果 "_HOST" 被用做hostname portion，需要使用实际运行的hostname来替代它。
+默认:
+ hbase.regionserver.keytab.file
+HRegionServer验证登录使用的kerberos keytab 文件路径。
+默认:
+ hbase.regionserver.kerberos.principal
+例如. "hbase/_HOST@EXAMPLE.COM". HRegionServer运行需要使用 kerberos principal name. principal name 可以在: user/hostname@DOMAIN 中获取. 如果 "_HOST" 被用做hostname portion，需要使用实际运行的hostname来替代它。在这个文件中必须要有一个entry来描述 hbase.regionserver.keytab.file
+默认:
+ zookeeper.session.timeout
+ZooKeeper 会话超时.Hbase把这个值传递改zk集群，向他推荐一个会话的最大超时时间。详见http://hadoop.apache.org /zookeeper/docs/current/zookeeperProgrammers.html#ch_zkSessions "The client sends a requested timeout, the server responds with the timeout that it can give the client. "。 单位是毫秒
+默认: 180000
+ zookeeper.znode.parent
+ZooKeeper中的Hbase的根ZNode。所有的Hbase的ZooKeeper会用这个目录配置相对路径。默认情况下，所有的Hbase的ZooKeeper文件路径是用相对路径，所以他们会都去这个目录下面。
+默认: /hbase
+ zookeeper.znode.rootserver
+ZNode 保存的 根region的路径. 这个值是由Master来写，client和regionserver 来读的。如果设为一个相对地址，父目录就是 ${zookeeper.znode.parent}.默认情形下，意味着根region的路径存储在/hbase/root-region- server.
+默认: root-region-server
+ hbase.zookeeper.quorum
+Zookeeper 集群的地址列表，用逗号分割。例 如："host1.mydomain.com,host2.mydomain.com,host3.mydomain.com".默认是 localhost,是给伪分布式用的。要修改才能在完全分布式的情况下使用。如果在hbase-env.sh设置了HBASE_MANAGES_ZK， 这些ZooKeeper节点就会和Hbase一起启动。
+默认: localhost
+ hbase.zookeeper.peerport
+ZooKeeper节点使用的端口。详细参见：http://hadoop.apache.org/zookeeper/docs/r3.1.1/zookeeperStarted.html#sc_RunningReplicatedZooKeeper
+默认: 2888
+ hbase.zookeeper.leaderport
+ZooKeeper用来选择Leader的端口，详细参见：http://hadoop.apache.org/zookeeper/docs/r3.1.1/zookeeperStarted.html#sc_RunningReplicatedZooKeeper
+默认: 3888
+ hbase.zookeeper.property.initLimit
+ZooKeeper的zoo.conf中的配置。 初始化synchronization阶段的ticks数量限制
+默认: 10
+ hbase.zookeeper.property.syncLimit
+ZooKeeper的zoo.conf中的配置。 发送一个请求到获得承认之间的ticks的数量限制
+默认: 5
+ hbase.zookeeper.property.dataDir
+ZooKeeper的zoo.conf中的配置。 快照的存储位置
+默认: ${hbase.tmp.dir}/zookeeper
+ hbase.zookeeper.property.clientPort
+ZooKeeper的zoo.conf中的配置。 客户端连接的端口
+默认: 2181
+ hbase.zookeeper.property.maxClientCnxns
+ZooKeeper的zoo.conf中的配置。 ZooKeeper集群中的单个节点接受的单个Client(以IP区分)的请求的并发数。这个值可以调高一点，防止在单机和伪分布式模式中出问题。
+默认: 2000
+ hbase.rest.port
+HBase REST server的端口
+默认: 8080
+ hbase.rest.readonly
+定义REST server的运行模式。可以设置成如下的值： false: 所有的HTTP请求都是被允许的 - GET/PUT/POST/DELETE. true:只有GET请求是被允许的
+默认: false
+```
+
+###HBase Q&A
+----------------------
+1. ScannerTimeoutException
+```
+修改配置文件：$HBASE_HOME/conf/hbase-site.xml，修改或添加此属性
+<property>
+<name>hbase.regionserver.lease.period</name>
+<value>180000</value>
+</property>
+二是修改程序，换一种思路，最好一次scan在60秒内总能返回至少一条结果。
+看 HBase权威指南，发现还有中简单的方法：
+Configuration conf = HBaseConfiguration.create()  
+conf.setLong(HConstants.HBASE_REGIONSERVER_LEASE_PERIOD_KEY, 120000)  
+```
+
+2. regionServer dead
+```
+一将Zookeeper的timeout时间加长。
+二是配置“hbase.regionserver.restart.on.zk.expire” 为true。 这样子，遇到ZooKeeper session expired ， regionserver将选择 restart 而不是 abort
+具体的配置是，在hbase-site.xml中加入
+<property>
+<name>zookeeper.session.timeout</name>
+<value>90000</value>
+<description>ZooKeeper session timeout.
+</property>
+
+<property>
+<name>hbase.regionserver.restart.on.zk.expire</name>
+<value>true</value>
+<description>
+Zookeeper session expired will force regionserver exit.
+Enable this will make the regionserver restart.
+</description>
+</property>
+```
+
+3. 如果一个HDFS上的文件大小(file size) 小于块大小(block size) ，那么HDFS会实际占用Linux file system的多大空间?
+```
+1. 往hdfs里面添加新文件前，hadoop在linux上面所占的空间为 464 MB：
+2. 往hdfs里面添加大小为2673375 byte(大概2.5 MB)的文件： 2673375 derby.jar
+3. 此时，hadoop在linux上面所占的空间为 467 MB——增加了一个实际文件大小(2.5 MB)的空间，而非一个block size(128 MB)：
+4. 使用hadoop dfs -stat查看文件信息： 这里就很清楚地反映出： 文件的实际大小(file size)是2673375 byte， 但它的block size是128 MB。
+5. 通过NameNode的web console来查看文件信息: 文件的实际大小(file size)是2673375 byte， 但它的block size是128 MB
+
+值得注意的是，结果中有一个 ‘1（avg.block size 2673375 B）’的字样。这里的 'block size' 并不是指平常说的文件块大小(Block Size)—— 后者是一个元数据的概念，相反它反映的是文件的实际大小(file size)。以下是Hadoop Community的专家给我的回复： 
+“The fsck is showing you an "average blocksize", not the block size metadata attribute of the file like stat shows. In this specific case, the average is just the length of your file, which is lesser than one whole block.”
+最后一个问题是： 如果hdfs占用Linux file system的磁盘空间按实际文件大小算，那么这个”块大小“有必要存在吗？
+其实块大小还是必要的，一个显而易见的作用就是当文件通过append操作不断增长的过程中，可以通过来block size决定何时split文件。以下是Hadoop Community的专家给我的回复： 
+“The block size is a meta attribute. If you append tothe file later, it still needs to know when to split further - so it keeps that value as a mere metadata it can use to advise itself on write boundaries.” 
 ```
