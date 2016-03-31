@@ -889,6 +889,22 @@ Exception in thread "main" org.apache.hadoop.security.AccessControlException: Pe
 [root@halo-cnode1 usr]# sudo -u hdfs hadoop fs -mkdir /user/root
 [root@halo-cnode1 usr]# sudo -u hdfs hadoop fs -chown root:root /user/root
 
+                
+[root@halo-cnode1 backup]# hadoop dfs -cat /tommyx/test.domain/part-m-00000 #查看hdfs里面的存储的数据
+[root@halo-cnode1 backup]# hadoop fs -text /tommyx/test.domain/part-m-00000 #查看hdfs里面的存储的数据
+DEPRECATED: Use of this script to execute hdfs command is deprecated.
+Instead use the hdfs command for it.
+
+SEQ1org.apache.hadoop.hbase.io.ImmutableBytesWritable%org.apache.hadoop.hbase.client.Result���;��س٩!j]r1V
+-
+r1infoemail �����*(2tommyx@domain.com
+!
+r1infoname ���*(2tommyx ([r2T
+,
+r2infoemail �ͷ��*(2suans@domain.com
+ 
+r2infoname �����*(2suans ([root@halo-cnode1 backup]#
+
 hadoop fs -copyToLocal /hbase/input ~/Documents/output_name
 After that, I copied that data back to another hbase (other system) by following command
 hadoop fs -copyFromLocal ~/Documents/input /hbase/mydata
@@ -898,6 +914,8 @@ hadoop fs -rm -r /user   #需要切换到该user下, 或者看http://halo-cnode1
 hbase shell> deleteall 'test.domain', 'r1'
 hbase shell> deleteall 'test.domain', 'r2'
 hbase org.apache.hadoop.hbase.mapreduce.Import test.domain /tommyx/test.domain
+
+
 ```
 
 

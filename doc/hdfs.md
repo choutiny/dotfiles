@@ -1,5 +1,6 @@
 HDFS
 =========
+[hdfs configuration](https://hadoop.apache.org/docs/r2.6.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml)
 
 ###command
 ---------
@@ -138,10 +139,30 @@ FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
 可以看见Average block replication 仍是3
 需要修改hdfs中文件的备份系数。
 修改hdfs文件备份系数：hadoop dfs -setrep [-R] <path>  如果有-R将修改子目录文件的性质。
-`hadoop dfs -setrep -w 3 -R /user/hadoop/dir1` 就是把目录下所有文件备份系数设置为3
+`hadoop dfs -setrep -w 3 -R /user/hadoop/dir1` 就是把目录下所有文件备份系数设置为3, 如果你只有3个datanode，但是你却指定副本数为4，是不会生效的，因为每个datanode上只能存放一个副本
 `sudo -u hdfs hadoop fs -setrep -R 2 /`
 如果再fsck时候出错，往往是由于某些文件的备份不正常导致的，可以用hadoop的balancer工具修复
-自动负载均衡hadoop文件：hadoop balancer
+自动负载均衡hadoop文件：hadoop balancer, 不同节点之间复制数据的带宽是受限的，默认是1MB/s，可以通过hdfs-site.xml文件中的dfs.balance.bandwithPerSec属性指定（单位是字节）。
 查看各节点的磁盘占用情况 hadoop dfsadmin -report
+
+hadoop fsck -locations 可以看到相应的提示信息，可以看到副本丢失率为0%：
+`sudo -u hdfs hadoop fsck -locations  /` 
+
+otal size:    14866530469 B (Total open files size: 415 B)
+ Total dirs:    337
+ Total files:   706
+ Total symlinks:                0 (Files currently being written: 6)
+ Total blocks (validated):      755 (avg. block size 19690768 B) (Total open file blocks (not validated): 5)
+ Minimally replicated blocks:   755 (100.0 %)
+ Over-replicated blocks:        0 (0.0 %)
+ Under-replicated blocks:       0 (0.0 %)
+ Mis-replicated blocks:         0 (0.0 %)
+ Default replication factor:    1
+ Average block replication:     1.0
+ Corrupt blocks:                0
+ Missing replicas:              0 (0.0 %)
+ Number of data-nodes:          3
+ Number of racks:               1
+FSCK ended at Wed Mar 30 18:08:58 CST 2016 in 64 milliseconds
 
 ```
