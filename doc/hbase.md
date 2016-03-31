@@ -915,6 +915,8 @@ hbase shell> deleteall 'test.domain', 'r1'
 hbase shell> deleteall 'test.domain', 'r2'
 hbase org.apache.hadoop.hbase.mapreduce.Import test.domain /tommyx/test.domain
 
+hbase org.apache.hadoop.hbase.mapreduce.Import test.domain hdfs://halo-cnode1.domain.org:8020/tommyx/test.domain/part-m-00000
+
 
 ```
 
