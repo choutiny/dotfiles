@@ -968,6 +968,37 @@ hbase org.apache.hadoop.hbase.mapreduce.Import test.domain /tommyx/test.domain
 hbase org.apache.hadoop.hbase.mapreduce.Import test.domain hdfs://halo-cnode1.domain.org:8020/tommyx/test.domain/part-m-00000
 
 
+`restore`
+---------------
+sudo -h hdfs hadoop fs -mkdir /tommyx
+hadoop fs -copyFromLocal /home/backup/test.domain /tommyx/test.domain
+hbase shell> 
+create "test.domain",{ NAME => 'info', REPLICATION_SCOPE => '1', COMPRESSION => 'snappy'}
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import test.domain /tommyx/test.domain
+hbase shell> scan 'test.domain'
+ROW COLUMN+CELL 
+0 row(s) in 0.2290 seconds
+hbase(main):003:0> scan 'test.domain'
+ROW COLUMN+CELL 
+r1 column=info:email, timestamp=1459335595708, value=tommyx@domain.com 
+r1 column=info:name, timestamp=1459335571056, value=tommyx 
+r2 column=info:email, timestamp=1459335587513, value=tester@domain.com 
+r2 column=info:name, timestamp=1459335579163, value=tester 
+2 row(s) in 0.0160 seconds
+
+
+
+create_namespace 'testnamespace', {'PROERTY_NAME' => 'ServerStatus', NAME => 'info', REPLICATION_SCOPE => '0', COMPRESSION => 'snappy'}
+create 'testnamespace:ServerStatusSnapshot', {NAME=>'f', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0'}, {NAME=>'info', COMPRESSION=>'SNAPPY', REPLICATION_SCOPE => '0'},  {NAME=>'status', COMPRESSION=>'SNAPPY',REPLICATION_SCOPE => '0'}
+create 'testnamespace:ServerStatus', {NAME=>'info', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0'}, {NAME=>'sensor', COMPRESSION=>'SNAPPY', REPLICATION_SCOPE => '0'},  {NAME=>'status', COMPRESSION=>'SNAPPY',REPLICATION_SCOPE => '0'}
+create 'testnamespace:LatestServerStatus', {NAME=>'f', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0'}, {NAME=>'info', COMPRESSION=>'SNAPPY', REPLICATION_SCOPE => '0'},  {NAME=>'status', COMPRESSION=>'SNAPPY',REPLICATION_SCOPE => '0'}
+create 'history.statistics', { NAME => 'cf0', COMPRESSION => 'GZ', REPLICATION_SCOPE => '0'}
+create 'history.session', { NAME => 'cf0', COMPRESSION => 'GZ', REPLICATION_SCOPE => '0'}
+create 'history.recentstat', { NAME => 'cf0', COMPRESSION => 'GZ', REPLICATION_SCOPE => '0'}
+create 'history.history', {NAME =>'cf0', COMPRESSION => 'SNAPPY',REPLICATION_SCOPE => '0'}, {NAME =>'cf1', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0'}
+create 'document_demo', {NAME =>'doc', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
+create 'analytics_demo',{NAME =>'day', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'hour', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'total', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
+
 ```
 
 
