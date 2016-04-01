@@ -96,42 +96,49 @@ postgresql*
 ----------------------
 ```
 cd /usr/lib/ 
-rm -rf hadoop hbase zookeeper hcatalog hive ambari-* storm ams-hbase flume hadoop-*
-
+rm -rf hadoop hbase zookeeper hcatalog hive ambari-* storm ams-hbase flume hadoop-* falcon* slider* pgsql*
 cd /var/lib/
-rm -rf ambari-* hadoop-* pgsql
-
+rm -rf ambari-* hadoop-* pgsql oozie* hive*  falcon* slider*
 cd /var/log/ 
-rm -rf hadoop hbase spark tuned ambari-* zookeeper hadoop-* hive*
-
+rm -rf hadoop hbase spark tuned ambari-* zookeeper hadoop-* hive* oozie* storm* kafka*  falcon* slider*
+find . -type f -size +10k | grep mesos | xargs rm
+centos:find ./ -type f | grep -E "[a-z]+-[0-9]+" | xargs rm
+echo '' > messages
+echo '' > secure
+rm -rf audit/audit.log.*
+ 
 cd /etc/ 
-rm -rf hadoop hbase hive* ambari-* spark tez tuned zookeeper maven
-
-rm -rf /hadoop/hdfs
-
+rm -rf hadoop hbase hive* ambari-* spark tez tuned zookeeper maven* oozie* storm* ams-* hadoop-* falcon* slider*
+rm -rf /hadoop/*
 cd /usr/share
-rm -rf apache-maven
-
+rm -rf apache-maven HDP-oozie maven-* falcon*
 rm /usr/hdp
-
 cd /usr/bin
 rm -rf mvnyjp
 ls -la | grep hdp | awk '{ print $9 }' | xargs rm
-
 cd /home
-
+rm -rf oozie mapred zookeeper storm yarn hive spark tez kafka hcat hdfs hbase ams ambari-* knox
+cd /var/spool/mail
+rm -rf ambari-* ams hadoop hbase hcat hdfs hive kafka knox mapred oozie  slider spark storm tez yarn zookeeper
+cd /
+rm -rf kafka-logs hadoop
+cd /tmp
+rm -rf hadoop* hsperfdata* Jetty* hbase* ambari* jetty* MIME* ehcache* oozie* hive 
+ 
+cd /usr/lib/python2.6/site-packages
+rm -rf ambari* resource_*
+ps aux | grep ambari | awk '{ print NR=$2 }' | xargs kill -9
+ 
 vim /etc/passwd
 vim /etc/group
-
 ln -s /home/hdfs/data /hadoop/hdfs/data
 ln -s /home/hdfs/namenode /hadoop/hdfs/namenode
+ln -s /home/hdfs/namesecondary /hadoop/hdfs/namesecondary
 chown hdfs:hadoop data -R
 chown hdfs:hadoop namenode -R
-
 yum clean metadata
 yum repolist
 yum -y intall ambari-server
-
 ambari-server setup
 ambari-server start
 ```
@@ -165,6 +172,14 @@ Kadmin:
 ```
 for storm,hive
 mkdir -p /usr/hdp/2.4.0.0-169/storm/extlib-daemon
+
+resource_management.core.exceptions.Fail: Execution of 'cp /usr/share/HDP-oozie/ext-2.2.zip /usr/hdp/current/oozie-server/libext' returned 1. cp: cannot stat '/usr/share/HDP-oozie/ext-2.2.zip': No such file or directory
+
+mkdir /usr/share/HDP-oozie
+wget http://web_url/ext-2.2.zip -O /usr/share/HDP-oozie/ext-2.2.zip  #6.5MB
+chown oozie:hadoop /usr/share/HDP-oozie/ext-2.2.zip
+cp /usr/share/HDP-oozie/ext-2.2.zip /usr/hdp/current/oozie-server/libext/
+
 ```
 
 ###Install

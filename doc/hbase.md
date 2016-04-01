@@ -1290,6 +1290,8 @@ Zookeeper session expired will force regionserver exit.
 Enable this will make the regionserver restart.
 </description>
 </property>
+
+hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 ```
 
 3. 如果一个HDFS上的文件大小(file size) 小于块大小(block size) ，那么HDFS会实际占用Linux file system的多大空间?
