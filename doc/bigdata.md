@@ -15,6 +15,7 @@ ZooKeeper的基本运转流程：
 3、选举Leader过程中算法有很多，但要达到的选举标准是一致的。
 4、Leader要具有最高的zxid。
 5、集群中大多数的机器得到响应并follow选出的Leader。[3] 
+ Znode维护着数据、ACL（access control list，访问控制列表）、时间戳等交换版本号等数据结构，
 
 HBase和ZooKeeper
 HBase内置有ZooKeeper，也可以使用外部ZooKeeper。

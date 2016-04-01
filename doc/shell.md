@@ -7,6 +7,9 @@ script -t 2> time.log -a output.session
 time.log描述每个命令在何时运行 output.session存储命令输出
 -t 将数序数据导入stderr 2> 将stderr重定向到time.log
 scriptreplay time.log output.session 按照播放命令序列输出
+
+modprobe -r pcspkr
+
 ```
 
 2.在第二个终端演示操作
@@ -19,6 +22,7 @@ terminal_1
     script -f scriptfifo
     command;
     exit;
+
 ```
 
 3.显示行号 移除空白行
@@ -1691,7 +1695,7 @@ killall -9 mysqld_safe //有些进程超级用户也停止不了,-9是强制删�
 mirror /mysql //下载mysql目录
 mirror -R /mysql //上传mysql目录
 rmmod pcspkr //关掉tab提示音
-modprobe pcspkr //开启tab提示音
+modprobe pcspkr //开启tab提示音,喇叭
 readlink的读取了链接内容
 dd if=/filepath/linux.iso of=/dev/sdb bs=1M #创建系统镜像盘
 dd if=/dev/zero of=/virtual/ubuntu.virt.img bs=1M count=4096 //创建一个4G的IMG镜像
@@ -3752,6 +3756,33 @@ commit(提交前删除库中指定文件)
 
 84.ANSI控制码
 ```
+    shell read命令接收标准输入的输入，或其它文件描述符的输入。得到输入后，read命令将数据输入放入一个标准变量中
+        -t选项指定read命令等待输入的秒数。当计时器计时数满时，read命令返回一个非零退出状态
+            if read -t 5 -p "please enter your name:" name
+            then 
+                ...
+            fi
+        -p选项，允许在read命令行中直接指定一个提示
+            read -p "please enter your age:" age
+        默读,不希望输入的数据显示在监视器上,实际上是显示的只是read命令将文本颜色设置为与背景相同的了
+            read -s -p "enter your password:" pass
+
+
+    echo - 显示一行文本
+            -n 不输出换行符
+            -e 打开反斜杠ESC转义
+            -E 取消反斜杠ESC转义
+        \e[背景色;前景色;高亮m
+        \033[背景色;前景色;高亮m
+    背景色 
+        第一个参数：
+            0 透明（使用终端颜色）,1 高亮 40 黑, 41 红, 42 绿, 43 黄, 44 蓝 45 紫, 46 青 绿, 47白（灰）
+        第二个参数： 前景色（也就是文本的颜色）可以被以下数字替换
+            30 黑 31 红, 32 绿, 33 黄, 34 蓝, 35 紫, 36 青绿, 37 白（灰）
+        第三个参数：
+            高亮是1，不高亮是0
+        第四个参数为m:
+            注意m后面紧跟字符串。
     man console_codes
     echo -ne "\33[32m" 可以将字符的显示颜色改为绿色
     echo -ne "\33[3;1H" 可以将光标移到第3行第1列处
@@ -3775,6 +3806,38 @@ commit(提交前删除库中指定文件)
     \33[u 恢复光标位置
     \33[?25l 隐藏光标
     \33[?25h 显示光标
+
+    输出红色字体 abc，背景色不变,以下三个效果一样
+        echo -e '\033[0;31;1m abc \033[0m'
+        echo -e "\e[1;31m     abc \e[0m"
+        echo -e "\e[0;31;1m   abc \e[0m"
+
+        2，输出黄色字体 abc，红色背景色,以下三个效果一样
+        echo -e '\033[41;33;1m abc \033[0m'
+        echo -e "\e[41;33m     abc \e[0m"
+        echo -e "\e[41;33;1m   abc \e[0m"
+
+        30 黑 31 红, 32 绿, 33 黄, 34 蓝, 35 紫, 36 青绿, 37 白（灰）
+        echo -e "\e[1;30m test exist \e[0m" //黑色
+        echo -e "\e[1;31m test exist \e[0m" //红色
+        echo -e "\e[1;32m test exist \e[0m" //绿色
+        echo -e "\e[1;33m test exist \e[0m" //黄色
+        echo -e "\e[1;34m test exist \e[0m" //蓝色
+        echo -e "\e[1;35m test exist \e[0m" //紫色
+        echo -e "\e[1;36m test exist \e[0m" //青绿
+        echo -e "\e[1;37m test exist \e[0m" //白（灰）
+
+        嵌入式中用一下方法:
+        echo -e "^[[1;30m test exist ^[[0m" //黑色
+        echo -e "^[[1;31m test exist ^[[0m" //红色
+        echo -e "^[[1;32m test exist ^[[0m" //绿色
+        echo -e "^[[1;33m test exist ^[[0m" //黄色
+        echo -e "^[[1;34m test exist ^[[0m" //蓝色
+        echo -e "^[[1;35m test exist ^[[0m" //紫色
+        echo -e "^[[1;36m test exist ^[[0m" //青绿
+        echo -e "^[[1;37m test exist ^[[0m" //白（灰）
+        注意：^[  的输入方法是ctrl+v键，再按ESC键
+
 ```
 
 85.在bash中检查远程端口是否打开:
@@ -3968,13 +4031,89 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
     test 第一个操作数 数值比较符 第二个操作数  或者用[ ] 来代替test
     [ 第一个操作数 数值比较符 第二个操作数 ] 注意中括号内部有空格
     -eq 两个数是否相等 -le 第一个是否不大于第二个 -ne 是否不相等 -ge 是否不小于第二个数 -gt 是否大于第二个数 -lt 第一个数是否小于第二个数
+        -eq 等于,如:if [ "$a" -eq "$b" ]   
+        -ne 不等于,如:if [ "$a" -ne "$b" ]   
+        -gt 大于,如:if [ "$a" -gt "$b" ]   
+        -ge 大于等于,如:if [ "$a" -ge "$b" ]   
+        -lt 小于,如:if [ "$a" -lt "$b" ]   
+        -le 小于等于,如:if [ "$a" -le "$b" ]   
+        <   小于(需要双括号),如:(("$a" < "$b"))   
+        <=  小于等于(需要双括号),如:(("$a" <= "$b"))   
+        >   大于(需要双括号),如:(("$a" > "$b"))   
+        >=  大于等于(需要双括号),如:(("$a" >= "$b"))  
 
     字符串比较 =是否相等 !=是否不相等 -z是否是空字符串 -n 是否是空字符串
+        = 等于,如:if [ "$a" = "$b" ]   
+        == 等于,如:if [ "$a" == "$b" ],与=等价   
+        比较两个字符串是否相等的办法是：
+        if [ "$test"x = "test"x ]; then
+        这里的关键有几点：
+        1 使用单个等号
+        2 注意到等号两边各有一个空格：这是unix shell的要求
+        3 注意到"$test"x最后的x，这是特意安排的，因为当$test为空的时候，上面的表达式就变成了x = testx，显然是不相等的。而如果没有这个x，表达式就会报错：[: =: unary operator expected
+        [[ $a == z* ]]   # 如果$a以"z"开头(模式匹配)那么将为true   
+        [[ $a == "z*" ]] # 如果$a等于z*(字符匹配),那么结果为true   
+          
+        [ $a == z* ]     # File globbing 和word splitting将会发生   
+        [ "$a" == "z*" ] # 如果$a等于z*(字符匹配),那么结果为true   
 
     逻辑测试 
         -a 逻辑与 两边都为真才为真
         -o 逻辑或 有一个为真就为真
         !逻辑否,条件为假时才返回真
+
+    判断字符串为空
+        if [ -z "$d" ]  
+        then  
+            echo "d is empty"  
+        fi  
+            -e                          文件存在
+            -a                          文件存在（已被弃用）
+            -f                          被测文件是一个regular文件（正常文件，非目录或设备）
+            -s                          文件长度不为0
+            -d                          被测对象是目录
+            -b                          被测对象是块设备
+            -c                          被测对象是字符设备
+            -p                          被测对象是管道
+            -h                          被测文件是符号连接
+            -L                          被测文件是符号连接
+            -S(大写)                    被测文件是一个socket
+            -t                          关联到一个终端设备的文件描述符。用来检测脚本的stdin[-t0]或[-t1]是一个终端
+            -r                          文件具有读权限，针对运行脚本的用户
+            -w                          文件具有写权限，针对运行脚本的用户
+            -x                          文件具有执行权限，针对运行脚本的用户
+            -u                          set-user-id(suid)标志到文件，即普通用户可以使用的root权限文件，通过chmod +s file实现
+            -k                          设置粘贴位
+            -O                          运行脚本的用户是文件的所有者
+            -G                          文件的group-id和运行脚本的用户相同
+            -N                          从文件最后被阅读到现在，是否被修改
+            f1 -nt f2                   文件f1是否比f2新
+            f1 -ot f2                   文件f1是否比f2旧
+            f1 -ef f2                   文件f1和f2是否硬连接到同一个文件
+            二元比较操作符，比较变量或比较数字
+            整数比较：
+            -eq                       等于            if [ "$a" -eq "$b" ]
+            -ne                       不等于          if [ "$a" -ne "$b" ]
+            -gt                       大于            if [ "$a" -gt "$b" ]
+            -ge                       大于等于        if [ "$a" -ge "$b" ]
+            -lt                       小于            if [ "$a" -lt "$b" ]
+            -le                       小于等于        if [ "$a" -le "$b" ]
+            <                         小于（需要双括号）           (( "$a" < "$b" ))
+            <=                        小于等于(...)                (( "$a" <= "$b" ))
+            >                         大于(...)                    (( "$a" > "$b" ))
+            >=                        大于等于(...)                (( "$a" >= "$b" ))
+
+            字符串比较：
+            =                         等于           if [ "$a" = "$b" ]
+            ==                        与=等价
+            !=                        不等于         if [ "$a" = "$b" ]
+            <                         小于，在ASCII字母中的顺序：
+                                      if [[ "$a" < "$b" ]]
+                                      if [ "$a" \< "$b" ]         #需要对<进行转义
+            >                         大于
+            -z                        字符串为null，即长度为0
+            -n                        字符串不为null，即长度不为0
+
 
     流程控制
         if 条件
@@ -4111,6 +4250,51 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
         跟踪脚本里每个命令的执行并附加扩充信息：
             bash -x myscript.sh
         你可以在脚本头部使用set -o verbose和set -o xtrace来永久指定-v和-o.当在远程机器上执行脚本时,这样做非常有用,用它来输出远程信息.
+
+    数组
+        定义1
+            arr=(1 2 3 4 5)
+        定义2
+            array
+            array[0]="a"
+            array[1]="b"
+            array[2]="c"
+        获取数组的length（数组中有几个元素）：
+            ${#array[@]}
+        遍历（For循环法）
+            for var in ${arr[@]};
+            do
+                echo $var
+            done
+        遍历（带数组下标）
+            for i in "${!arr[@]}"; do 
+                printf "%s\t%s\n" "$i" "${arr[$i]}"
+            done
+        遍历（While循环法）
+            i=0
+            while [ $i -lt ${#array[@]} ]
+            do
+                echo ${ array[$i] }
+                let i++
+            done
+        向函数传递数组
+            fun() {
+                    local _arr=(`echo $1 | cut -d " "  --output-delimiter=" " -f 1-`)
+                    local _n_arr=${#_arr[@]}
+                    for((i=0;i<$_n_arr;i++));
+                    do  
+                            elem=${_arr[$i]}
+                            echo "$i : $elem"
+                    done; 
+            }
+            array=(a b c)
+            fun "$(echo ${array[@]})"
+        数组 在有的机器上会报错Syntax error: "(" unexpected, 与你实际使用的shell版本有关。你可以用 ls -l /bin/*sh 打印出来
+        在这里，sh被重定向到dash，因此，如果执行./example.sh，则使用的是dash 避免报错可有多种方法，例如执行 bash example.sh，或者，将脚本第一行改为 #!/bin/bash，执行./example.sh也可以。
+
+        shell args用法
+         $0      脚本名称
+         $n      传给脚本/函数的第n个参数
 ```
 
 93.vim中一些高级替换技巧
