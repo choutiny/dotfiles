@@ -471,6 +471,9 @@ awk '!/linux/'      不包含样式linux的行
 设置字段定界符 默认是空格 用-F "delimiter" 指定
 awk -F: '{ print $NF }' /etc/passwd 或者
 awk 'BEGIN { FS=":" } { print $NF }' /etc/passwd 在begin语句块中用OFS="delimiter" 设置输出字段的定界符
+
+awk ' { print NR=$2 }' | sed -n 2p 获取某一列的某一行内容, 2p是第2行
+
 查看系统所有用户 cut -d: -f1 /etc/passwd
 查看系统所有组   cut -d: -f1 /etc/group
 
@@ -4937,19 +4940,24 @@ DECLARE l_varchar VARCHAR(255) DEFAULT 'This will not be padded';
 由于性能的考虑,所以一次只允许一个 strace 命令来打开 STREAMS 日志驱动程序.日志驱动程序有一个三元组的列表(该列表在命令调用中指定),并且程序会根据该列表比较每个潜在的跟踪消息,以决定是否要格式化和发送这个信息到 strace 进程中.因此,长的三元组列表会对 STREAMS 的总体性能的影响更大.运行 strace 命令对于某些模块和驱动程序(生成要发送给 strace 进程的跟踪消息的模块和驱动程序)的定时的影响最大.如果跟踪消息生成过快,以至 strace 进程无法处理,那么就会丢失一些消息.最后的情况可以通过检查跟踪消息输出上的序列号来确定.
 
 strace用法, 
-    1.可以找到被一个程序读取的配置文件.e.g: strace php 2>&1 | grep php.ini
-    2.跟踪指定的系统调用, -e选项仅仅被用来展示特定的系统调用.比如open,write
+    1. 可以找到被一个程序读取的配置文件.e.g: strace php 2>&1 | grep php.ini
+    2. 跟踪指定的系统调用, -e选项仅仅被用来展示特定的系统调用.比如open,write
         e.g: strace -e open cat dead.letter
-    3. 通过使用-p选项能用在运行的进程上.
+            -e trace=network // 只记录和网络api相关的系统调用
+            -e trace=file // 只记录涉及到文件名的系统调用
+            -e trace=desc // 只记录涉及到文件句柄的系统调用
+    3. strace -p pid  可以跟踪某个后台进程, 通过使用-p选项能用在运行的进程上.
         e.g: strace -p 6543
     4. 统计概要. -c选项以一种整洁的方式展示.
         e.g: strace -c ls
-    5. 保存输出结果 -o 
+    5. strace -o filename 把跟踪结果输出到文件, 保存输出结果 -o 
         e.g: strace -o filename -p 7777
-    6. 显示时间戳 -t, -tt选项可以展示微秒级别的时间戳, -ttt则是从epoch(1970/1/1 00:00:00 UTC)展示秒数, -r展示系统调用之间的相对时间戳
+    6. strace -T 记录每个系统调用花费的时间，可以看看哪个系统调用时间长, 显示时间戳 -t, -tt选项可以展示微秒级别的时间戳, -ttt则是从epoch(1970/1/1 00:00:00 UTC)展示秒数, -r展示系统调用之间的相对时间戳
         e.g: strace -t ls
-    7
-strace -f -e execve git ls
+    7. strace -f -e execve git ls
+    8. strace -s 1024 显示系统调用参数时，对于字符串显示的长度， 默认是32，如果字符串参数很长，很多信息显示不出来。
+
+
 ```
 
 103.trigger
