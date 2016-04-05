@@ -1685,6 +1685,9 @@ wget -c //断点下载
 chroot /mnt/ubuntu //改变根目录到/mnt/ubuntu
 ctrl+a //命令行下,光标称动到开头
 ctrl+e //命令行下,光标移动结尾
+ctrl+k //命令行下,清除光标后的内容
+ctrl+w //命令行下,清除光标前的一个单词内容
+ctrl+u //命令行下,清除光标所在的行
 cut -d: -f 1-4 test //用：分割文件,取分割后的1－4列
 file /home/zhangy/test.php //用于查看文件的一些基本信息
 touch test.txt //创建一个空文件 text.txt
