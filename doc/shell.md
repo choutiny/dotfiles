@@ -1176,6 +1176,17 @@ ulimit -a //查看系统限制
     * soft nofile 1024000
     * hard nofile 1024000
 
+cat /proc/sys/fs/file-max  系统最大打开文件描述符数
+ulimit -n 进程最大打开文件描述符数
+cat /proc/sys/fs/file-nr
+16448   0       1197574
+其中第一个数表示当前系统已分配使用的打开文件描述符数，第二个数为分配后已释放的（目前已不再使用），第三个数等于file-max。
+     所有进程打开的文件描述符数不能超过/proc/sys/fs/file-max
+     单个进程打开的文件描述符数不能超过user limit中nofile的soft limit
+     nofile的soft limit不能超过其hard limit
+     nofile的hard limit不能超过/proc/sys/fs/nr_open
+
+
 ipcs -l //查看内核限制
 xrandr //查看当前屏幕分辨率
     dual-screen display
@@ -5405,6 +5416,15 @@ strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo
 date | md5sum
 ```
 
+124. centos7 network initial
+```
+cat /etc/sysconfig/network-scripts/ifcfg-enp2s0
+ONBOOT="yes"
+vim /etc/selinux/config
+setenforce 0
+systemctl disable firewalld
+service firewalld stop
+```
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
