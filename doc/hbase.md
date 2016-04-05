@@ -999,6 +999,31 @@ create 'history.history', {NAME =>'cf0', COMPRESSION => 'SNAPPY',REPLICATION_SCO
 create 'document_demo', {NAME =>'doc', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
 create 'analytics_demo',{NAME =>'day', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'hour', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'total', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
 
+
+
+sudo -u hdfs hadoop fs -copyFromLocal ./analytics_demo /tommyx/analytics_demo
+sudo -u hdfs hadoop fs -copyFromLocal ./document_demo /tommyx/document_demo
+sudo -u hdfs hadoop fs -copyFromLocal ./history.recentstat /tommyx/history.recentstat
+sudo -u hdfs hadoop fs -copyFromLocal ./history.session /tommyx/history.session
+sudo -u hdfs hadoop fs -copyFromLocal ./history.statistics /tommyx/history.statistics
+sudo -u hdfs hadoop fs -copyFromLocal ./ps_IdxLatestServerStatus /tommyx/ps_IdxLatestServerStatus
+sudo -u hdfs hadoop fs -copyFromLocal ./ps_IdxServerStatusSnapshot /tommyx/ps_IdxServerStatusSnapshot
+sudo -u hdfs hadoop fs -copyFromLocal ./ps_ServerStatus /tommyx/ps_ServerStatus
+sudo -u hdfs hadoop fs -copyFromLocal ./history.history /tommyx/history.history
+
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import analytics_demo /tommyx/analytics_demo
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import document_demo /tommyx/document_demo
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import history.recentstat /tommyx/history.recentstat
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import history.session /tommyx/history.session
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import history.statistics /tommyx/history.statistics
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import ps:IdxLatestServerStatus /tommyx/ps_IdxLatestServerStatus
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import ps:IdxServerStatusSnapshot /tommyx/ps_IdxServerStatusSnapshot
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import ps:ServerStatus /tommyx/ps_ServerStatus
+sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.Import history.history /tommyx/history.history
+ 
+sudo -u hdfs hadoop fs -rm -r /tommyx/
+sudo -u hfds hadoop fs -rm -r /user/hdfs/.Trash/
+
 ```
 
 
