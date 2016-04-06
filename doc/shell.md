@@ -1175,6 +1175,9 @@ ulimit -a //查看系统限制
     对所有的文件限制
     * soft nofile 1024000
     * hard nofile 1024000
+    对所有的最大线程数限制
+    * soft noproc 102400
+    * hard noproc 102400
 
 cat /proc/sys/fs/file-max  系统最大打开文件描述符数
 ulimit -n 进程最大打开文件描述符数
@@ -1185,6 +1188,13 @@ cat /proc/sys/fs/file-nr
      单个进程打开的文件描述符数不能超过user limit中nofile的soft limit
      nofile的soft limit不能超过其hard limit
      nofile的hard limit不能超过/proc/sys/fs/nr_open
+
+数据段长度：ulimit -d unlimited
+最大内存大小：ulimit -m unlimited
+堆栈大小：ulimit -s unlimited
+CPU 时间：ulimit -t unlimited
+虚拟内存：ulimit -v unlimited
+
 
 
 ipcs -l //查看内核限制
