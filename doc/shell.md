@@ -2797,6 +2797,7 @@ git fetch origin 远程分支名:本地分支名 会只拉取.
 
 git blame file_name  查看文件每一行的修改.
 git cherry-pick commit_hash 从不同的分支中捡出一个单独的commit,并把它和你当前的分支合并
+git cherry-pick --abort 放弃合并(git checkout master, git branch new_branch, git cherry-pick some-commit, send pull request)
 git log --author="$(git config --get user.name)" --no-merges --since=1am --stat --oneline 统计当天代码.
 git log --author="$(git config --get user.name)" --no-merges --since=1am --stat --oneline| awk '{print $3}' | awk '{ sub(/[^0-9]*/, "", $0); print}' | awk 'BEGIN{sum=0}{sum=sum+$0}END{print strftime("%F %T") " Today Code Rows="sum}'
 sub做替换,然后计算行,最后输出
