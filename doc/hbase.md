@@ -200,22 +200,94 @@ hbase(main):005:0> delete "ambarismoketest", 'row01', 'family:col01'
 
 7  All command
 ```
-normal command
+COMMAND GROUPS:
+  Group name: general
+  Commands: status, table_help, version, whoami
 
-status
-Version
+  Group name: ddl
+  Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all, enable, enable_all, exists, get_table, is_disabled, is_enabled, list, show_filters
 
-DDL
-    alter,create,describe,disable,drop,enable,exists,is_disabled,is_enabled,list
+  Group name: namespace
+  Commands: alter_namespace, create_namespace, describe_namespace, drop_namespace, list_namespace, list_namespace_tables
+  namespace命名空间指对一组表的逻辑分组，类似RDBMS中的database，方便对表在业务上划分。Apache HBase从0.98.0, 0.95.2两个版本开始支持namespace级别的授权操作，HBase全局管理员可以创建、修改和回收namespace的授权
+    hbase>create_namespace 'ai_ns'          #创建namespace
+    hbase>drop_namespace 'ai_ns'            #删除namespace
+    hbase>describe_namespace 'ai_ns'        #查看namespace
+    hbase>list_namespace                    #列出所有namespace
+    hbase>create 'ai_ns:testtable', 'fm1'   #在namespace下创建表
+    hbase>list_namespace_tables 'ai_ns'     #查看namespace下的表
+    具备Create权限的namespace Admin可以对表创建和删除、生成和恢复快照
+    具备Admin权限的namespace Admin可以对表splits或major compactions
 
-DML
-    count,delete,delteall,get,get_counter,incr,put,scan,truncate
+    hbase>grant 'tenant-A' 'W' '@ai_ns'     #授权tenant-A用户对ai_ns下的写权限
+    hbase>revoke 'tenant-A''@ai_ns'         #回收tenant-A用户对ai_ns的所有权限
+    hbase>namespace_create 'hbase_perf'     #当前用户：hbase
+    hbase>grant 'mike', 'W', '@hbase_perf'  #当前用户：mike
+    hbase>create 'hbase_perf.table20', 'family1'  
+    hbase>create 'hbase_perf.table50', 'family1'  
+        mike创建了两张表table20和table50，同时成为这两张表的owner，意味着有'RWXCA'权限
+        此时，mike团队的另一名成员alice也需要获得hbase_perf下的权限，hbase管理员操作如下
+    当前用户：hbase
 
-Tool
-    assign,balance_switch,balancer,compact,Flush,major_compact,Move,split,unassign,zk_dump
+    hbase>grant 'alice', 'W', '@hbase_perf'  
 
-Replication
-    add_peer,disable_peer,enable_peer,remove_peer,start_replication,stop_replication
+    此时alice可以在hbase_perf下创建表，但是无法读、写、修改和删除hbase_perf下已存在的表
+    当前用户：alice
+
+    hbase>scan 'hbase_perf:table20'  
+
+    报错AccessDeniedException
+    如果希望alice可以访问已经存在的表，则hbase管理员操作如下
+    当前用户：hbase
+    hbase>grant 'alice', 'RW', 'hbase_perf.table20'  
+    hbase>grant 'alice', 'RW', 'hbase_perf.table50'  
+
+    在HBase中启用授权机制
+    hbase-site.xml
+    [html] view plain copy
+    <property>  
+         <name>hbase.security.authorization</name>  
+         <value>true</value>  
+    </property>  
+    <property>  
+         <name>hbase.coprocessor.master.classes</name>  
+         <value>org.apache.hadoop.hbase.security.access.AccessController</value>  
+    </property>  
+    <property>  
+         <name>hbase.coprocessor.region.classes</name>  
+         <value>org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.AccessController</value>  
+    </property>  
+    配置完成后需要重启HBase集群
+
+
+  Group name: dml
+  Commands: append, count, delete, deleteall, get, get_counter, get_splits, incr, put, scan, truncate, truncate_preserve
+
+  Group name: tools
+  Commands: assign, balance_switch, balancer, balancer_enabled, catalogjanitor_enabled, catalogjanitor_run, catalogjanitor_switch, close_region, compact, compact_rs, flush, major_compact, merge_region, move, normalize, normalizer_enabled
+, normalizer_switch, split, trace, unassign, wal_roll, zk_dump
+
+  Group name: replication ,Replication 是基于列族的备份机制
+  Commands: add_peer, append_peer_tableCFs, disable_peer, disable_table_replication, enable_peer, enable_table_replication, list_peers, list_replicated_tables, remove_peer, remove_peer_tableCFs, set_peer_tableCFs, show_peer_tableCFs
+        peer: 同位体, 在网络结构体系中,任何与另一个实体处在同一层次上的功能单元或操作装置。
+
+  Group name: snapshots
+  Commands: clone_snapshot, delete_all_snapshot, delete_snapshot, list_snapshots, restore_snapshot, snapshot, snapshot_all, snapshot_restore
+
+  Group name: configuration
+  Commands: update_all_config, update_config
+
+  Group name: quotas
+  Commands: list_quotas, set_quota
+
+  Group name: security
+  Commands: grant, revoke, user_permission
+
+  Group name: procedures
+  Commands: abort_procedure, list_procedures
+
+  Group name: visibility labels
+  Commands: add_labels, clear_auths, get_auths, list_labels, set_auths, set_visibility
 ```
 
 #Instruction cn
@@ -432,93 +504,6 @@ drop 't1'
 
 以上是一些常用命令详解,具体的所有hbase的shell命令如下,分了几个命令群,看英文是可以看出大概用处的,详细的用法使用help "cmd" 进行了解.
 
-COMMAND GROUPS:
-  Group name: general
-  Commands: status, table_help, version, whoami
-
-  Group name: ddl
-  Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all, enable, enable_all, exists, get_table, is_disabled, is_enabled, list, show_filters
-
-  Group name: namespace
-  Commands: alter_namespace, create_namespace, describe_namespace, drop_namespace, list_namespace, list_namespace_tables
-  namespace命名空间指对一组表的逻辑分组，类似RDBMS中的database，方便对表在业务上划分。Apache HBase从0.98.0, 0.95.2两个版本开始支持namespace级别的授权操作，HBase全局管理员可以创建、修改和回收namespace的授权
-    hbase>create_namespace 'ai_ns'          #创建namespace
-    hbase>drop_namespace 'ai_ns'            #删除namespace
-    hbase>describe_namespace 'ai_ns'        #查看namespace
-    hbase>list_namespace                    #列出所有namespace
-    hbase>create 'ai_ns:testtable', 'fm1'   #在namespace下创建表
-    hbase>list_namespace_tables 'ai_ns'     #查看namespace下的表
-    具备Create权限的namespace Admin可以对表创建和删除、生成和恢复快照
-    具备Admin权限的namespace Admin可以对表splits或major compactions
-
-    hbase>grant 'tenant-A' 'W' '@ai_ns'     #授权tenant-A用户对ai_ns下的写权限
-    hbase>revoke 'tenant-A''@ai_ns'         #回收tenant-A用户对ai_ns的所有权限
-    hbase>namespace_create 'hbase_perf'     #当前用户：hbase
-    hbase>grant 'mike', 'W', '@hbase_perf'  #当前用户：mike
-    hbase>create 'hbase_perf.table20', 'family1'  
-    hbase>create 'hbase_perf.table50', 'family1'  
-        mike创建了两张表table20和table50，同时成为这两张表的owner，意味着有'RWXCA'权限
-        此时，mike团队的另一名成员alice也需要获得hbase_perf下的权限，hbase管理员操作如下
-    当前用户：hbase
-
-    hbase>grant 'alice', 'W', '@hbase_perf'  
-
-    此时alice可以在hbase_perf下创建表，但是无法读、写、修改和删除hbase_perf下已存在的表
-    当前用户：alice
-
-    hbase>scan 'hbase_perf:table20'  
-
-    报错AccessDeniedException
-    如果希望alice可以访问已经存在的表，则hbase管理员操作如下
-    当前用户：hbase
-    hbase>grant 'alice', 'RW', 'hbase_perf.table20'  
-    hbase>grant 'alice', 'RW', 'hbase_perf.table50'  
-
-    在HBase中启用授权机制
-    hbase-site.xml
-    [html] view plain copy
-    <property>  
-         <name>hbase.security.authorization</name>  
-         <value>true</value>  
-    </property>  
-    <property>  
-         <name>hbase.coprocessor.master.classes</name>  
-         <value>org.apache.hadoop.hbase.security.access.AccessController</value>  
-    </property>  
-    <property>  
-         <name>hbase.coprocessor.region.classes</name>  
-         <value>org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.AccessController</value>  
-    </property>  
-    配置完成后需要重启HBase集群
-
-
-  Group name: dml
-  Commands: append, count, delete, deleteall, get, get_counter, get_splits, incr, put, scan, truncate, truncate_preserve
-
-  Group name: tools
-  Commands: assign, balance_switch, balancer, balancer_enabled, catalogjanitor_enabled, catalogjanitor_run, catalogjanitor_switch, close_region, compact, compact_rs, flush, major_compact, merge_region, move, normalize, normalizer_enabled
-, normalizer_switch, split, trace, unassign, wal_roll, zk_dump
-
-  Group name: replication
-  Commands: add_peer, append_peer_tableCFs, disable_peer, disable_table_replication, enable_peer, enable_table_replication, list_peers, list_replicated_tables, remove_peer, remove_peer_tableCFs, set_peer_tableCFs, show_peer_tableCFs
-
-  Group name: snapshots
-  Commands: clone_snapshot, delete_all_snapshot, delete_snapshot, list_snapshots, restore_snapshot, snapshot, snapshot_all, snapshot_restore
-
-  Group name: configuration
-  Commands: update_all_config, update_config
-
-  Group name: quotas
-  Commands: list_quotas, set_quota
-
-  Group name: security
-  Commands: grant, revoke, user_permission
-
-  Group name: procedures
-  Commands: abort_procedure, list_procedures
-
-  Group name: visibility labels
-  Commands: add_labels, clear_auths, get_auths, list_labels, set_auths, set_visibility
 ```
 
 # Instruction
@@ -770,6 +755,32 @@ cluster hbase-site.xml
     <name>hbase.replication</name>
     <value>true</value>
 </property>
+```
+
+```
+create 'table_name1', { NAME => 'cf1', REPLICATION_SCOPE => 1}
+
+add_peer "1",'halo-cnode1.domain.org,halo-cnode2.domain.org,halo-cnod3.domain.org:2181:/hbase' 
+     '1' 是peerID, 必须是short型的整数 
+    'halo-cnode1.domain.org,halo-cnode2.domain.org,halo-cnod3.domain.org:2181:/hbase'  是一个字符串, 格式是"cluster zookeeper: cluster zookeeper port: cluster hbase zookeeper node"
+
+历史数据迁移 
+    sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=halo-cnode2.domain.org:2181:/hbase --families=cf1
+    上面命令会复制table_name1:cf1 数据去cluster halo-cnode2.domain.org table_name1
+    其他参数 --starttime=1459931000000 --endtime=1459936941022  
+        会复制这个时间段的数据 
+
+验证
+halo-cnode1> put 't1','row1', 'cf1', 'value1'
+halo-cnode2>get 't1','row1'
+
+add_peer <ID> <CLUSTER_KEY>
+list_peers #list all peer
+enable_peer  <ID>
+disable_peer <ID> 
+remove_peer <ID>
+enable_table_replication <TABLE_NAME>  #其中一个表中所有列族的replication
+disable_table_replication <TABLE_NAME> #禁用一个表中所有列族的replication
 ```
 
 use "verifyrep" to check
