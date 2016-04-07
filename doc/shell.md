@@ -1365,16 +1365,29 @@ ssh user@host cat /path/to/remotefile | diff /path/to/localfile -
 
 41.netstat -tulnp 查看占用端口的进程
 ```
-    -a all 网络端口 -at tcp的端口 -s 所有连接的统计 -c 动态持续输出
+    -a all 网络端口 -at tcp的端口, 显示所有连接和监听端口
+    -b 显示包含于创建每个连接或监听端口的可执行组件。在某些情况下已知可执行组件 拥有多个独立组件，并且在这些情况下包含于创建连接或监听端口的组件序列被显示。这种情况下，可执行组件名 在底部的 [] 中，顶部是其调用的组件，等等，直到 TCP/IP 部分。注意此选项  可能需要很长时间，如果没有足够权限可能失败。
+    -c 动态持续输出
+    -e 显示以太网统计信息。此选项可以与 -s选项组合使用。
+    -l 显示监听状态的端口
+    -n 直接显示ip,不做名称转换,以数字形式显示地址和端口号
+    -o 显示与每个连接相关的所属进程 ID
+    -p 显示相应的进程PID以及名称,用于指定默认情况的子集
+    -p proto  显示 proto 指定的协议的连接；proto 可以是下列协议之一: TCP、UDP、TCPv6 或 UDPv6。  如果与 -s 选项一起使用以显示按协议统计信息，proto 可以是下列协议之一: IP、IPv6、ICMP、ICMPv6、TCP、TCPv6、UDP 或 UDPv6
+    -r 显示路由表
+    -s 所有连接的统计,显示按协议统计信息。默认地，显示 IP、IPv6、ICMP、ICMPv6、TCP、TCPv6、UDP 和 UDPv6 的统计信息
     -t 显示TCP链接信息
     -u 显示UDP链接信息
-    -l 显示监听状态的端口
-    -n 直接显示ip,不做名称转换
-    -p 显示相应的进程PID以及名称
+    -v 与 -b 选项一起使用时将显示包含于 为所有可执行组件创建连接或监听端口的组件。
+    interval 重新显示选定统计信息，每次显示之间 暂停时间间隔(以秒计)。按 CTRL+C 停止重新 显示统计信息。如果省略，netstat 显示当前 配置信息(只显示一次)
+
 sockets 的要用lsof工具
 netstat -lntp 查看所有监听端口
 netstat -antp 查看所有已经建立的连接
 netstat -s 查看网络统计信息
+
+根据端口号查询，查询其占用进程ID
+netstat -tlnp|grep 80|awk '{print $7}'|awk -F '/' '{print $1}'
 ```
 
 42.更友好的显示当前挂载的文件系统
@@ -1709,6 +1722,13 @@ ctrl+e //命令行下,光标移动结尾
 ctrl+k //命令行下,清除光标后的内容
 ctrl+w //命令行下,清除光标前的一个单词内容
 ctrl+u //命令行下,清除光标所在的行
+ctrl+r <keywords> //搜索history的关键词的命令, 再ctrl+r 上翻下一个
+ctrl+z //暂停已经运行的进程,挂起当前会话
+ctrl+c //退出
+alt+b  //前移到单词开头
+alt+f  //后移到单词开头
+ctrl+f //一个字母的前移
+ctrl+b //一个字母的后移
 cut -d: -f 1-4 test //用：分割文件,取分割后的1－4列
 file /home/zhangy/test.php //用于查看文件的一些基本信息
 touch test.txt //创建一个空文件 text.txt
