@@ -325,6 +325,8 @@ grep "main()" . -r –include *.{c.cpp} 在目录中递归搜索所有的.c 和.
 grep "main()" . -r -exclude "readme" 排除所有readme文件 
 排除目录—exclude-dir 从文件中读取所许排除的文件列表 –exclude-from file
 grep -A 3匹配某个结果之后的3行 -B 3 匹配结果之前的3行 -C 3匹配结果之前和之后的3行
+
+grep -B2 -A5 -i keywords  #匹配关键词的内容,并且包含前2行和后5行
 echo -e "a\nb\nc\na\nb\nc" | grep a -A 1 多个匹配,以一行 – 作为各匹配之前的定界符
 grep "keyword1\|keyword2" 用 | 来分割来, 需要转义, 来多个匹配
 
