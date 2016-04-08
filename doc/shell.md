@@ -1044,8 +1044,6 @@ traceroute 域名 跟踪跳hop
 
 lsof -i 列出系统中的开放端口以及运行在端口上的服务的详细信息
 lsof -Pnl -i:80 查看80端口.
-netstat 查看开放端口和服务
-netstat -nlp |grep LISTEN 查看LISTEN的
 ```
 
 26.磁盘
@@ -1381,13 +1379,19 @@ ssh user@host cat /path/to/remotefile | diff /path/to/localfile -
     -v 与 -b 选项一起使用时将显示包含于 为所有可执行组件创建连接或监听端口的组件。
     interval 重新显示选定统计信息，每次显示之间 暂停时间间隔(以秒计)。按 CTRL+C 停止重新 显示统计信息。如果省略，netstat 显示当前 配置信息(只显示一次)
 
+netstat -nlp |grep LISTEN 查看LISTEN的
 sockets 的要用lsof工具
 netstat -lntp 查看所有监听端口
 netstat -antp 查看所有已经建立的连接
 netstat -s 查看网络统计信息
+netstat -tunl //列出监听的网络服务端口
+netstat -tun //列出已连接的网络服务端口
 
 根据端口号查询，查询其占用进程ID
 netstat -tlnp|grep 80|awk '{print $7}'|awk -F '/' '{print $1}'
+
+根据端口查找进程netstat -anp | grep port_no, 获取最右边的PID/程序, 到对应主机上执行 ps aux | grep PID
+
 ```
 
 42.更友好的显示当前挂载的文件系统
@@ -1706,8 +1710,6 @@ ifup //开启网卡
 ifdown //关闭网卡
 route del -net 172.168.0.0 netmask 255.255.0.0 dev eth0 //删除 172.168这个网段
 route add -net 172.168.10.0 netmask 255.255.255.0 dev eth0 //增加一个路由
-netstat -tunl //列出监听的网络服务端口
-netstat -tun //列出已连接的网络服务端口
 nmap -sP 172.30.4.0/24 //在这个网段内有多少用户在我的主机上操作,一个不错的安全检查工具
 vgdisplay //查看系统中的可用空间
 lvextend -L+20G /dev/tank/part1 //向part1这个分区增加20G的空间

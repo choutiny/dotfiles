@@ -88,8 +88,7 @@ ambari-server stop
 ###Remove
 ----------------------
 ```
-yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoop_* zookeeper_* hbase* range* pig*  hive* tez* mysql-* bigtop-*  tuned-* ambari-* apache-maven*
-postgresql*
+yum remove -y hadoop_* zookeeper* ranger* hbase_* ranger* hbase_* ambari-* hadoop_* zookeeper_* hbase* range* pig*  hive* tez* mysql-* bigtop-*  tuned-* ambari-* apache-maven* postgresql*
 ```
 
 ###Reinstall Path
