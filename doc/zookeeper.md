@@ -17,3 +17,13 @@ zookeeper是一个注册中心
 6.可通过<dubbo:registry group="dubbo" />设置zookeeper的根节点，不设置将使用无根树。
 7.支持*号通配符<dubbo:reference group="*" version="*" />，可订阅服务的所有分组和所有版本的提供者。
 ```
+
+###command
+```
+ps aux | grep zookeeper-server
+netstat -tpnl | grep 2181
+端口应该都是一个有互相通信的
+
+测试
+zookeeper-client -server host1:2181
+```
