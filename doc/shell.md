@@ -1667,9 +1667,14 @@ lsattr file //查看文件属性
 cat /etc/passwd |awk -F: '{print $1}' //查看系统中所有用户
 cat /etc/group //查看系统中所有的组
 groups //查前当前用户所在的,所有组
-usermod -g 组名 用户 //这种方式是覆盖的方式,用的时候要小心,如果用户A性于mysql usermod -g php mysql这样的话只属于php了,
-usermod -G 组名 用户 //这种方式是增加的方式,如果用户A性于mysql usermod -g php mysql这样的话,mysql就属于2个组了
-usermod -a -G 组名 用户 ,把已有的用户名添加到已有的组里面
+usermod -g groupname1,groupname2,group2name3  username //这种方式是覆盖的方式,用的时候要小心,用户以前的组都会丢失
+usermod -G groupname1,groupname2 username //这种方式是增加的方式,用的时候也要小心,
+usermod -a -G grouname username ,把已有的用户名添加到已有的组里面,以前的组继续存在
+    -g, --gid GROUP       force use GROUP as new primary group 
+    -G, --groups GROUPS   new list of supplementary GROUPS 
+    -a, --append          append the user to the supplemental GROUPS 
+    -s, --shell SHELL     new login shell for the user account 
+    -d, --home HOME_DIR   new home directory for the user account 
 bc //进入数学计算中去
 umask 003 u权限是7,g权限是7,其他用户是4,也就是774,777-003=774
 mkfs -t vfat /dev/hda6 //将移动硬盘里面的一个分区格式化成vfat格式
