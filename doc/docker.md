@@ -335,6 +335,10 @@ docker run -tid --name hue8888 --hostname halo-cnode1.domain.org -p 8888:8888 -v
     -p docker 容器的端口:外部主机的端口, 作端口映射, 来公开在dockerfile里面定义的expose的所有端口.
     -v 挂在目录, 外部主机目录:容器内部目录, 多个就继续-v external_path:internal_path
 
+docker run --rm -h "new_hostname" -ti images_name bash 修改当前image的hostname
+e.g.:
+docker run --rm -h "halo-cnode1-docker" -t -i cdkdc.domain.org:5000/hue:latest bash           
+
 
 更新docker images里面的内容后. 
 需要stop掉当前的docker, 然后rm 掉, 启新的
