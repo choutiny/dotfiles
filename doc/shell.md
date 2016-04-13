@@ -2356,6 +2356,25 @@ mysql>CREATE USER 'lujunyi'@'%' IDENTIFIED BY '123456';
 mysql>SHOW GRANTS FOR 'lujunyi'@'%';
 mysql>GRANT ALL PRIVILEGES ON testdb.* TO 'lujunyi'@'%';
 
+对于centos6,7的远程连接失败问题, 普遍是新装的server
+没有root密码的: mysqladmin -uroot password "newpass"
+已经有root密码: mysqladmin -uroot password 'oldpasswd' 'newpasswd'
+也可以直接登录mysql, mysql -u root;use mysql;UPDATE user SET Password = PASSWORD('newpass') WHERE user = 'root';FLUSH PRIVILEGES;
+丢失密码: mysqld_safe --skip-grant-tables& mysql -u root mysql;
+ UPDATE user SET password=PASSWORD("new password") WHERE user='root'; FLUSH PRIVILEGES;
+
+给用户授权远程访问, 首先确认端口[client] port=3307 [mysqld] port=3307 其次看mysql是否启动起来, netstat -anp | grep 3307看端口占用
+然后grant all privileges on *.* to 'root'@'%' identified by 'your_password' with grant option; FLUSH PRIVILEGES;
+防火墙开放3307端口,  iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 3307 -j ACCEPT 
+查看规则是否生效, iptables -L -n
+删除老的规则iptables -D INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+同时防火墙需要保存service iptables save /etc/init.d/iptables save
+或者直接修改vi /etc/sysconfig/iptables 加入
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 3307 -j ACCEPT
+这样就可以远程登录了.
+
+
+
 下面列出了您可以使用的 JOIN 类型,以及它们之间的差异.
 JOIN: 如果表中有至少一个匹配,则返回行
 LEFT JOIN: 即使右表中没有匹配,也从左表返回所有的行
