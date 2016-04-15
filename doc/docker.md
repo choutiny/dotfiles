@@ -418,6 +418,7 @@ docker rm `docker ps -q -a`
 docker history rainysia/nginx
 docker push rainysia/new_project_name
 
+-p host_port:container_port
 docker run -d -p 127.0.0.1:44444:80 --name website \
         -v $PWD/website:/var/www/html/website \
         rainysia/nginx nginx

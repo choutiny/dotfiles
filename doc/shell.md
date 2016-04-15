@@ -5505,6 +5505,110 @@ systemctl disable firewalld
 service firewalld stop
 ```
 
+125. ldap
+ldap3 package
+```
+ldapsearch -H ldap://ldap_server.domain.org/ -b dc=domain,dc=org -x
+more detail
+ldapsearch -H ldap://ldap_server.domain.org/ -b dc=domain,dc=org -x -d -1  
+
+ldapsearch -x -LLL -H ldap://ldap_server.com:3268 -dbc=test,dc=com -D 'DOMAIN\username' -W name=username dn
+
+ldapsearch -x -LLL -H ldap://fcadc05.domain.org:3268 -b dc=domain,dc=org -D 'DOMAINORG\rainysia' -W name=rainysia dn   
+Enter LDAP Password: 
+ldap_bind: Invalid credentials (49)
+        additional info: 80090308: LdapErr: DSID-0C0903A9, comment: AcceptSecurityContext error, data 52e, v1db1
+
+ldapsearch -x -LLL -H ldap://fcadc05.domain.org:3268 -b dc=domain,dc=org -D 'DOMAINORG\rainysia' -W '(sAMAccountName=rainysia)' dn 
+Enter LDAP Password: 
+dn: CN=Rainy Sia,OU=ENT,OU=ITO,OU=USERS,OU=CDC,OU=CHINA,DC=domain,DC=org
+
+通过上述来调试
+
+ldapadd 
+    -x   进行简单认证
+    -D   用来绑定服务器的DN
+    -h   目录服务的地址
+    -w   绑定DN的密码
+    -f   使用ldif文件进行条目添加的文件
+例子 
+ldapadd -x -D "cn=root,dc=starxing,dc=com" -w secret -f /root/test.ldif 
+ldapadd -x -D "cn=root,dc=starxing,dc=com" -w secret (这样写就是在命令行添加条目)
+
+ldapsearch 
+    -x   进行简单认证
+    -D   用来绑定服务器的DN
+    -w   绑定DN的密码
+    -b   指定要查询的根节点
+    -H   制定要查询的服务器
+CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称（DN, distinguished   name） 
+LDAP连接服务器的连接字串格式为：ldap://servername/DN   
+其中DN有三个属性，分别是CN,OU,DC   
+CN=Common Name 为用户名或服务器名，最长可以到80个字符，可以为中文
+OU=Organization Unit为组织单元，最多可以有四级，每级最长32个字符，可以为中文
+O=Organization 为组织名，可以3—64个字符长
+C=Country为国家名，可选，为2个字符长
+
+CN=test,OU=developer,DC=domainname,DC=com 
+在上面的代码中 cn=test 可能代表一个用户名，ou=developer 代表一个 active directory 中的组织单位。这句话的含义可能就是说明 test 这个对象处在domainname.com 域的 developer 组织单元中。
+
+ldapsearch -x -D "cn=root,dc=starxing,dc=com" -w secret -b "dc=starxing,dc=com" 
+使用简单认证，用 "cn=root,dc=starxing,dc=com" 进行绑定，
+要查询的根是 "dc=starxing,dc=com"。这样会把绑定的用户能访问"dc=starxing,dc=com"下的
+所有数据显示出来。
+ldapsearch -x -W -D "cn=administrator,cn=users,dc=osdn,dc=zzti,dc=edu,dc=cn" -b "cn=administrator,cn=users,dc=osdn,dc=zzti,dc=edu,dc=cn" -h ttest.org 
+ldapsearch -b "dc=canon-is,dc=jp" -H ldaps://192.168.0.92:636 
+
+ldapdelete 
+    ldapdelete -x -D "cn=Manager,dc=test,dc=com" -w secret "uid=test1,ou=People,dc=test,dc=com" 
+    ldapdelete -x -D 'cn=root,dc=it,dc=com' -w secert 'uid=zyx,dc=it,dc=com' 
+这样就可以删除'uid=zyx,dc=it,dc=com'记录了，应该注意一点，如果o或ou中有成员是不能删除的。
+
+ldappasswd 
+    -x   进行简单认证
+    -D   用来绑定服务器的DN
+    -w   绑定DN的密码
+    -S   提示的输入密码
+    -s pass 把密码设置为pass
+    -a pass 设置old passwd为pass
+    -A   提示的设置old passwd
+    -H   是指要绑定的服务器
+    -I   使用sasl会话方式
+ldappasswd -x -D 'cm=root,dc=it,dc=com' -w secret 'uid=zyx,dc=it,dc=com' -S
+New password:
+Re-enter new password: 
+就可以更改密码了，如果原来记录中没有密码，将会自动生成一个userPassword。
+
+ldapmodify 
+    -a 添加新的条目.缺省的是修改存在的条目.
+    -C 自动追踪引用.
+    -c 出错后继续执行程序并不中止.缺省情况下出错的立即停止.比如如果你的ldif 文
+       件内的某个条目在数据库内并不存在,缺省情况下程序立即退出,但如果使用了该参数,程
+       序忽略该错误继续执行.
+    -n 用于调试到服务器的通讯.但并不实际执行搜索.服务器关闭时,返回错误；服务器
+       打开时,常和-v 参数一起测试到服务器是否是一条通路.
+    -v 运行在详细模块.在标准输出中打出一些比较详细的信息.比如:连接到服务器的
+       ip 地址和端口号等.
+    -M[M] 打开manage DSA IT 控制. -MM 把该控制设置为重要的.
+    -f file 从文件内读取条目的修改信息而不是从标准输入读取.
+    -x 使用简单认证.
+    -D binddn 指定搜索的用户名(一般为一dn 值).
+    -W 指定了该参数,系统将弹出一提示入用户的密码.它和-w 参数相对使用.
+    -w bindpasswd 直接指定用户的密码. 它和-W 参数相对使用.
+    -H ldapuri 指定连接到服务器uri(ip 地址和端口号,常见格式为
+       ldap://hostname:port).如果使用了-H 就不能使用-h 和-p 参数.
+    -h ldaphost 指定要连接的主机的名称/ip 地址.它和-p 一起使用.
+    -p ldapport 指定要连接目录服务器的端口号.它和-h 一起使用.
+       如果使用了-h 和-p 参数就不能使用-H 参数.
+    -Z[Z] 使用StartTLS 扩展操作.如果使用-ZZ,命令强制使用StartTLS 握手成功.
+    -V 启用证书认证功能,目录服务器使用客户端证书进行身份验证,必须与-ZZ 强制启用
+       TLS 方式配合使用,并且匿名绑定到目录服务器.
+    -e 设置客户端证书文件,例: -e cert/client.crt
+    -E 设置客户端证书私钥文件,例: -E cert/client.key
+ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif 
+将modify.ldif中的记录更新原有的记录。
+```
+
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
 5.3 更新hg merge                                    2013-11-20 11:02:31
@@ -5540,3 +5644,4 @@ service firewalld stop
 16.1更新format                                      2016-01-20 17:41:05
 16.2更新xrandr显示分屏                              2016-03-15 23:22:55
 16.3更新passwd generate                             2016-04-02 00:28:12
+16.4更新ldap                                        2016-04-14 14:31:12
