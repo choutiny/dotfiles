@@ -2599,6 +2599,7 @@ git diff --cached 查看提交暂存区和版本库中文件的差异
 git diff --staged 提交任务 和版本库中文件的差异(stage 暂存区)
 git diff HEAD 将工作区和HEAD (和当前工作区) 对比
 git diff 分支1 分支2 -- 文件名, 可以对比不同分支的文件的差异.
+git diff | cat -A 会显示所有的差异, 包括^I, ^M 这些
 
 
 git补丁管理
