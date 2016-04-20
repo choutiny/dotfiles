@@ -123,6 +123,10 @@ Hadoop的备份系数是指每个block在hadoop集群中有几份，系数越高
 sudo -u hdfs hadoop fsck /
 
 
+su - hdfs
+hdfs fsck / -files -blocks
+
+
  Total size:    14866531168 B (Total open files size: 415 B)
  Total dirs:    344
  Total files:   712
@@ -152,6 +156,13 @@ FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
 hadoop fsck -locations 可以看到相应的提示信息，可以看到副本丢失率为0%：
 `sudo -u hdfs hadoop fsck -locations  /` 
 
+`Fix under-replicated blocks`
+su - <$hdfs_user>
+bash-4.1$ hdfs fsck / | grep 'Under replicated' | awk -F':' '{print $1}' >> /tmp/under_replicated_files 
+-bash-4.1$ for hdfsfile in `cat /tmp/under_replicated_files`; do echo "Fixing $hdfsfile :" ;  hadoop fs -setrep 3 $hdfsfile; done
+
+
+
 otal size:    14866530469 B (Total open files size: 415 B)
  Total dirs:    337
  Total files:   706
@@ -169,4 +180,9 @@ otal size:    14866530469 B (Total open files size: 415 B)
  Number of racks:               1
 FSCK ended at Wed Mar 30 18:08:58 CST 2016 in 64 milliseconds
 
+```
+
+6. webhdfs
+```
+curl --negotiate -u : -b ~/cookiejar.txt -c ~/cookiejar.txt http://node1.domain.org:50070/webhdfs/v1/?op=liststatus   
 ```
