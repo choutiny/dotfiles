@@ -24,7 +24,7 @@ alias gv='gvim'
 alias gno='xdg-open'
 alias cdh='cd /home'
 alias cdw='cd /home/www/ && su tommy'
-alias cdwn='cd /home/www'
+alias cdnw='cd /home/www'
 alias cdws='cd /home/www/chinasite'
 alias cdww='cd /home/www/wordpress && su tommy'
 alias cdwh='cd /home/www/domain'
@@ -79,3 +79,4 @@ export PATH="$PATH:$JAVA_HOME/bin:$HBASE_HOME/bin"
 
 export HADOOP_HOME=/home/hadoop/hadoop-2.7.1
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+export EDITOR=vim
