@@ -686,6 +686,16 @@ ps top pgrep
     ps -e 或者#ps -ef 或者 #ps -ax #ps -axf
     ps -e | head用head过滤 打印前10项
 
+
+ps axjf | grep process_name 获取进程树
+ps -ef | grep process_name 
+UID  PID  PPID  C STIME TTY   TIME CMD
+(C= processor utilization, 处理器利用率,%cpu)
+ps -aux | grep process_name
+USER PID  %CPU %MEM  VSZ RSS     TTY   STAT START   TIME COMMAND
+(VSZ=virtual memory usage of entire process in KiB, RSS=resident set size in KiB(the non-swapped physical memory that a task has used ))
+(STAT=multi-character process state, TIME = cumulative CPU time)
+
 -o 参数,参数,参数 用,定界符且没有空格 指定想要显示的列
 ps -eo comm,pcpu | head 其中comm标示command,pcpu表示cpu占有率
 参数有 
