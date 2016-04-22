@@ -808,6 +808,7 @@ RegionServer(RS)
     Compact & split, set  hbase.hregion.majorcompaction=0, set hbase.hregion.max.filesize.  when region hbase exceed this value will split it into RS.
     Memory, hbase.regionserver.global.memstore.upperLimit,hbase.regionserver.global.memstore.lowerLimit,memstore.flush .size
     HFile
+        压缩只在硬盘上存在, 在内存里(memstore或者blockcache)或者通过网络传输时是没有压缩的
         compress, GZIP, LZO, Snappy. (recommend LZO or Snappy)
             Algorithm   % remaining Encoding    Decoding
             GZIP        13.4%       21 MB/s     118 MB/s
@@ -849,9 +850,14 @@ major_compact 'table_name'  #动作耗时较长，会对服务有很大影响，
 
 
 
-Regions是由每个Column Family的Store组成.
+Regions是由每个Column Family的Store组成, hbase会把表切分成小一点儿的数据单位, 然后分配到多台服务器上,
+    这些小一点儿的数据单位就叫region, 托管region的服务器就叫region server.
+典型情况下, regionServer和HDFS DatNode并且配置在同一物理硬件上, RegionServer本质上是HDFS 客户端.
+每个regionServer会托管多个Region
+考虑到基础数据存储在HDFS上, 所有客户端都可以在一个命名空间上访问.
+所有regionServer都可以访问文件里同一个文件, 理论上RS可以把本地DataNode作为主要DataNode进行读写操作.(减小网络IO)
 
-Region大小
+Region大小, 通过hbase.hregion.max.filesize决定, 大于该值时会切分成两个region
 Region的大小是一个棘手的问题,需要考量如下几个因素.
 Regions是可用性和分布式的最基本单位
     HBase通过将region切分在许多机器上实现分布式.也就是说,你如果有16GB的数据,只分了2个region, 你却有20台机器,有18台就浪费了.
