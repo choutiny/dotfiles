@@ -2577,6 +2577,7 @@ git commit --amend --allow-empty --reset-author
 对提交修补 允许空 将作者ID同步修改,会重置uthorDate
 
 
+git draw:
 touch -d "20 hours ago" test.file
 git commit --date="$(stat -c %y test)" -m "test" ./   #用20小时前的文件来提交到github
 
