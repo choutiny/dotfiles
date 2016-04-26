@@ -322,7 +322,7 @@ docker run -d -p 80:80 --name static_web rainysia/static_web \
         nginx -g "daemon off;"
 可以通过 http://127.0.0.1:32768/ 来查看映射
     -p 127.0.0.1:80:80 把80端口绑定到宿主机的127.0.0.1:80
-    -P 来公开在dockerfile里面定义的expose的所有端口.
+    -P 来公开在dockerfile里面定义的expose的所有端口
 docker run -d -P --name static_web rainysia/static_web nginx -g "daemon off;"
 docker run -d -p 192.168.85.123:33333:80 --name static_web rainysia/static_web nginx -g "daemon off;"
 
@@ -332,7 +332,7 @@ docker run -tid --name hue8888 --hostname halo-cnode1.domain.org -p 8888:8888 -v
     -d  参数会把容器放到后台运行
     --name alias_name 可以为这个docker指定一个别名, 要放前面, docker run -tid --name alias_name images:version /bin/bash
     --hostname 指定hostname, 类似--ip
-    -p docker 容器的端口:外部主机的端口, 作端口映射, 来公开在dockerfile里面定义的expose的所有端口.
+    -p docker 外部主机的被映射的端口:容器内程序的端口, 作端口映射, 来公开在dockerfile里面定义的expose的所有端口.
     -v 挂在目录, 外部主机目录:容器内部目录, 多个就继续-v external_path:internal_path
 
 docker run --rm -h "new_hostname" -ti images_name bash 修改当前image的hostname
