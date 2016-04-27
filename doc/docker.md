@@ -148,6 +148,9 @@ docker top daemon_dave  查看容器内部运行的进程
 docker exec -d daemon_dave touch /etc/new_config_file 
 docker exec -t -i daemon_dave /bin/bash
 
+docker exec -i -t nginx8888 less /var/log/nginx/error.log
+docer exec -ti nginx8888 cat /var/log/error.log
+
 停止守护式容器
 docker stop daemon_dave
 

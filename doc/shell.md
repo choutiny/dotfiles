@@ -5518,7 +5518,8 @@ service firewalld stop
 ```
 
 125. ldap
-ldap3 package
+pip install ldap3 
+apt-get install ldap-utils
 ```
 ldapsearch -H ldap://ldap_server.domain.org/ -b dc=domain,dc=org -x
 more detail
@@ -5619,6 +5620,7 @@ ldapmodify
     -E 设置客户端证书私钥文件,例: -E cert/client.key
 ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif 
 将modify.ldif中的记录更新原有的记录。
+
 ```
 
 ##########################################################################
