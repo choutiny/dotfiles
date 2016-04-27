@@ -3048,6 +3048,8 @@ git submodule add git_repo_add.git alias_name 来添加子模块
 git submodule init 来初始化本地配置文件
 git submodule update 来从上游库拉取所有数据
 为了避免子模块的不可逆操作. 可以在子模块路径里面建立一个可回溯的branch
+
+git subtree is a copy, git submodule is a link
 ```
 
 64.cat来读取文本赋值
