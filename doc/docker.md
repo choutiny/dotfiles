@@ -198,7 +198,7 @@ RUN echo 'Hi, i am in your container' \
 EXPOSE 80                                   #指定打开80端口
 ----------------------------
 执行docker build来build一个镜像
-$sudo docker build -t="rainysia/static_web" .
+$sudo docker build -t="rainysia/static_web" ./
 
 ------------------------------------------------
 docker build -t="rainysia/static_web" .
@@ -350,14 +350,19 @@ docker rmi image_id 根据image_id删除镜像
 
 Dockerfile 的命令
 ================
-CMD 指定一个容器启动时要运行的命令, 类似RUN, RUN是指定镜像被构建时要运行的命令.
+FROM 基于哪个镜像
+RUN 安装如那间用
+MAINTAINER 镜像创建者
+CMD 指定一个容器启动时要运行的命令, 类似RUN, RUN是指定镜像被构建时要运行的命令.一个Dockerfile中只能有一条CMD命令，多条则只执行最后一条CMD
+CMD主要用于container时启动指定的服务，当Docker run command的命令匹配到CMD command时，会替换CMD执行的命令
     CMD ["/bin/true"]
     CMD ["/bin/true", "-1"]
 
-ENTRYPOINT 提供的命令不容易在启动容器的时候被覆盖
+ENTRYPOINT 提供的命令不容易在启动容器的时候被覆盖,container启动时执行的命令，但是一个Dockerfile中只能有一条ENTRYPOINT命令，如果多条，则只执行最后一条,ENTRYPOINT没有CMD的可替换特性
     ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 
 WORKDIR 用来在镜像创建一个新容器时,在容器内部设置一个工作目录, ENTRYPOINT/CMD 指定的程序会在这目录下运行
+切换目录用，可以多次切换(相当于cd命令)，对RUN,CMD,ENTRYPOINT生效
     WORKDIR /opt/webapp/db
     RUN bundle install
     WORKDIR /opt/webapp
@@ -366,8 +371,9 @@ WORKDIR 用来在镜像创建一个新容器时,在容器内部设置一个工�
     docker run -ti -w /var/lig ubuntu pwd
 
 ENV 在镜像构建过程中设置环境变量
-    ENV RVM_PATH /home/rvm
-    类似RUN gem install unicorn
+    ENV RVM_PATH /home/rvm  #类似RUN gem install unicorn
+    ENV LANG en_US.UTF-8
+    ENV LC_ALL en_US.UTF-8
 
 USER 指定该镜像会以什么用户来运行,不指定默认root
     USER nginx
@@ -375,13 +381,20 @@ USER 指定该镜像会以什么用户来运行,不指定默认root
     USER user:group
     USER user:gid
     USER uid:group
+    USER daemon
+EXPOSE container内部服务开启的端口。主机上要用还得在启动container时，做host-container的端口映射
+    docker run -d -p 127.0.0.1:33301:22 centos7-ssh  #container ssh服务的22端口被映射到主机的33301端口
 
 VOLUME 向容器添加卷
     VOLUME ["/opt/project"]
     VOLUME ["/opt/project", "/data"]
 
+
 ADD 将构建环境下的文件和目录复制到镜像中 ADD host_file dest_file, host_file支持url地址
+所有拷贝到container中的文件和文件夹权限为0755,uid和gid为0,如果要ADD本地文件，则本地文件必须在 docker build <PATH>，指定的<PATH>目录下
+ADD只有在build镜像的时候运行一次，后面运行container的时候不会再重新加载了。
     ADD software.inc /opt/application/software.inc
+使用docker build - < somefile方式进行build，是不能直接将本地文件ADD到container中。只能ADD url file.
 
 COPY ,不存在会创建目录
     COPY /etc/nginx/  /etc/apache2/nginx
@@ -413,7 +426,7 @@ $sudo docker run -t -i docker.example.com:5000/rainysia/static_web /bin/bash
 修改dockerfile
 
 docker iamges
-docker build -t rainysia/new_project_name .
+docker build -t rainysia/new_project_name ./
 docker rm `docker ps -q -a`
 docker history rainysia/nginx
 docker push rainysia/new_project_name
@@ -977,6 +990,8 @@ curl -X GET http://localhost:5000/v2/_catalog
 {"repositories":["ubuntu"]}
 $ curl -X GET http://localhost:5000/v2/ubuntu/tags/list
 {"name":"ubuntu","tags":["latest"]}
+
+删除用curl -X DELETE http://cddc.domain.org:5000/v1/repositories/images_name/
 
 
 对container
