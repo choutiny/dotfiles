@@ -1094,3 +1094,13 @@ docker简单操作
 docker search, pull, login, and push
 ```
 
+# Docker Advanced 
+----------------------
+```
+Machine(Docker管理工具)：解决的是操作系统异构安装Docker困难的问题，没有Machine的时候，CentOS是一种，Ubuntu又是一种，AWS又是一种。有了Machine，所有的系统都是一样的安装方式。
+Swarm(Docker集群工具)：我们有了Machine就意味着有了docker环境，但是那是单机的，而通常我们的应用都是集群的。这正是Swarm要做的事情，给你提供docker集群环境和调度策略等。
+Compose(Docker编排工具)：有了环境，我们下一步要做什么？部署应用。然后我们需要docker run image1、docker run image2...一次一次不厌其烦的重复这些操作，每次都写大量的命令参数。Compose简化了这个流程，只需要把这些内容固话到docker-compose.yml中。
+目前Machine、Swarm、Compose已经可以结合使用，创建集群环境，简单的在上面部署应用
+
+swarm:客户端通过它的网络端口（2375）与Swarm交互,Swarm守护进程本身相当于是一个调度器和一个路由器。它实际上并没有运行容器，也就是说，如果Swarm服务停止了，它在终端Docker主机上已分配好的容器仍然是开启的。另外，由于它不处理任何网络路由（网络连接需要被直接发送到后端的Docker主机上），即使Swarm守护进程意外终止，运行的容器仍然可用。当Swarm从这样的崩溃中恢复，它依然能够查询终端以重建其元数据的列表。
+```
