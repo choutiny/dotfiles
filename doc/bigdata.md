@@ -337,8 +337,22 @@ Apache Knox Gateway 项目的目的是为了简化和标准化发布和实现安
 Apache Falcon 是一个面向Hadoop的、新的数据处理和管理平台，设计用于数据移动、数据管道协调、生命周期管理和数据发现。它使终端用户可以快速地将他们的数据及其相关的处理和管理任务“上载（onboard）”到Hadoop集群。
 Apache Falcon解决了大数据领域中一个非常重要和关键的问题。升级为顶级项目是该项目的一个重大进展。Apache Falcon有一个完善的路线图，可以减少应用程序开发和管理人员编写和管理复杂数据管理和处理应用程序的痛苦。
 
-###
+###Phoenix
 ---------------
+Apache Phoenix 是 HBase 的 SQL 驱动。Phoenix 使得 HBase 支持通过 JDBC 的方式进行访问，并将你的 SQL 查询转成 HBase 的扫描和相应的动作。
+Phoenix完全使用Java编写，代码位于GitHub上，并且提供了一个客户端可嵌入的JDBC驱动。
+根据项目所述，Phoenix被Salesforce.com内部使用，对于简单的低延迟查询，其量级为毫秒；对于百万级别的行数来说，其量级为秒。Phoenix并不是像HBase那样用于map-reduce job的，而是通过标准化的语言来访问HBase数据的。
+根据项目创建者所述，对于10M到100M的行的简单查询来说，Phoenix要胜过Hive。对于使用了HBase API、协同处理器及自定义过滤器的Impala与OpenTSDB来说，进行相似的查询Phoenix的速度也会更快一些。
+Phoenix查询引擎会将SQL查询转换为一个或多个HBase scan，并编排执行以生成标准的JDBC结果集。直接使用HBase API、协同处理器与自定义过滤器，对于简单查询来说，其性能量级是毫秒，对于百万级别的行数来说，其性能量级是秒。
+嵌入式的JDBC驱动，实现了大部分的java.sql接口，包括元数据API
+可以通过多部行键或是键/值单元对列进行建模
+完善的查询支持，可以使用多个谓词以及优化的扫描键
+DDL支持：通过CREATE TABLE、DROP TABLE及ALTER TABLE来添加/删除列
+版本化的模式仓库：当写入数据时，快照查询会使用恰当的模式
+DML支持：用于逐行插入的UPSERT VALUES、用于相同或不同表之间大量数据传输的UPSERT SELECT、用于删除行的DELETE
+通过客户端的批处理实现的有限的事务支持
+单表——还没有连接，同时二级索引也在开发当中
+紧跟ANSI SQL标准
 
 ###
 ---------------
