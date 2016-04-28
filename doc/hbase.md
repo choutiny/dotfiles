@@ -760,19 +760,19 @@ cluster hbase-site.xml
 ```
 create 'table_name1', { NAME => 'cf1', REPLICATION_SCOPE => 1}
 
-add_peer "1",'halo-cnode1.domain.org,halo-cnode2.domain.org,halo-cnod3.domain.org:2181:/hbase' 
+add_peer "1",'rs-cnode1.domain.org,rs-cnode2.domain.org,rs-cnod3.domain.org:2181:/hbase' 
      '1' 是peerID, 必须是short型的整数 
-    'halo-cnode1.domain.org,halo-cnode2.domain.org,halo-cnod3.domain.org:2181:/hbase'  是一个字符串, 格式是"cluster zookeeper: cluster zookeeper port: cluster hbase zookeeper node"
+    'rs-cnode1.domain.org,rs-cnode2.domain.org,rs-cnod3.domain.org:2181:/hbase'  是一个字符串, 格式是"cluster zookeeper: cluster zookeeper port: cluster hbase zookeeper node"
 
 历史数据迁移 
-    sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=halo-cnode2.domain.org:2181:/hbase --families=cf1
-    上面命令会复制table_name1:cf1 数据去cluster halo-cnode2.domain.org table_name1
+    sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=rs-cnode2.domain.org:2181:/hbase --families=cf1
+    上面命令会复制table_name1:cf1 数据去cluster rs-cnode2.domain.org table_name1
     其他参数 --starttime=1459931000000 --endtime=1459936941022  
         会复制这个时间段的数据 
 
 验证
 halo-cnode1> put 't1','row1', 'cf1', 'value1'
-halo-cnode2>get 't1','row1'
+rs-cnode2>get 't1','row1'
 
 add_peer <ID> <CLUSTER_KEY>
 list_peers #list all peer
