@@ -26,4 +26,7 @@ netstat -tpnl | grep 2181
 
 测试
 zookeeper-client -server host1:2181
+
+hortonworks:
+rest_url=http://cnode1.domain,org:9998,http://cnode2.domain,org:9998,http://cnode3.domain,org:9998
 ```
