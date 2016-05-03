@@ -695,6 +695,9 @@ bin/graceful_stop.sh --restart --reload --debug inspurXXX.xxx.xxx.org
 
 # hbase 设置replication复制
 ----------------------
+HBase replication采用的基本架构模式是：master-push；因为每个region server都有自己的write-ahead-log(即WAL或HLog)，这样就很容易记录下从上次复制之后又发生了什么，非常类似于其他一些著名的解决方案，就像MySQL 的主从复制就只用了一个binary log来进行追踪。一个master集群可以向任意数目的slave集群进行复制，同时每个region server会参与复制它本身所对应的一系列的修改。
+Replication是异步进行的，这意味着参与的集群可能在地理位置上相隔甚远，它们之间的连接可以在某段时间内是断开的，插入到master集群中的那些行，在同一时间在slave集群上不一定是可用的(最终一致性)。
+在该设计中所采用的replication格式在原理上类似于MySQL的基于状态的replication。在这里，不是SQL语句，而是整个的WALEdits(由来自客户端的put和delete操作的多个cell inserts组成)会被复制以维持原子性。
 hbase shell
 ```
     disable 'table_name'

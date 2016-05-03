@@ -74,16 +74,17 @@ sync 等待要被传送的数据
 ###Hbase in Zookeeper
 ----------------
 ```
-root-region-server:ROOT表所在的regionserver(HMaster查找root表并分配给一个NodeServer上后,注册在zookeeper上)
-rs: 子节点表示在线的region server(regionserver上线后,注册在rs下面)
+hbaseid:集群id, 包含了集群ID, 跟存储在HDFS上的 hbase.id 文件中的一致
+master:存储hmaster节点(Master启动后,注册在该节点中),包含了服务器名称
+replication: 包含了replication的细节信息
+root-region-server: 包含了持有 -ROOT- regions 的region server的服务器名称. 在region查找过程中会用到它ROOT表所在的regionserver(HMaster查找root表并分配给一个NodeServer上后,注册在zookeeper上)
+rs: 作为所有region servers的根节点,会记录它们是何时启动。用来追踪服务器的失败。每个内部的znode节点是临时性的,以它所代表的region server的服务器名称为名子节点表示在线的region server(regionserver上线后,注册在rs下面)
 draining:(HDFS currently has a way to exclude certain datanodes and prevent them from getting new blocks. HDFS goes one step further and even drains these nodes for you. This enhancement is a step in that direction.
 The idea is that we mark nodes in zookeeper as draining nodes. This means that they don't get any more new regions. These draining nodes look exactly the same as the corresponding nodes in /rs, except they live under /draining.)
-master:存储hmaster节点(Master启动后,注册在该节点中)
 backup-masters:存储backup master节点(Backup master注册在该节点下)
 shutdown:关闭的regionserver(关闭的失效的regionserver)
 unassigned:子节点表示未分配的region(HMaster启动后,扫描HDFS中ROOT,META表,把所有的region放在这个节点下,待分配)
-table:子节点表示表名称,内容表示表的状态,缓存表状态(如果无该表节点,表示未enabled的状态)
-hbaseid:集群id
+table:当一个表被禁用时,它会被添加到该节点下. 表名就是新创建的znode的名称,内容就是"DISABLED", 子节点表示表名称,内容表示表的状态,缓存表状态(如果无该表节点,表示未enabled的状态)
 splitlog:(分布式split log,子节点是所有的需要split的WAL日志文件,在region server中有woker线程领取任务<锁住>,对该文件进行拆分,按照region分组,拆分到HDFS中的regioninfo下)
 
 ```
