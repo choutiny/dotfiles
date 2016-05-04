@@ -206,7 +206,7 @@ Alluxio是一个分布式内存文件系统，它在减轻Spark内存压力的�
 
 ###Sqoop
 ---------------
-Sqoop: 是一个用来将Hadoop和关系型数据库中的数据相互转移的工具，可以将一个关系型数据库（MySQL ,Oracle ,Postgres等）中的数据导进到Hadoop的HDFS中，也可以将HDFS的数据导进到关系型数据库中。
+Sqoop:是SQL-to-Hadoop的缩写，主要用于传统数据库和Hadoop之前传输数据。 数据的导入和导出本质上是Mapreduce程序，充分利用了MR的并行化和容错性 是一个用来将Hadoop和关系型数据库中的数据相互转移的工具，可以将一个关系型数据库（MySQL ,Oracle ,Postgres等）中的数据导进到Hadoop的HDFS中，也可以将HDFS的数据导进到关系型数据库中。
 Sqoop用于将关系形数据库（如mysql）或者其它结构化的数据导入到hadoop的生态系统中（HDFS，Hive ， HBase），反过来也可以将hadoop的数据导出为对应的结构形式。
 
 ###Mahout
