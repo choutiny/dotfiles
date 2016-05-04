@@ -1104,3 +1104,21 @@ Compose(Docker编排工具)：有了环境，我们下一步要做什么？部�
 
 swarm:客户端通过它的网络端口（2375）与Swarm交互,Swarm守护进程本身相当于是一个调度器和一个路由器。它实际上并没有运行容器，也就是说，如果Swarm服务停止了，它在终端Docker主机上已分配好的容器仍然是开启的。另外，由于它不处理任何网络路由（网络连接需要被直接发送到后端的Docker主机上），即使Swarm守护进程意外终止，运行的容器仍然可用。当Swarm从这样的崩溃中恢复，它依然能够查询终端以重建其元数据的列表。
 ```
+
+# tips
+-----------
+```
+docker容器的hosts文件。
+在正在运行的容器 用docker exec 进入修改 /etc/hosts 文件 ，这个容器被重启后会发现 hosts文件会被还原。 所以不要直接修改hosts文件， 需要增加hosts ，在docker run时 用 –add-host 参数。
+
+虚拟目录不会提交到镜像
+Dockerfile 中 VOLUME 指定的目录 或 docker run 时 -v 参数指定的目录， 在docker commit 时不会提交到镜像中。 如果-v 参数指定的容器内的目录原本有文件， 原本的文件都会被删除， 只存在宿主机目录的文件。
+
+docker容器的重启。
+容器一个容器运行中apache 我们要重启Apache ， 应该怎么重启？ 可能新手会 docker exec -it container_name bash 进入容器， 然后运行 service apache2 restart 启动Apache ， 这样是不能启动apache的， 只会把容器停止掉。 因为容器的主进程就是Apache ， 主进程退出时会退出容器， 在重启apache的时候 主进程先退出了， 这时候docker容器也跟着退出了，所以Apache不会重启。 要重启Apache 用docker命令： docker restart container_name
+
+退出容器的方法
+如果是docker run 运行一个容器， 没有加 -d 参数让它后台运行， 这时候 ctrl+c 退出进程也会让容器停止， 如果先退出但不停止容器可以ctrl+p 然后 ctrl+q
+
+容器内可以用supervision管理进程，防止进程异常退出。
+```
