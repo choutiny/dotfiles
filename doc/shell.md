@@ -1332,6 +1332,12 @@ vim scp://usrname@host//path/to/somefile  vim远程一个文件
 31.切换到上一个目录 等价于cd $OLDPWD $PWD是当前目录的路径
 ```
 cd -
+
+shell 里面获取脚本目录
+/bin/bash
+dirname $0
+cd `dirname $0`
+pwd
 ```
 
 32.替换上一条命令中的一个短语 把foo替换成bar,然后直接会运行上一条替换后的命令
