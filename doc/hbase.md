@@ -1386,3 +1386,75 @@ hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 其实块大小还是必要的，一个显而易见的作用就是当文件通过append操作不断增长的过程中，可以通过来block size决定何时split文件。以下是Hadoop Community的专家给我的回复： 
 “The block size is a meta attribute. If you append tothe file later, it still needs to know when to split further - so it keeps that value as a mere metadata it can use to advise itself on write boundaries.” 
 ```
+
+
+# All hbase backup system
+
+### static migration(safe), full shutdown backup
+-----------------------------
+   use hadoop distcp to migrate another cluster, base on a file-by-file copy, support different hadoop version
+   `hdfs dfs -ls /hbase/data/default` 
+   `disable hbase table_name`
+   `hadoop distcp hdfs://old cluster:9000/path hdfs://new cluster:9000:/path`   #distcp default port:8020
+
+### dynamic migration
+-----------------------------
+    1. Export and Import
+        steps:
+            run the below command on old cluster:
+            `hbase org.apache.hadoop.hbase.mapreduce.Export tbl_name hdfs://new cluster domain or IP:9000/path`
+            or 
+            write java script and use hbase export jar.
+            ```
+            package org.apache.hadoop.hbase.mapreduce;
+            public class Export {
+                ...
+            }
+            ```
+
+            create the table schema and run the below command on new cluster:
+            `hbase org.apache.hadoop.hbase.mapreduce.Import tbl_name hfds://new cluster domain or IP:9000/path`
+            `hadoop fs -copyToLocal /hbase/input ~/Documents/output_name`
+            `hadoop fs -copyFormLocal ~/Documents/input /hbase/data`
+            or write java script and use hbase import jar
+            ```
+            package org.apache.hadoop.hbase.mapreduce;
+            public class Import {
+                ...
+            }
+            ```
+
+    2. CopyTable    #####still failed
+        `hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=new cluster:2181:/hbase-table`
+        or
+        ```
+        package org.apache.hadoop.hbase.mapreduce;
+
+        public class CopyTable extends Configured implements Tool {
+            ...
+        }
+        ```
+
+    3. Replication (real time, need hadoop version match)
+        modify hbase-site.xml add `hbase.replication=true`
+        alter hbase table and add `REPLICATION_SCOPE=1`
+        `alter 'your_table', {NAME => 'family_name', REPLICATION_SCOPE => '1'}`
+        `add_peer` a cluster
+        `start_replication` `stop_replication`
+
+### manual migration(safe)
+-----------------------------
+    1. dump hbase table on old hbase cluster 
+        `hadoop fs -get src desc`
+    2. load hbase table into new hbase cluster
+        `hadoop fs -put src desc`
+    3. fix .META table
+        `hbase hbck -fixMeta`
+    4. verify data
+        `scan 'hbase:meta'`
+    5. re-allocate data to each RegionServer
+        `hbase hsbc -fixAssignments`
+
+### Others
+-----------------------------
+    HDFS Replication
