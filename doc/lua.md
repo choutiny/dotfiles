@@ -112,3 +112,49 @@ repeat
    print(sum)
 until sum >1000
 ```
+
+5. 函数
+```
+Lua的函数和Javascript的很像
+递归
+function fib(n)
+  if n < 2 then return 1 end
+  return fib(n - 2) + fib(n - 1)
+end
+闭包,同样，Javascript附体！
+示例一
+function newCounter()
+    local i = 0
+    return function()     -- anonymous function
+       i = i + 1
+        return i
+    end
+end
+c1 = newCounter()
+print(c1())  --> 1
+print(c1())  --> 2
+示例二
+function myPower(x)
+    return function(y) return y^x end
+end
+power2 = myPower(2)
+power3 = myPower(3)
+print(power2(4)) --4的2次方
+print(power3(5)) --5的3次方
+函数的返回值
+和Go语言一样，可以一条语句上赋多个值，如：
+name, age, bGay = "haoel", 37, false, "haoel@hotmail.com"
+上面的代码中，因为只有3个变量，所以第四个值被丢弃。
+函数也可以返回多个值：
+function getUserInfo(id)
+    print(id)
+    return "haoel", 37, "haoel@hotmail.com", "http://coolshell.cn"
+end
+name, age, email, website, bGay = getUserInfo()
+注意：上面的示例中，因为没有传id，所以函数中的id输出为nil，因为没有返回bGay，所以bGay也是nil。
+局部函数
+函数前面加上local就是局部函数，其实，Lua中的函数和Javascript中的一个德行。
+比如：下面的两个函数是一样的：
+function foo(x) return x^2 end
+foo = function(x) return x^2 end
+```
