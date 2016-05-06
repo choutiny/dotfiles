@@ -100,6 +100,7 @@ hbase_conf_dir=/etc/hbase/conf
       user=tommy
       password=p12391kfjkew
       options={ "init_command":"SET NAMES 'utf8'"}
+      options={"init_command": "SET sql_select_limit=100;SET NAMES 'utf8';SET sql_safe_updates=1"}
 
 ```
 
