@@ -1,3 +1,6 @@
+mkdir ~/.terminfo && cd ~/.terminfo
+tic mostlike.txt
+
 #	Reconstructed via infocmp from file: /usr/share/terminfo/x/xterm-pcolor
 mostlike|manpages with color looking like most, 
 	am, hs, km, mir, msgr, xenl, 
