@@ -1387,6 +1387,84 @@ hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 “The block size is a meta attribute. If you append tothe file later, it still needs to know when to split further - so it keeps that value as a mere metadata it can use to advise itself on write boundaries.” 
 ```
 
+4. dfs.replication
+hdfs - general - Block replication = 3 (default value)
+hdfs - hdfs.site - dfs.replication.max = 50 (default value)
+```
+查看hadoop集群的备份冗余情况 `hadoop fsck /`
+Total size: 14866531168 B (Total open files size: 415 B)
+Total dirs: 344
+Total files: 712
+Total symlinks: 0 (Files currently being written: 6)
+Total blocks (validated): 758 (avg. block size 19612837 B) (Total open file blocks (not validated): 5)
+Minimally replicated blocks: 758 (100.0 %)
+Over-replicated blocks: 0 (0.0 %)
+Under-replicated blocks: 0 (0.0 %)
+Mis-replicated blocks: 0 (0.0 %)
+Default replication factor: 1
+Average block replication: 3.0
+Corrupt blocks: 0
+Missing replicas: 0 (0.0 %)
+Number of data-nodes: 3
+Number of racks: 1
+FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
+可以看见Average block replication 仍是3
+需要修改hdfs中文件的备份系数。
+修改hdfs文件备份系数：hadoop dfs -setrep [-R] <path> 如果有-R将修改子目录文件的性质。
+`hadoop dfs -setrep -w 3 -R /user/hadoop/dir1` 就是把目录下所有文件备份系数设置为3
+`sudo -u hdfs hadoop fs -setrep -R 2 /`
+如果再fsck时候出错，往往是由于某些文件的备份不正常导致的，可以用hadoop的balancer工具修复
+自动负载均衡hadoop文件：hadoop balancer
+查看各节点的磁盘占用情况 hadoop dfsadmin -report
+```
+
+5. ERROR: org.apache.hadoop.hbase.NotServingRegionException: Region hbase:meta,,1 is not online on xxxxx
+```
+可能原因1:
+zookeeper引起的, 通常这种情况往往是在你正在运行一个进程正在操作hbase数据库的时候, hbase进程被杀掉或hbase服务被停掉所引起的, 如果是hbase自身管理的zookeeper
+解决方法1:
+可以将hbase的zookeeper目录下的文件全都删除掉, 然后再重启hbase服务就可以了.
+解决方法2:
+检查一下是否只有master创建了zookeeper目录
+注释:
+配置zookeeper的的目录为属性hbase.zookeeper.property.dataDir
+
+可能原因2:
+数据损坏导致当前数据存放的region无法使用, 使用hadoop fsck检查是否有损坏块
+解决方案:
+此时使用hadoop fsck 进行分析 就能看到CORRUPT 的storefile路径 hadoop fs -rm 当前storefile
+可能原因3:
+集群中各节点的时间不一致造成RegionServer启动失败:集群节点和master的时间误差阀值由hbase.master.maxclockskew参数设定的。
+hbase-site.xml
+```
+
+6. HBase corrupt block
+```
+`hdfs fsck /` to check the file block data is recoverable or not. it depends hdfs replication.
+`hdfs fsck / | egrep -v '^\.+$' | grep -v eplica` to get corrupt file blocks
+`hdfs fsck /path/to/corrupt/file -locations -blocks -files` 
+`hadoop fs -rm or  hadoop fsck -delete /path/to/file/with/permanently/missing/blocks` to remove corrupt blocks 
+or
+`hdfs dfs -rm /corrupt_block`
+`hbase hbck` to check again
+
+
+switch to hbase user: su hbase
+hbase hbck -details to understand the scope of the problem
+hbase hbck -fix to try to recover from region-level inconsistencies
+hbase hbck -repair tried to auto-repair, but actually increased number of inconsistencies by 1
+hbase hbck -fixMeta -fixAssignments
+hbase hbck -repair this time tables got repaired
+hbase hbck -details to confirm the fix
+At this point, HBase was healthy, added additional region, and de-referenced corrupted files. However, HDFS still had 5 corrupted files. Since they were no longer referenced by HBase, we deleted them:
+
+switch to hdfs user: su hdfs
+hdfs fsck / to understand the scope of the problem
+hdfs fsck / -delete remove corrupted files only
+hdfs fsck / to confirm healthy status
+
+```
+
 
 # All hbase backup system
 
