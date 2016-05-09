@@ -5631,6 +5631,12 @@ ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif
 
 ```
 
+126. fonts
+```
+dpkg-reconfigure fontconfig-config 可以配置bitmap
+```
+
+
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
 5.3 更新hg merge                                    2013-11-20 11:02:31

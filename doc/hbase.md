@@ -1503,6 +1503,12 @@ hdfs fsck / to confirm healthy status
             ```
 
     2. CopyTable    #####still failed
+        a. 集群内复制表数据.  Internal copy of a table (Poor man’s snapshot)
+            首先创建一个一样的被复制的表结构
+            然后 hbase org.apache.hadoop.hbase.mapreduce.CopyTable --new.name=tableCopy tableOrig
+        b. 远程hbase 备份 Remote HBase instance backup
+        c. 增量hbase 表数据复制 Incremental HBase table copies
+        d. 部分hbase 表数据复制和表结构修改.  Partial HBase table copies and HBase table schema changes
         `hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=new cluster:2181:/hbase-table`
         or
         ```
