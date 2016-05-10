@@ -763,20 +763,20 @@ cluster hbase-site.xml
 ```
 create 'table_name1', { NAME => 'cf1', REPLICATION_SCOPE => 1}
 
-add_peer "1",'rs-cnode1.domain.org,rs-cnode2.domain.org,rs-cnod3.domain.org:2181:/hbase' 
+add_peer "1",'remote_cluster_server1.domain.org,remote_cluster_server2.domain.org,rs-cnod3.domain.org:2181:/hbase' 
      '1' 是peerID, 必须是short型的整数 
-    'rs-cnode1.domain.org,rs-cnode2.domain.org,rs-cnod3.domain.org:2181:/hbase'  是一个字符串, 格式是"cluster zookeeper: cluster zookeeper port: cluster hbase zookeeper node"
+    'remote_cluster_server1.domain.org,remote_cluster_server2.domain.org,rs-cnod3.domain.org:2181:/hbase'  是一个字符串, 格式是"cluster zookeeper: cluster zookeeper port: cluster hbase zookeeper node"
 
 历史数据迁移 
     $ bin/hbase org.apache.hadoop.hbase.mapreduce.CopyTable [--starttime=X] [--endtime=Y] [--new.name=NEW] [--peer.adr=ADR] tablename  
-    sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=rs-cnode2.domain.org:2181:/hbase --families=cf1
-    上面命令会复制table_name1:cf1 数据去cluster rs-cnode2.domain.org table_name1
+    sudo -u hdfs hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=remote_cluster_server2.domain.org:2181:/hbase --families=cf1
+    上面命令会复制table_name1:cf1 数据去cluster remote_cluster_server2.domain.org table_name1
     其他参数 --starttime=1459931000000 --endtime=1459936941022  
         会复制这个时间段的数据 
 
 验证
 halo-cnode1> put 't1','row1', 'cf1', 'value1'
-rs-cnode2>get 't1','row1'
+remote_cluster_server2>get 't1','row1'
 
 add_peer <ID> <CLUSTER_KEY>
 list_peers #list all peer
@@ -1507,7 +1507,22 @@ hdfs fsck / to confirm healthy status
             首先创建一个一样的被复制的表结构
             然后 hbase org.apache.hadoop.hbase.mapreduce.CopyTable --new.name=tableCopy tableOrig
         b. 远程hbase 备份 Remote HBase instance backup
-        c. 增量hbase 表数据复制 Incremental HBase table copies
+            首先创建一个一样的被复制的表结构.
+            然后获得所有的远程peer.adr, 还有zookeeper的client port, 以及远端的zookeeper.znode.parent
+            command: 
+                hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:zk_client_port:zookeeper.znode.parent --new.name=tableCopy tableOrig
+            e.g.:
+                hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:2181:/hbase-unsecure -new.name=tableCopy tableOrig
+
+        c. 增量hbase 表数据复制 Increme table copies
+            需要指定--starttime 和 --endtime, 并且时间窗口(时间差)要大于3600000ms 也就是1 小时
+            -Dhbase.client.scanner.caching=100  推荐要设置>100, 这会占用更多内存但是数据在cluster之间的延迟更短, 这会增加性能
+            -Dmapreduce.map.speculative=false 应该经常被设置为假，以防止写数据两次，这可能会产生不准确的结果
+            command:
+                hbase org.apache.hadoop.hbase.mapreduce.CopyTable --starttime=1265875194289 --endtime=1265878794289  --peer.adr=remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:zk_client_port:zookeeper.znode.parent --families=myOldCf:myNewCf,cf2,cf3  --new.name=tableCopy tableOrig
+            e.g.:
+                hbase org.apache.hadoop.hbase.mapreduce.CopyTable --starttime=1460865700000 --endtime=1462865720000 --peer.adr=remote_cluster_server1.domain.org,remote_cluster_server2.domain.org,remote_cluster_server3.domain.org:2181:/hbase-unsecure --new.name=test.domain_cp test.domain
+
         d. 部分hbase 表数据复制和表结构修改.  Partial HBase table copies and HBase table schema changes
         `hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=new cluster:2181:/hbase-table`
         or
@@ -1517,6 +1532,12 @@ hdfs fsck / to confirm healthy status
         public class CopyTable extends Configured implements Tool {
             ...
         }
+            –families=srcCf1      只复制指定的列
+            –families=srcCf1,srcCf2 只复制指定的列
+            –families=srcCf1:dstCf1  复制指定的列到对应的列
+            –families=srcCf1:dstCf1,dstCf2,srcCf3:dstCf3   copy from srcCf1 to destCf1, copy dstCf2 to dstCf2 (no rename), and srcCf3 to dstCf3
+            –versions=vers  vers 是单元的版本, 默认是1, aka是最新 
+            –all.cells     会复制被标记删除了的单元(also copy delete markers and deleted cells)
         ```
 
     3. Replication (real time, need hadoop version match)

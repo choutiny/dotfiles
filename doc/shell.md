@@ -1067,6 +1067,7 @@ nslookup 域名
 nslookup google.com 8.8.8.8   查找google可用ip
 nslookup -q=mx www.google.com  查找MX记录
 nslookup -q=ns www.google.com 查找NS记录(nameserver)
+nslookup -vc www.google.com 
 
 route 路由表
 route -n 设置默认网关 route add default gw ip_address interface_name
