@@ -546,7 +546,8 @@ hbase(main)> list
 2）创建表
 
 # 语法:create <table>, {NAME => <family>, VERSIONS => <VERSIONS>}
-# 例如:创建表t1,有两个family name:f1,f2,且版本数均为2
+# 例如:创建表t1,有两个family name:f1,f2,且版本数均为2, 版本数为2的意思,就是一共可以存两个版本,
+默认1 开始,存2个版本,当再来一个版本的时候, 会 覆盖2的版本, 同时之前2的版本会覆盖掉1的版本.  scan的时候会一直取最新的版本, 也就是2的版本.
 hbase(main)> create 't1',{NAME => 'f1', VERSIONS => 2},{NAME => 'f2', VERSIONS => 2}
     
 
@@ -1524,14 +1525,14 @@ hdfs fsck / to confirm healthy status
                 hbase org.apache.hadoop.hbase.mapreduce.CopyTable --starttime=1460865700000 --endtime=1462865720000 --peer.adr=remote_cluster_server1.domain.org,remote_cluster_server2.domain.org,remote_cluster_server3.domain.org:2181:/hbase-unsecure --new.name=test.domain_cp test.domain
 
         d. 部分hbase 表数据复制和表结构修改.  Partial HBase table copies and HBase table schema changes
-        `hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=new cluster:2181:/hbase-table`
-        or
-        ```
-        package org.apache.hadoop.hbase.mapreduce;
+            `hbase org.apache.hadoop.hbase.mapreduce.CopyTable --peer.adr=new cluster:2181:/hbase-table`
+            or
+            ```
+            package org.apache.hadoop.hbase.mapreduce;
 
-        public class CopyTable extends Configured implements Tool {
-            ...
-        }
+            public class CopyTable extends Configured implements Tool {
+                ...
+            }
             –families=srcCf1      只复制指定的列
             –families=srcCf1,srcCf2 只复制指定的列
             –families=srcCf1:dstCf1  复制指定的列到对应的列
