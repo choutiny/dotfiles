@@ -1542,10 +1542,15 @@ hdfs fsck / to confirm healthy status
         ```
 
     3. Replication (real time, need hadoop version match)
+        首先创建一个一样的被复制的表结构
         modify hbase-site.xml add `hbase.replication=true`
         alter hbase table and add `REPLICATION_SCOPE=1`
+        `disable yourtable`
         `alter 'your_table', {NAME => 'family_name', REPLICATION_SCOPE => '1'}`
+        `enable yourtable`
         `add_peer` a cluster
+            e.g.: add_peer '1', remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:2181:/hbase-unsecure 
+        replication 就会自动开始.
         `start_replication` `stop_replication`
 
 ### manual migration(safe)
