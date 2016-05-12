@@ -4115,7 +4115,7 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
 
 92.shell 计算
 ```
-    echo `expr 1+2` 可以来计算出表达式. 也可以用let 来赋值 let b=1+2然后echo $b
+    echo `expr 1 + 2` 可以来计算出表达式, 必须有空格. 也可以用let 来赋值 let b=1+2然后echo $b
     ** 冥计算 
 
     文件重定向
