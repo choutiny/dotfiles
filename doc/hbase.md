@@ -702,8 +702,8 @@ Replication是异步进行的，这意味着参与的集群可能在地理位置
 hbase shell
 ```
     disable 'table_name'
-
-    alter  'table_name',  { NAME => 'cf1', REPLICATION_SCOPE => 1} #开启table_name的replication, default=0, cf1 = column_family_1
+    
+    alter  'table_name',  { NAME => 'cf1', REPLICATION_SCOPE => '1'} #开启table_name的replication, default=0, cf1 = column_family_1
     enable 'table_name'
     flush "table_name" #立即生效
 
@@ -1021,8 +1021,9 @@ create 'history.session', { NAME => 'cf0', COMPRESSION => 'GZ', REPLICATION_SCOP
 create 'history.recentstat', { NAME => 'cf0', COMPRESSION => 'GZ', REPLICATION_SCOPE => '0'}
 create 'history.history', {NAME =>'cf0', COMPRESSION => 'SNAPPY',REPLICATION_SCOPE => '0'}, {NAME =>'cf1', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0'}
 create 'document_demo', {NAME =>'doc', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
-create 'analytics_demo',{NAME =>'day', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'hour', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'total', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}
+create 'analytics_demo',{NAME =>'day', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'hour', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'}, {NAME =>'total', COMPRESSION => 'SNAPPY', REPLICATION_SCOPE => '0', VERSIONS => '3'} 
 
+create 'Test.Performance', {NAME=>'cf1', COMPRESSION => 'snappy', REPLICATION_SCOPE => '1', VERSIONS => 1}, {NAME=>'cf2', REPLICATION_SCOPE => '1', VERSIONS=>10}, {NAME=>'cf3',VERSIONS=>3}
 
 
 sudo -u hdfs hadoop fs -copyFromLocal ./analytics_demo /tommyx/analytics_demo
