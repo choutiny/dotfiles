@@ -663,6 +663,9 @@ DOS版本的awk不能运行, 只能用gawk:
 
 cat 1.txt | awk -F":" '{gsub(/\//, "-", $1);"date +%Y-%m-%d -d" $1|getline d;print d" "$2":"$3":"$4$5}'
 18/Apr/2015:09:34:12 +0800  => 转成 2015-04-18 09:34:12 +0800
+
+查找关键字进程, 并且杀掉它
+ps aux | grep 'gethb' | awk 'NR==2' | awk '{print $2}' | xargs kill -9
 ```
  
 sendmail.sh
@@ -3884,7 +3887,7 @@ commit(提交前删除库中指定文件)
         默读,不希望输入的数据显示在监视器上,实际上是显示的只是read命令将文本颜色设置为与背景相同的了
             read -s -p "enter your password:" pass
 
-
+    color,terminal color
     echo - 显示一行文本
             -n 不输出换行符
             -e 打开反斜杠ESC转义
