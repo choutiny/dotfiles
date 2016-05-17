@@ -1737,13 +1737,6 @@ restore -r -f /dev/hda2/sda2_bak.dump //还原备份
 fc-list //查看系统中安装的字体
 find ./ -type f -exec grep -q "root" {} \; -exec echo {} \; //查找目录下文件所包涵的字符串
 vmstat 5 //每5显示一下次系统信息,cpu,memory,i/o等
-top 后 在shift + P 所占进程的排序显示 process
-top 后 在shift + M 所占内存的排序显示 memory
-    top 后 在shift + A 按照不同类别排序显示
-    top 后 在shift + H Thread 和Task切换
-    top 后 在shift + L 搜索 
-    top 后 在shift + H Thread 和Task切换
-    top 后 在shift + H Thread 和Task切换
 
 iptraf -g //查看各个接口的流量
 iostat -d -x /dev/sda2 2 //用iostat查看磁盘/dev/sda2的磁盘i/o情况,每两秒刷新一次
@@ -3279,6 +3272,25 @@ chkconfig --list script_name
         TIME+ 进程使用的CPU时间总计,单位1/100秒
         COMMAND 正在运行进程的命令名或路径
 
+e 计数单位切换.
+y 立即刷新
+u + user 只查看相关用户的
+i 只查看前面有用的 
+s 修改延迟从3s到.., 同d
+f 显示条目修改., 上下选择, d来选中显示, s 来排序,
+h help
+k +PID 杀掉
+z 彩色化, b 加粗
+x,y 高亮sort, y 运行任务
+c 显示进程详细参数.
+
+top 后 在shift + P 所占进程的排序显示 process
+top 后 在shift + M 所占内存的排序显示 memory
+    top 后 在shift + A 按照不同类别排序显示
+    top 后 在shift + H Thread 和Task切换
+    top 后 在shift + L 搜索 
+    top 后 在shift + H Thread 和Task切换
+    top 后 在shift + H Thread 和Task切换
 按照指定应用输出内存占用
 ps -e -o 'pid,comm,args,pcpu,rsz,vsz,stime,user,uid' | grep oracle |  sort -nrk5
 ```
