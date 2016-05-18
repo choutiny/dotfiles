@@ -5559,6 +5559,10 @@ tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1
 strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo
 < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c6
 date | md5sum
+
+by python
+''.join(map(lambda xx:(hex(ord(xx))[2:]),os.urandom(16)))
+
 ```
 
 124. centos7 network initial
