@@ -1554,6 +1554,9 @@ hdfs fsck / to confirm healthy status
             e.g.: add_peer '1', remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:2181:/hbase-unsecure 
         replication 就会自动开始.
         `start_replication` `stop_replication`
+        
+        对于master-master模式, 需要先开启peer_id后, 再做更新. 这样数据会互相同步
+        
 
 ### manual migration(safe)
 -----------------------------
