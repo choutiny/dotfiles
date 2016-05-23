@@ -254,3 +254,144 @@ jps
 hadoop dfsadmin -report
 ```
 
+
+
+
+#HADOOP Q&A
+----------------------
+1. ScannerTimeoutException
+```
+修改配置文件：$HBASE_HOME/conf/hbase-site.xml，修改或添加此属性
+<property>
+<name>hbase.regionserver.lease.period</name>
+<value>180000</value>
+</property>
+二是修改程序，换一种思路，最好一次scan在60秒内总能返回至少一条结果。
+看 HBase权威指南，发现还有中简单的方法：
+Configuration conf = HBaseConfiguration.create()  
+conf.setLong(HConstants.HBASE_REGIONSERVER_LEASE_PERIOD_KEY, 120000)  
+```
+
+2. regionServer dead
+```
+一将Zookeeper的timeout时间加长。
+二是配置“hbase.regionserver.restart.on.zk.expire” 为true。 这样子，遇到ZooKeeper session expired ， regionserver将选择 restart 而不是 abort
+具体的配置是，在hbase-site.xml中加入
+<property>
+<name>zookeeper.session.timeout</name>
+<value>90000</value>
+<description>ZooKeeper session timeout.
+</property>
+
+<property>
+<name>hbase.regionserver.restart.on.zk.expire</name>
+<value>true</value>
+<description>
+Zookeeper session expired will force regionserver exit.
+Enable this will make the regionserver restart.
+</description>
+</property>
+
+hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
+```
+
+3. 如果一个HDFS上的文件大小(file size) 小于块大小(block size) ，那么HDFS会实际占用Linux file system的多大空间?
+```
+1. 往hdfs里面添加新文件前，hadoop在linux上面所占的空间为 464 MB：
+2. 往hdfs里面添加大小为2673375 byte(大概2.5 MB)的文件： 2673375 derby.jar
+3. 此时，hadoop在linux上面所占的空间为 467 MB——增加了一个实际文件大小(2.5 MB)的空间，而非一个block size(128 MB)：
+4. 使用hadoop dfs -stat查看文件信息： 这里就很清楚地反映出： 文件的实际大小(file size)是2673375 byte， 但它的block size是128 MB。
+5. 通过NameNode的web console来查看文件信息: 文件的实际大小(file size)是2673375 byte， 但它的block size是128 MB
+
+值得注意的是，结果中有一个 ‘1（avg.block size 2673375 B）’的字样。这里的 'block size' 并不是指平常说的文件块大小(Block Size)—— 后者是一个元数据的概念，相反它反映的是文件的实际大小(file size)。以下是Hadoop Community的专家给我的回复： 
+“The fsck is showing you an "average blocksize", not the block size metadata attribute of the file like stat shows. In this specific case, the average is just the length of your file, which is lesser than one whole block.”
+最后一个问题是： 如果hdfs占用Linux file system的磁盘空间按实际文件大小算，那么这个”块大小“有必要存在吗？
+其实块大小还是必要的，一个显而易见的作用就是当文件通过append操作不断增长的过程中，可以通过来block size决定何时split文件。以下是Hadoop Community的专家给我的回复： 
+“The block size is a meta attribute. If you append tothe file later, it still needs to know when to split further - so it keeps that value as a mere metadata it can use to advise itself on write boundaries.” 
+```
+
+4. dfs.replication
+hdfs - general - Block replication = 3 (default value)
+hdfs - hdfs.site - dfs.replication.max = 50 (default value)
+```
+查看hadoop集群的备份冗余情况 `hadoop fsck /`
+Total size: 14866531168 B (Total open files size: 415 B)
+Total dirs: 344
+Total files: 712
+Total symlinks: 0 (Files currently being written: 6)
+Total blocks (validated): 758 (avg. block size 19612837 B) (Total open file blocks (not validated): 5)
+Minimally replicated blocks: 758 (100.0 %)
+Over-replicated blocks: 0 (0.0 %)
+Under-replicated blocks: 0 (0.0 %)
+Mis-replicated blocks: 0 (0.0 %)
+Default replication factor: 1
+Average block replication: 3.0
+Corrupt blocks: 0
+Missing replicas: 0 (0.0 %)
+Number of data-nodes: 3
+Number of racks: 1
+FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
+可以看见Average block replication 仍是3
+需要修改hdfs中文件的备份系数。
+修改hdfs文件备份系数：hadoop dfs -setrep [-R] <path> 如果有-R将修改子目录文件的性质。
+`hadoop dfs -setrep -w 3 -R /user/hadoop/dir1` 就是把目录下所有文件备份系数设置为3
+`sudo -u hdfs hadoop fs -setrep -R 2 /`
+如果再fsck时候出错，往往是由于某些文件的备份不正常导致的，可以用hadoop的balancer工具修复
+自动负载均衡hadoop文件：hadoop balancer
+查看各节点的磁盘占用情况 hadoop dfsadmin -report
+```
+
+5. ERROR: org.apache.hadoop.hbase.NotServingRegionException: Region hbase:meta,,1 is not online on xxxxx
+```
+可能原因1:
+zookeeper引起的, 通常这种情况往往是在你正在运行一个进程正在操作hbase数据库的时候, hbase进程被杀掉或hbase服务被停掉所引起的, 如果是hbase自身管理的zookeeper
+解决方法1:
+可以将hbase的zookeeper目录下的文件全都删除掉, 然后再重启hbase服务就可以了.
+解决方法2:
+检查一下是否只有master创建了zookeeper目录
+注释:
+配置zookeeper的的目录为属性hbase.zookeeper.property.dataDir
+
+可能原因2:
+数据损坏导致当前数据存放的region无法使用, 使用hadoop fsck检查是否有损坏块
+解决方案:
+此时使用hadoop fsck 进行分析 就能看到CORRUPT 的storefile路径 hadoop fs -rm 当前storefile
+可能原因3:
+集群中各节点的时间不一致造成RegionServer启动失败:集群节点和master的时间误差阀值由hbase.master.maxclockskew参数设定的。
+hbase-site.xml
+```
+
+6. HBase corrupt block
+```
+`hdfs fsck /` to check the file block data is recoverable or not. it depends hdfs replication.
+`hdfs fsck / | egrep -v '^\.+$' | grep -v eplica` to get corrupt file blocks
+`hdfs fsck /path/to/corrupt/file -locations -blocks -files` 
+`hadoop fs -rm or  hadoop fsck -delete /path/to/file/with/permanently/missing/blocks` to remove corrupt blocks 
+or
+`hdfs dfs -rm /corrupt_block`
+`hbase hbck` to check again
+
+
+switch to hbase user: su hbase
+hbase hbck -details to understand the scope of the problem
+hbase hbck -fix to try to recover from region-level inconsistencies
+hbase hbck -repair tried to auto-repair, but actually increased number of inconsistencies by 1
+hbase hbck -fixMeta -fixAssignments
+hbase hbck -repair this time tables got repaired
+hbase hbck -details to confirm the fix
+At this point, HBase was healthy, added additional region, and de-referenced corrupted files. However, HDFS still had 5 corrupted files. Since they were no longer referenced by HBase, we deleted them:
+
+switch to hdfs user: su hdfs
+hdfs fsck / to understand the scope of the problem
+hdfs fsck / -delete remove corrupted files only
+hdfs fsck / to confirm healthy status
+
+```
+
+7. YARN NodeManager  can't Start
+```
+Retrying after 1 seconds. Reason: Execution of 'ambari-sudo.sh su yarn -l -s /bin/bash -c 'ls /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid && ps -p `cat /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid`'' returned 1. /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid
+  PID TTY          TIME CMD
+delete /var/log/hadoop-yarn/nodemanager/recovery-state/[nm-aux-services  yarn-nm-state].
+retart yarn nodemanager
+```
