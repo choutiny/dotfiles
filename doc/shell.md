@@ -84,6 +84,11 @@ cat -n file.txt | tr -s '\n'
 
 apt-get install cloc
 cloc ./ --3 来代码统计, 可以按照语言排序
+
+tat filename , 获取文件的文件名,大小,Inode,权限,UID,GID,  访问时间,修改时间和状态改动时间
+等于ls -lc filename (ctime, 最后更改时间)
+    ls -lu filename (atime, 最后存取时间)
+    ls -l filename (mtime, 最后修改时间)
 ```
 
 4.echo 输出
