@@ -56,7 +56,6 @@ alias cdg='cd /home/vc/git/'
 alias cdgd='cd /home/vc/git/dotfiles/'
 alias cdgv='cd /home/vc/git/vimrc/'
 
-
 alias shl='sh /home/sh/log.sh'
 alias gvimlog='gvim /var/log/php_errors.log'
 alias vimlog='vim /var/log/php_errors.log'
@@ -70,13 +69,12 @@ alias systart='sh /home/sh/start_debian.sh'
 alias ks='sh /home/sh/kill.sh'
 
 alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
+
 export EDITOR=vim
 export JAVA_HOME=/usr/java/java7
 export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar
-
 export HBASE_HOME="/usr/hbase"
-export PATH="$PATH:$JAVA_HOME/bin:$HBASE_HOME/bin"
+export HADOOP_HOME=/home/hadoop/hadoop-1.7.1
+export SCALA_HOME=/usr/lib/scala
 
-export HADOOP_HOME=/home/hadoop/hadoop-2.7.1
-export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
-export EDITOR=vim
+export PATH=$PATH:$JAVA_HOME/bin:$HBASE_HOME/bin:$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$SCALA_HOME/bin
