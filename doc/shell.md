@@ -34,6 +34,7 @@ cat -n file.txt | tr -s '\n'
     mkdir filenames && chown tommy:tommy -R !$ 创建目录并且授权.
 打印访问时间超过7分钟的所有文件 atime 访问时间 mtime 修改时间 ctime 变化时间 分钟amin mmin cmin 后面参数 用+ -来控制大于还是小于 这个时间参数
     find . -type f -amin +7 -print 打印访问时间超过7分钟的所有文件
+    find . -type f -atime +7 -print 打印访问时间超过7天的所有文件
     find . -type f -newer file.txt -print 找出比file.txt更新的文件
     find . -type f -size +2k 找出大于2KB的文件 b块 c字节 w字 k千字节M兆字节G吉字节
     find . -type f -name "*.swp" -delete 删除找到的swp 文件

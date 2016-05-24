@@ -6,7 +6,7 @@ China Hbase Fastest Node [China Hbase Node](http://mirrors.cnnic.cn/apache/hbase
 #Install
 
 ###Install JAVA
-----------------------
+-----------------------------
 Oracle Java Download [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 ```
 #mkdir /usr/java && cd /usr/java
@@ -26,7 +26,7 @@ java -version
 ```
 
 ###Install HBase
-----------------------
+-----------------------------
 ```
 #cd /tmp && wget http://mirrors.cnnic.cn/apache/hbase/stable/hbase-1.1.2-bin.tar.gz
 #tar -zxvf hbase-0.98.16.1-src.tar.gz -C /usr/
@@ -41,13 +41,13 @@ export JAVA_HOME=/usr/java/java7/
 ```
 
 ###Verify Install
-----------------------
+-----------------------------
 ```
 #hbase version
 ```
 
 ###HBASE PORT
----------------------
+-----------------------------
 ```
 hdfs: 9090
 hbase.master.port: 60000
@@ -63,7 +63,7 @@ hbase.rest.port: 8080
 ```
 
 #Usage
-----------------------
+-----------------------------
 ###start hbase 
 ```
 #$HBASE_HOME/bin/start-hbase.sh
@@ -307,7 +307,7 @@ COMMAND GROUPS:
 ```
 
 #Instruction cn
---------------------
+----------------------
 ```
 HBase以表的形式存储数据.表有行和列组成.列划分为若干个列族/列簇(column family).
 
@@ -1516,6 +1516,15 @@ hbase.rest.readonly
     默认: false
 ```
 
+### hbase decommission and recommission
+-----------------------------
+decommission 解除停止主机上的所有角色roles, 而不需要单独停用每个服务上的角色.
+    退役仅适用于HDFS的DataNode, MapReduce的TaskTracker, YARN的NodeManager, HBase的RegionServer的角色.
+    如果主机上运行有其他角色, 这些角色角色也会停止
+    当所有角色roles都被解除后并且停止后, 主机可以从服务器中删除. 可以同时停用多个主机.
+recommission 
+
+
 
 
 # All hbase backup system
@@ -1623,3 +1632,7 @@ hbase.rest.readonly
 ### Others
 -----------------------------
     HDFS Replication
+
+
+
+
