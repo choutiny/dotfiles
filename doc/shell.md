@@ -273,7 +273,7 @@ tree -h PATH同时打印出文件和目录的大小
 tree path -H http://localhost -o out.html 用tree打印出html输出
 ```
 
-11.shell正则
+11.shell正则(regexp)
 ```
 ^ 行起始标记 
 $ 行尾标记 所以^$就匹配空行
@@ -360,7 +360,13 @@ fgrep=grep -F   它利用固定的字符串来对文本进行搜索,但不支持
 
 ls | egrep -E "*\.[0-9]" | xargs rm 删除/var/log下面的数字备份文件, 支持1级
 find ./ -type f | grep -E "[a-z]+\.[0-9]+" | xargs rm, 支持多级
-centos:find ./ -type f | grep -E "[a-z]+-[0-9]+" | xargs rm, 支持多级
+centos:
+    find ./ -type f | grep -E "[a-z]+-[0-9]+" | xargs rm, 支持多级
+    find /var/log/ -type f | grep -E "[a-z]+\.[0-9]+" | xargs rm
+    find /var/log/ -type f | grep -E "[a-z]+-[0-9]+" | xargs rm
+    find /var/log/ -type f | grep -E "[a-z]+[log].[0-9]+" | xargs rm
+    find /var/log/ -type f | grep -E "[ERROR|WARNING|INFO]+.[0-9]+" | xargs rm
+    find /var/log/ -type f | grep -E "[a-z]+\.[0-9]{4}+-[0-9]{2}+-[0-9]{2}" | xargs rm
 ```
 
 13.cut切分文件
@@ -3307,6 +3313,12 @@ top 后 在shift + M 所占内存的排序显示 memory
     top 后 在shift + H Thread 和Task切换
 按照指定应用输出内存占用
 ps -e -o 'pid,comm,args,pcpu,rsz,vsz,stime,user,uid' | grep oracle |  sort -nrk5
+
+%user 用户级别(应用程序)的CPU利用率百分比
+%nice  后台jobs的程序CPU利用率百分比
+%system 系统使用CPU的百分比.(内核级)
+%iowait CPU空闲期系统未完成的磁盘I/O请求
+%idle   闲置CPU
 ```
 
 73.nginx
