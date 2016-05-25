@@ -3264,7 +3264,7 @@ chkconfig --list script_name
     count 采样次数,默认1.
 ```
 
-72.top 解释
+72.top command
 ```
 输出位两个部分,统计信心区和进程信息区
 统计信息区

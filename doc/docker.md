@@ -159,7 +159,7 @@ docker ps -n x
 
 自动重启容器, always/on-failure:5 可选的重启次数,on-failure只有当容器的退出代码为非0值的时候才会自动重启, 可以接数字来限定重启次数
 docker run --restart=always --name daemon_dave -d ubuntu /bin/sh -c "while true;do echo hello world; sleep 1; done"
-    --restart=always
+    --restart=always    适用需要升级docker,获取宿主机等导致的容器退出
     --restart=on-failure
     --restart=on-failure:2
 
