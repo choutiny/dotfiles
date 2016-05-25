@@ -1010,7 +1010,10 @@ vim /etc/init/docker.conf
 restart docker
 if not work:
     kill docker,
-run docker -d --insecure-registry 192.168.85.116:5000
+run 
+docker -d --insecure-registry 192.168.85.116:5000
+or 
+docker daemon --insecure-registry cdkdc.domain.org:5000
 
 or 
 vim /lib/systemd/system/docker.service
@@ -1021,7 +1024,6 @@ change ExecStart
     ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS or $OPTIONS
 
 EnvironmentFile 变量后面 =- 表示 ignore_errors=yes 的意思，$DOCKER_OPTS 添加到 ExecStart 里意思应该是让 systemd 把 EnvironmentFile 里的 $DOCKER_OPTS 作为 docker 的启动参数。错误的原因是 $DOCKER_OPTS 好像没有被解析，docker 直接以 /usr/bin/docker -d $DOCKER_OPTS -H fd:// 启动，而不是
-
 
 vim /etc/default/docker
 add the below
