@@ -13,7 +13,7 @@ FROM java:7-jdk-alpine
 ENV JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk TSDB_VERSION=2.2.0 TSDB_HOME=/opentsdb
 
 RUN apk --update add rsyslog make bash \
-	&& apk --update add --virtual builddeps build-base autoconf automake git python
+	&& apk --update add --virtual builddeps build-base autoconf automake git python openssh
 
 RUN wget -O v${TSDB_VERSION}.zip https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.zip \
 	&& unzip v${TSDB_VERSION}.zip \
@@ -30,9 +30,21 @@ RUN apk del builddeps \
 
 VOLUME ["$TSDB_HOME/cache", "/etc/opentsdb"]
 
-EXPOSE 3636
+EXPOSE 4242
 
-CMD ["./build/tsdb", "tsd", "--port=3636", "--staticroot=./build/staticroot", "--cachedir=./cache"]
+CMD ["./build/tsdb", "tsd", "--port=4242", "--staticroot=./build/staticroot", "--cachedir=./cache"]
+```
+
+###Build
+----------------
+```
+docker build -t private.domain.org:5000/opentsdb ./opentsdb
+```
+
+###RUN
+----------------
+```
+docker run -d --restart=always -p 4242:4242 -v /home/softs/docker/opentsdb/opentsdb.conf:/opentsdb/src/opentsdb.conf --name opentsdb cdkdc.domain.org:5000/opentsdb
 ```
 
 ###Configuration
@@ -111,3 +123,4 @@ tsd.http.cachedir =
 # Compaction flush speed multiplier, default 2
 # tsd.storage.compaction.flush_speed = 2
 ```
+
