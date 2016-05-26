@@ -4885,6 +4885,51 @@ SELECT 显示变量, SELECT var into out_var 将变量值写入OUT参数
         SELECT @x;
         SET @y='Good bye !';
         SELECT @y;
+
+CREATE TABLE fruits (
+  type varchar(10) NOT NULL,
+  variety varchar(20) NOT NULL,
+  price decimal(5,2) NOT NULL default 0,
+  PRIMARY KEY  (type,variety)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+insert into fruits(type, variety, price) values
+('apple',  'gala',       2.79),
+('apple',  'fuji',       0.24),
+('apple',  'limbertwig', 2.87),
+('orange', 'valencia',   3.59),
+('orange', 'navel',      9.36),
+('pear',   'bradford',   6.05),
+('pear',   'bartlett',   2.14),
+('cherry', 'bing',       2.55),
+('cherry', 'chelan',     6.33);
+
+set @type := '', @num := 1;
+
+select type, variety,
+   @num := if(@type = type, @num + 1, 1) as row_number,
+   @type := type as dummy
+from fruits
+order by type, variety;
+
++--------+------------+------------+--------+
+| type   | variety    | row_number | dummy  |
++--------+------------+------------+--------+
+| apple  | fuji       |          1 | apple  | 
+| apple  | gala       |          2 | apple  | 
+| apple  | limbertwig |          3 | apple  | 
+| cherry | bing       |          1 | cherry | 
+| cherry | chelan     |          2 | cherry | 
+| orange | navel      |          1 | orange | 
+| orange | valencia   |          2 | orange | 
+| pear   | bartlett   |          1 | pear   | 
+| pear   | bradford   |          2 | pear   | 
++--------+------------+------------+--------+
+
+
+
+
+
 事件Event 可以定义一些任务调度,首先需要开启事件调度的支持 SET GLOBAL event_scheduler = 1;
 创建语法:
     CREATE EVENT [IF NOT EXISTS] <event_name>
