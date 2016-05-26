@@ -44,8 +44,21 @@ docker build -t private.domain.org:5000/opentsdb ./opentsdb
 ###RUN
 ----------------
 ```
-docker run -d --restart=always -p 4242:4242 -v /home/softs/docker/opentsdb/opentsdb.conf:/opentsdb/src/opentsdb.conf --name opentsdb cdkdc.domain.org:5000/opentsdb
+docker run -d --restart=always -p 4242:4242 -v /home/softs/opentsdb/opentsdb.conf:/etc/opentsdb.conf --name opentsdb cdkdc.domain.org:5000/opentsdb
 ```
+
+###ShortConfig
+----------------
+```
+#tsd.network.port=4242
+tsd.storage.hbase.zk_quorum  = hdp.domain.org
+tsd.storage.hbase.zk_basedir = /hbase-unsecure
+tsd.core.auto_create_metrics = true
+tsd.storage.fix_duplicates   = true
+#tsd.storage.hbase.data_table = tsdb
+tsd.core.meta.enable_realtime_ts = true
+```
+
 
 ###Configuration
 ----------------
