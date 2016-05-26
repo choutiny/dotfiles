@@ -186,3 +186,106 @@ FSCK ended at Wed Mar 30 18:08:58 CST 2016 in 64 milliseconds
 ```
 curl --negotiate -u : -b ~/cookiejar.txt -c ~/cookiejar.txt http://node1.domain.org:50070/webhdfs/v1/?op=liststatus   
 ```
+
+7. HBASE in HDFS
+```
+hbase or hbase-unsecure, maybe in /apps/hbase
+/hbase/.tmp             当对表做创建或者删除操作的时候，会将表move 到该 tmp 目录下，然后再去做处理操作
+/hbase/archive          HBase 在做 Split或者 compact 操作完成之后，会将 HFile 移到.archive 目录中，
+                            然后将之前的 hfile 删除掉，该目录由 HMaster 上的一个定时任务定期去清理
+
+/hbase/corrupt          存储HBase做损坏的日志文件，一般都是为空的
+/hbase/data             这个才是 hbase 的核心目录，0.98版本里支持 namespace 的概念模型，系统会预置两个 namespace 即：hbase和default
+/hbase/data/default         这个默认的namespace即没有指定namespace 的表都将会flush 到该目录下面。
+/hbase/data/hbase           这个namespace 下面存储了 HBase 的 namespace、meta 和acl 三个表，这里的 meta 表跟0.94版本的.META.是一样的，
+                                自0.96之后就已经将 ROOT 表去掉了，直接从Zookeeper 中找到meta 表的位置，
+                                然后通过 meta 表定位到 region。 namespace 中存储了 HBase 中的所有 namespace 信息，
+                                包括预置的hbase 和 default。acl 则是表的用户权限控制。
+                            如果自定义一些 namespace 的话，就会再/hbase/data 目录下新建一个 namespace 文件夹，该 namespace 下的表都将 flush 到该目录下。
+
+/hbase/WALs             HBase 是支持 WAL（Write Ahead Log）的，HBase在第一次启动之初会给每一台RegionServer在.log 下创建一个目录，
+                            若客户端如果开启WAL模式，会先将数据写入一份到.log 下，当 RegionServer crash 或者目录达到一定大小，会开启 replay 模式，类似 MySQL 的 binlog。
+
+/hbase/oldWALs          当WALs文件夹中的 HLog 没用之后会 move 到oldWALs中，HMaster会定期去清理, 
+                            由参数hadoop.logfile.size 和 hadoop.logfile.count 来指定每个log file最大size和最大超出多少个logfile后作清理
+                            以及hbase.master.logcleaner.ttl Hlog存在oldWALs的最长时间,默认600000
+/hbase/.snapshot        hbase若开启了 snapshot 功能之后，对某一个用户表建立一个 snapshot 之后，snapshot 都存储在该目录下，
+                            如对表test 做了一个 名为sp_test 的snapshot，就会在/hbase/.snapshot/目录下创建一个sp_test 文件夹，
+                            snapshot 之后的所有写入都是记录在这个 snapshot 之上
+
+/hbase/hbase.id         它是一个文件，存储集群唯一的 cluster id 号，是一个 uuid。
+/hbase/hbase.version    同样也是一个文件，存储集群的版本号，貌似是加密的，看不到，只能通过web-ui 才能正确显示出来。
+
+
+HBase 在HDFS上的文件可以被分为俩类，一类位于Hbase根目录下，另一类位于根目录的表目录下
+.根级文件
+### /hbase/WALs 被HLog实例管理的WAL文件。
+
+### /hbase/WALs/data-hbase.com,60020,1443159380730
+对于每个HregionServer,日志目录中都包含一个对应的子目录
+
+### hbase/WALs/data-hbase.com,60020,1443159380730/data-hbase.com%2C60020%2C1443159380730.1443787240573
+在每个子目录下有多个HLog文件（因为日志滚动）
+
+### /hbase/oldWALs
+当/hbase/WALs 中的HLog文件被持久化到存储文件中，不再需要日志文件时，它们会被移动到/hbase/oldWALs目录。
+
+### /hbase/oldWALs/data-hbase.com%2C60020%2C1443159381290.1443787452518
+具体的oldWALs文件。
+
+### /hbase/hbase.id
+集群的唯一ID
+
+### /hbase/hbase.version
+集群的文件格式版本信息
+
+### /hbase/corrupt
+损坏的日志文件，一般为空
+
+### /hbase/archive/
+存储表的归档和快照，HBase 在做 Split或者 compact 操作完成之后，会将 HFile 移到archive 目录中，然后将之前的 hfile 删除掉，该目录由 HMaster 上的一个定时任务定期去清理。
+存储表的归档和快照具体目录:
+/hbase/archive/data/default/表名/region名/列族名/fd2221d8d1ae4e579c21882f0ec4c5a5
+
+### /hbase/.tmp
+当对表做创建或者删除操作的时候，会将表move 到该 tmp 目录下，然后再去做处理操作。
+
+### /hbase/data
+hbase存储数据的核心目录
+### /hbase/data/hbase
+该目录存储了存储了 HBase 的 namespace、meta 和acl 三个系统级表。
+namespace 中存储了 HBase 中的所有 namespace 信息，包括预置的hbase 和 default。acl 则是表的用户权限控制。
+
+- /hbase/data/hbase/meta
+- /hbase/data/hbase/namespace
+- /hbase/data/hbase/acl
+
+### /hbase/data/default/
+该目录存储所有用户数据表
+/hbase/data/default/表名
+表目录
+### /hbase/data/default/表名/.tabledesc
+表的元数据信息
+#### /hbase/data/default/PERFORMANCE_TEST/.tabledesc/.tableinfo.0000000008
+表的元数据信息具体文件
+
+### /hbase/data/default/表名/.tmp
+中间临时数据，当.tableinfo被更新时该目录就会被用到
+
+### /hbase/data/default/表名/f569a17359edb2250cdf07964be606a7（由region的表名+Start Key+时间戳产生的hashcode）
+表中每一个region的目录
+region 目录
+### /hbase/data/default/表名/region名/.regioninfo
+包含了对应region的HRegionInfo的序列化信息，类似.tableinfo。hbase hbck 工具可以用它来生成丢失的表条目元数据
+
+### /hbase/data/default/表名/region名/列族名
+每个列族的所有实际数据文件
+
+#### /hbase/data/default/表名/region名/列族名/文件名
+hbase实际数据文件
+
+### /hbase/data/default/表名/region名/.tmp(按需创建)
+存储临时文件，比如某个合并产生的重新写回的文件。
+
+
+```

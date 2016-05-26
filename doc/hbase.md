@@ -1346,9 +1346,9 @@ hbase.regions.slop
     当任一regionserver有average + (average * slop)个region是会执行Rebalance
     默认: 0
 
-base.master.logcleaner.ttl
+hbase.master.logcleaner.ttl
     Hlog存在于.oldlogdir 文件夹的最长时间, 超过了就会被 Master 的线程清理掉.
-    默认: 600000
+    默认: 600000 (10 minutes)
 
 hbase.master.logcleaner.plugins
     LogsCleaner 服务会执行的一组LogCleanerDelegat。值用逗号间隔的文本表示。这些WAL/HLog cleaners会按顺序调用。

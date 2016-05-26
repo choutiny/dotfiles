@@ -45,6 +45,7 @@ docker build -t private.domain.org:5000/opentsdb ./opentsdb
 ----------------
 ```
 docker run -d --restart=always -p 4242:4242 -v /home/softs/opentsdb/opentsdb.conf:/etc/opentsdb.conf --name opentsdb cdkdc.domain.org:5000/opentsdb
+docker run -d --rm -p 4242:4242 -v /home/softs/opentsdb/opentsdb.conf:/etc/opentsdb.conf --name opentsdb cdkdc.domain.org:5000/opentsdb
 ```
 
 ###ShortConfig
