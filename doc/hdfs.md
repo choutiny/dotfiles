@@ -45,6 +45,9 @@ hadoop fs -get <hdfs file/dir> <local dir>      #拷贝多个文件或目录到�
 hadoop fs -copyToLocal <local src> <hdfs dst>   #与get相类似
 hadoop fs -mkdir <hdfs path>                    #只能一级一级的建目录,父目录不存在的话使用这个命令会报错
 hadoop fs -mkdir -p <hdfs path>                 #所创建的目录如果父目录不存在就创建该父目录
+hadoop fs -chown  -R <owner>:<group> <hdfs dst>
+hadoop fs -chmod -R <mode> <hdfs dst>
+hadoop fs -chgrp -R <groupp>  <hdfs url>
 hadoop fs -getmerge <hdfs dir> <local file>     #将hdfs指定目录下所有文件排序后合并到local指定的文件中,文件不存在时会自动创建,文件存在时会覆盖里面的内容
 hadoop fs -getmerge -nl <hdfs dir> <local file> #加上nl后,合并到local file中的hdfs文件之间会空出一行
 hadoop fs -cp <hdfs file> <hdfs file>           #目标文件不能存在,否则命令不能执行,相当于给文件重命名并保存,源文件还存在
