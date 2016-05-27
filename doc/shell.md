@@ -1031,6 +1031,9 @@ wget –mirror url 或者 wget -r -N -1 depeth url 其中-1 是指定的页面�
 访问需要http或者ftp的认证页面
 wget –user username –paswword pass url
 也可以改成需要网页提示并且手动输入密码 –password 改成 –ask-password
+
+wget fileurl -P /tmp
+wget fileurl -O /tmp/newname
 ```
 
 24.命令行的web浏览器
