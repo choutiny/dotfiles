@@ -366,8 +366,10 @@ DML支持：用于逐行插入的UPSERT VALUES、用于相同或不同表之间�
 ---------------
 每秒查询率QPS(Query Per Second)是对一个特定的查询服务器在规定时间内所处理流量多少的衡量标准。
 
-###
+###Grafana
 ---------------
+Grafana 是 Graphite 和 InfluxDB 仪表盘和图形编辑器。Grafana 是开源的，功能齐全的度量仪表盘和图形编辑器，支持 Graphite，InfluxDB 和 OpenTSDB。
+Grafana 主要特性：灵活丰富的图形化选项；可以混合多种风格；支持白天和夜间模式；多个数据源；Graphite 和 InfluxDB 查询编辑器等等。
 
 ###
 ---------------

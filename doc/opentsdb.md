@@ -50,9 +50,10 @@ docker run -d --rm -p 4242:4242 -v /home/softs/opentsdb/opentsdb.conf:/etc/opent
 
 ###ShortConfig
 ----------------
+need to check hbase shell>zk_dump
 ```
 #tsd.network.port=4242
-tsd.storage.hbase.zk_quorum  = hdp.domain.org
+tsd.storage.hbase.zk_quorum  = hdp.domain.org:2181
 tsd.storage.hbase.zk_basedir = /hbase-unsecure
 tsd.core.auto_create_metrics = true
 tsd.storage.fix_duplicates   = true
