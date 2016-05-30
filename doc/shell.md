@@ -5750,6 +5750,7 @@ ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif
 126. fonts
 ```
 dpkg-reconfigure fontconfig-config 可以配置bitmap
+/etc/fonts/conf.d/6n 里面存在了中文和英文字体的绑定关系
 ```
 
 
