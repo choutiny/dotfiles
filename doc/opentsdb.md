@@ -61,6 +61,13 @@ tsd.storage.fix_duplicates   = true
 tsd.core.meta.enable_realtime_ts = true
 ```
 
+###OpenTSDB term
+----------------
+```
+metric  监控项, 比如CPU利用率
+tags    标签,在OpenTSDB里面，Tags由tagk和tagv组成，即tagk=takv。标签是用来描述Metric的，譬如上面为了标记是服务器A的CpuUsage，tags可为hostname=qatest
+```
+
 
 ###Configuration
 ----------------
