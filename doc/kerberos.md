@@ -84,7 +84,7 @@ add_principal: Principal or policy already exists while creating "host/cdkdc.dom
 kadmin.local:  ktadd host/cdkdc.domain.org     
 
 
-kadmin 和 kadmin.local 都是 KDC 的管理接口, 区别在于 kadmin.local 只能在 Server 上使用,无需密码; kadmin 在 Server 和 Client 上都能使用, 需要密码——当然, 需要在 Server 上启动 Kadmin 服务.
+kadmin 和 kadmin.local 都是 KDC 的管理接口, 区别在于 kadmin.local 只能在 Server 上使用,无需密码; kadmin 在 Server 和 Client 上都能使用, 需要密码--当然, 需要在 Server 上启动 Kadmin 服务.
 
 将 KDC 的域名加入到 Kerberos 的数据库
 kadmin.local:  addprinc -randkey host/kdctommy.example.org

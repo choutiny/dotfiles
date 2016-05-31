@@ -84,7 +84,7 @@ Usage
             ansible v1 -m service -a "name=mysql state=restarted" --sudo -K
             ansible v1 -m service -a "name=mysql state=stopped" --sudo -K 
 playbook YAML syntax
-        start — as document
+        start - as document
         list start , key: value, the space right near the colon(:) is must.  if colon(:) exists in colon, it should be quoted.
         ansible-playbook test.yaml
             ---

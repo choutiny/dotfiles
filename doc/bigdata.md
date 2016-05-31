@@ -176,7 +176,7 @@ YARN是从MapReduce中演化而来的,因而在大数据处理中扮演重要角
 ---------------
 Marathon是一个全新的框架,它将Mesos变成一个更有活力的工具,进而可以在单一的集群上运行不同的应用程序.Marathon出自于一家初创公司Mesosphere,该公司由两位前Airbnb的工程师创立.
 
-它的设计宗旨就是让用户在同一组服务器之上,更智能地运行多种应用程序和服务——Hadoop,Storm,甚至一个标准的Web应用.Marathon出自于一家初创公司 Mesosphere之手,这家公司主要就是想构建一个数据中心操作系统,不过这个系统是运行在 Mesos集群管理软件之上,这也是 Twitter基础设施的重要组成部分.该公司的联合创始人是前Airbnb的工程师Florian Leibert(也曾在Twitter工作过)和Tobias Knaup. 
+它的设计宗旨就是让用户在同一组服务器之上,更智能地运行多种应用程序和服务--Hadoop,Storm,甚至一个标准的Web应用.Marathon出自于一家初创公司 Mesosphere之手,这家公司主要就是想构建一个数据中心操作系统,不过这个系统是运行在 Mesos集群管理软件之上,这也是 Twitter基础设施的重要组成部分.该公司的联合创始人是前Airbnb的工程师Florian Leibert(也曾在Twitter工作过)和Tobias Knaup. 
 
 Marathon只不过占据了Mesosphere的一小部分,但是Leibert表示它很重要且有着非常大的吸引力.就目前而言,云计算和大数据的发展趋势已经从巩固阶段跳转到问题的解决阶段,未来可能需要多个分布式系统去处理那些特定的任务. 
 
@@ -351,7 +351,7 @@ DDL支持:通过CREATE TABLE,DROP TABLE及ALTER TABLE来添加/删除列
 版本化的模式仓库:当写入数据时,快照查询会使用恰当的模式
 DML支持:用于逐行插入的UPSERT VALUES,用于相同或不同表之间大量数据传输的UPSERT SELECT,用于删除行的DELETE
 通过客户端的批处理实现的有限的事务支持
-单表——还没有连接,同时二级索引也在开发当中
+单表--还没有连接,同时二级索引也在开发当中
 紧跟ANSI SQL标准
 
 ### Metrics

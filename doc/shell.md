@@ -354,7 +354,7 @@ grep "match_text" . -R -n 多级目录递归
 或者是先指定多个pattern 然后用-f 执行grep #$echo hello this is cool | grep -f patfile
 grep "main()" . -r –include *.{c.cpp} 在目录中递归搜索所有的.c 和.cpp文件
 grep "main()" . -r -exclude "readme" 排除所有readme文件 
-排除目录—exclude-dir 从文件中读取所许排除的文件列表 –exclude-from file
+排除目录-exclude-dir 从文件中读取所许排除的文件列表 –exclude-from file
 
 echo -e "a\nb\nc\na\nb\nc" | grep a -A 1 多个匹配,以一行 – 作为各匹配之前的定界符
 grep "keyword1\|keyword2" 用 | 来分割来, 需要转义, 来多个匹配
@@ -428,7 +428,7 @@ cut -c1-5 range_fields.txt 显示c后5个字符
 cut range_fields.txt -c-2 显示c前两个字符,
     将-c 替换成-b,可以用字节作为计数单位 在使用-c ,-f ,-b 时可以指定输出定界符
     --output-delimiter "delimiter string"
-    当用-b或者-c提取多个字段时,必须使用—output-delimiter
+    当用-b或者-c提取多个字段时,必须使用-output-delimiter
 cut range_fields.txt -c1-3,6-9 –output-delimiter ","
     abc,fghi
     abc,fghi
@@ -1028,7 +1028,7 @@ crontab -u user -r
 wget url1 url2 url3 ... -O 指定输出名 -o 写入日志
 wget -t 重试次数 url 中断后尝试次数
 下载限速 wget –limit-rate 20k url k或者m
-下载限制最大下载配额quota wget -Q 100m url 或者用—quota 
+下载限制最大下载配额quota wget -Q 100m url 或者用-quota 
 断点续传 wget -c url
 
 curl下载 不是将下载数据写入文件,而是写入标准输出stdout,所以需要重定向stdout到文件
@@ -1046,7 +1046,7 @@ wget fileurl -O /tmp/newname
 ```
 lynx -dump url>webpage_as_text.txt (以ascii字符下载到文本中) 这会把所有的超链接(<a href="link">) 作为文本输出的页脚列在reference标题之下
 
-curl 将下载文件输出到stdou,将进度信息输出到stderr,如果不想显示进度信息,需要用—slient
+curl 将下载文件输出到stdou,将进度信息输出到stderr,如果不想显示进度信息,需要用-slient
 curl url –silent
 curl ifconfig.me 当机器在内网的时候,可以通过这个命令查看外网IP
 
@@ -1107,7 +1107,7 @@ lsof -Pnl -i:80 查看80端口.
 ```
 du filename 查找某个文件占用的磁盘空间 df = disk free du=disk usage
 du -a directory 递归输出指定目录或者多个目录所有文件的统计结果
-du -b 用字节单位 -k 以KB为单位 -m 以MB为单位 -B 以块为单位 如果要排除 用—exclude "文件"
+du -b 用字节单位 -k 以KB为单位 -m 以MB为单位 -B 以块为单位 如果要排除 用-exclude "文件"
    -c 求total 
    -k 列出值以KB输出-m 以mb输出-s 只列出最后求总的值
 找出指定目录中最大的10个文件
@@ -4442,7 +4442,9 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
         定义1
             arr=(1 2 3 4 5)
         or
-            declare -A array
+            declare -a array, 
+                将变量var声明为数组变量.但这没有必要.所有变量都不必显式定义就可以用作数组.
+                事实上,在某种意义上,似乎所有变量都是数组,而且赋值给没有下标的变量与赋值给"[0]"相同.
             arr[1]='aaa'
         定义2
             array
@@ -4606,9 +4608,9 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
                     ls /etc/rc3.d/S* |cut -c 15-
     如何在编写SHELL显示多个信息,用EOF
                     cat << EOF
-                        +————————————————————–+
+                        +--------------------–+
                         |   === Welcome to Tunoff services ===                         |
-                        +————————————————————–+
+                        +--------------------–+
                         EOF
     for的用法(如给mysql建软链接)
                     cd /usr/local/mysql/bin
@@ -5044,19 +5046,19 @@ STRCMP (string1 ,string2 ) //逐字符比较两字串大小,
 SUBSTRING (str , position [,length ]) //从str的position开始,取length个字符,
 注: mysql中处理字符串时,默认第一个字符下标为1,即参数position必须大于等于1
 mysql> select substring('abcd',0,2);
-+———————–+
++-------–+
 | substring('abcd',0,2) |
-+———————–+
++-------–+
 |                       |
-+———————–+
++-------–+
 1 row in set (0.00 sec)
 
 mysql> select substring('abcd',1,2);
-+———————–+
++-------–+
 | substring('abcd',1,2) |
-+———————–+
++-------–+
 | ab                    |
-+———————–+
++-------–+
 1 row in set (0.02 sec)
 
 TRIM([[BOTH|LEADING|TRAILING] [padding] FROM]string2) //去除指定位置的指定字符
@@ -5085,29 +5087,29 @@ ROUND (number [,decimals ]) //四舍五入,decimals为小数位数]
 
 (1)默认变为整形值
 mysql> select round(1.23);
-+————-+
++-----+
 | round(1.23) |
-+————-+
++-----+
 |           1 |
-+————-+
++-----+
 1 row in set (0.00 sec)
 
 mysql> select round(1.56);
-+————-+
++-----+
 | round(1.56) |
-+————-+
++-----+
 |           2 |
-+————-+
++-----+
 1 row in set (0.00 sec)
 
 (2)可以设定小数位数,返回浮点型数据
 
 mysql> select round(1.567,2);
-+—————-+
++------+
 | round(1.567,2) |
-+—————-+
++------+
 |           1.57 |
-+—————-+
++------+
 1 row in set (0.00 sec)
 
 SIGN (number2 ) //返回符号,正负或0
@@ -5696,7 +5698,7 @@ LDAP连接服务器的连接字串格式为:ldap://servername/DN
 其中DN有三个属性,分别是CN,OU,DC   
 CN=Common Name 为用户名或服务器名,最长可以到80个字符,可以为中文
 OU=Organization Unit为组织单元,最多可以有四级,每级最长32个字符,可以为中文
-O=Organization 为组织名,可以3—64个字符长
+O=Organization 为组织名,可以3-64个字符长
 C=Country为国家名,可选,为2个字符长
 
 CN=test,OU=developer,DC=domainname,DC=com 

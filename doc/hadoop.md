@@ -299,11 +299,11 @@ hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 ```
 1. 往hdfs里面添加新文件前,hadoop在linux上面所占的空间为 464 MB:
 2. 往hdfs里面添加大小为2673375 byte(大概2.5 MB)的文件: 2673375 derby.jar
-3. 此时,hadoop在linux上面所占的空间为 467 MB——增加了一个实际文件大小(2.5 MB)的空间,而非一个block size(128 MB):
+3. 此时,hadoop在linux上面所占的空间为 467 MB--增加了一个实际文件大小(2.5 MB)的空间,而非一个block size(128 MB):
 4. 使用hadoop dfs -stat查看文件信息: 这里就很清楚地反映出: 文件的实际大小(file size)是2673375 byte, 但它的block size是128 MB.
 5. 通过NameNode的web console来查看文件信息: 文件的实际大小(file size)是2673375 byte, 但它的block size是128 MB
 
-值得注意的是,结果中有一个 '1(avg.block size 2673375 B)'的字样.这里的 'block size' 并不是指平常说的文件块大小(Block Size)—— 后者是一个元数据的概念,相反它反映的是文件的实际大小(file size).以下是Hadoop Community的专家给我的回复: 
+值得注意的是,结果中有一个 '1(avg.block size 2673375 B)'的字样.这里的 'block size' 并不是指平常说的文件块大小(Block Size)-- 后者是一个元数据的概念,相反它反映的是文件的实际大小(file size).以下是Hadoop Community的专家给我的回复: 
 "The fsck is showing you an "average blocksize", not the block size metadata attribute of the file like stat shows. In this specific case, the average is just the length of your file, which is lesser than one whole block."
 最后一个问题是: 如果hdfs占用Linux file system的磁盘空间按实际文件大小算,那么这个"块大小"有必要存在吗?
 其实块大小还是必要的,一个显而易见的作用就是当文件通过append操作不断增长的过程中,可以通过来block size决定何时split文件.以下是Hadoop Community的专家给我的回复: 
