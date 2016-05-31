@@ -52,12 +52,10 @@ docker run -d --rm -p 4242:4242 -v /home/softs/opentsdb/opentsdb.conf:/etc/opent
 ----------------
 need to check hbase shell>zk_dump
 ```
-#tsd.network.port=4242
 tsd.storage.hbase.zk_quorum  = hdp.domain.org:2181
 tsd.storage.hbase.zk_basedir = /hbase-unsecure
 tsd.core.auto_create_metrics = true
 tsd.storage.fix_duplicates   = true
-#tsd.storage.hbase.data_table = tsdb
 tsd.core.meta.enable_realtime_ts = true
 ```
 
@@ -66,83 +64,32 @@ tsd.core.meta.enable_realtime_ts = true
 ```
 metric  监控项, 比如CPU利用率
 tags    标签,在OpenTSDB里面,Tags由tagk和tagv组成,即tagk=takv.标签是用来描述Metric的,譬如上面为了标记是服务器A的CpuUsage,tags可为hostname=qatest
+tsd     OpenTSDB处理HBase交互的进程. 使用简单的HTTP API接口提供基于HBase的查询服务.
 ```
 
 
 ###Configuration
 ----------------
 ```
-# --------- NETWORK ----------
-# The TCP port TSD should use for communications
-# *** REQUIRED ***
-tsd.network.port =
-
-# The IPv4 network address to bind to, defaults to all addresses
-# tsd.network.bind = 0.0.0.0
-
-# Disable Nagel's algorithm, default is True
-#tsd.network.tcpnodelay = true
-
-# Determines whether or not to send keepalive packets to peers, default
-# is True
-#tsd.network.keep_alive = true
-
-# Determines if the same socket should be used for new connections, default
-# is True
-#tsd.network.reuseaddress = true
-
-# Number of worker threads dedicated to Netty, defaults to # of CPUs * 2
-#tsd.network.worker_threads = 8
-
-# Whether or not to use NIO or tradditional blocking IO, defaults to True
-#tsd.network.async_io = true
-
-# ----------- HTTP -----------
-# The location of static files for the HTTP GUI interface.
-# *** REQUIRED ***
+tsd.network.port = 4242
+tsd.network.bind = 0.0.0.0
+tsd.network.tcpnodelay = true
+tsd.network.keep_alive = true
+tsd.network.reuseaddress = true
+tsd.network.worker_threads = 8
+tsd.network.async_io = true
 tsd.http.staticroot =
-
-# Where TSD should write it's cache files to
-# *** REQUIRED ***
 tsd.http.cachedir =
-
-# --------- CORE ----------
-# Whether or not to automatically create UIDs for new metric types, default
-# is False
-#tsd.core.auto_create_metrics = false
-
-# --------- STORAGE ----------
-# Whether or not to enable data compaction in HBase, default is True
-#tsd.storage.enable_compaction = true
-
-# How often, in milliseconds, to flush the data point queue to storage,
-# default is 1,000
-# tsd.storage.flush_interval = 1000
-
-# Name of the HBase table where data points are stored, default is "tsdb"
-#tsd.storage.hbase.data_table = tsdb
-
-# Name of the HBase table where UID information is stored, default is "tsdb-uid"
-#tsd.storage.hbase.uid_table = tsdb-uid
-
-# Path under which the znode for the -ROOT- region is located, default is "/hbase"
-#tsd.storage.hbase.zk_basedir = /hbase
-
-# A comma separated list of Zookeeper hosts to connect to, with or without
-# port specifiers, default is "localhost"
-#tsd.storage.hbase.zk_quorum = localhost
-
-# --------- COMPACTIONS ---------------------------------
-# Frequency at which compaction thread wakes up to flush stuff in seconds, default 10
-# tsd.storage.compaction.flush_interval = 10
-
-# Minimum rows attempted to compact at once, default 100
-# tsd.storage.compaction.min_flush_threshold = 100
-
-# Maximum number of rows, compacted concirrently, default 10000
-# tsd.storage.compaction.max_concurrent_flushes = 10000
-
-# Compaction flush speed multiplier, default 2
-# tsd.storage.compaction.flush_speed = 2
+tsd.core.auto_create_metrics = false
+tsd.storage.enable_compaction = true
+tsd.storage.flush_interval = 1000
+tsd.storage.hbase.data_table = tsdb
+tsd.storage.hbase.uid_table = tsdb-uid
+tsd.storage.hbase.zk_basedir = /hbase
+tsd.storage.hbase.zk_quorum = localhost
+tsd.storage.compaction.flush_interval = 10
+tsd.storage.compaction.min_flush_threshold = 100
+tsd.storage.compaction.max_concurrent_flushes = 10000
+tsd.storage.compaction.flush_speed = 2
 ```
 
