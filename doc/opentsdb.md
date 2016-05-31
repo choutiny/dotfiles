@@ -62,9 +62,10 @@ tsd.core.meta.enable_realtime_ts = true
 ###OpenTSDB term
 ----------------
 ```
-metric  监控项, 比如CPU利用率
-tags    标签,在OpenTSDB里面,Tags由tagk和tagv组成,即tagk=takv.标签是用来描述Metric的,譬如上面为了标记是服务器A的CpuUsage,tags可为hostname=qatest
-tsd     OpenTSDB处理HBase交互的进程. 使用简单的HTTP API接口提供基于HBase的查询服务.
+metric      监控项, 比如CPU利用率
+tags        标签,在OpenTSDB里面,Tags由tagk和tagv组成,即tagk=takv.标签是用来描述Metric的,譬如上面为了标记是服务器A的CpuUsage,tags可为hostname=qatest
+tsd         OpenTSDB处理HBase交互的进程. 使用简单的HTTP API接口提供基于HBase的查询服务.
+tcollector  守护进程采集HBase
 ```
 
 
