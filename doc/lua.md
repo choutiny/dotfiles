@@ -24,7 +24,7 @@ ln -s /usr/bin/lua5.3 /usr/local/bin/lua
 ```
 shell#lua5.3
 Lua 5.3.1  Copyright (C) 1994-2015 Lua.org, PUC-Rio
->print("hello world")       #Lua脚本的语句的分号是可选的，这个和GO语言很类似。
+>print("hello world")       #Lua脚本的语句的分号是可选的,这个和GO语言很类似.
 
 or 
 shell#lua32 hello.lua
@@ -39,7 +39,7 @@ or chmod +x hello.lua
 2. add `#!/usr/local/bin/lua` in lua
 3. 变量 
 ``` 
-Lua的数字只有double型，64bits，你不必担心Lua处理浮点数会慢（除非大于100,000,000,000,000），或是会有精度问题,你可以以如下的方式表示数字，0x开头的16进制和C是很像的。
+Lua的数字只有double型,64bits,你不必担心Lua处理浮点数会慢(除非大于100,000,000,000,000),或是会有精度问题,你可以以如下的方式表示数字,0x开头的16进制和C是很像的.
 num = 1024
 num = 3.0
 num = 3.1416
@@ -47,24 +47,24 @@ num = 314.16e-2
 num = 0.31416E1
 num = 0xff
 num = 0x56
-字符串你可以用单引号，也可以用双引号，还支持C类型的转义，比如： ‘\a’ （响铃）， ‘\b’ （退格）， ‘\f’ （表单）， ‘\n’ （换行）， ‘\r’ （回车）， ‘\t’ （横向制表）， ‘\v’ （纵向制表）， ‘\\’ （反斜杠）， ‘\”‘ （双引号）， 以及 ‘\” （单引号)
-下面的四种方式定义了完全相同的字符串（其中的两个中括号可以用于定义有换行的字符串）
+字符串你可以用单引号,也可以用双引号,还支持C类型的转义,比如: '\a' (响铃), '\b' (退格), '\f' (表单), '\n' (换行), '\r' (回车), '\t' (横向制表), '\v' (纵向制表), '\\' (反斜杠), '\"' (双引号), 以及 '\" (单引号)
+下面的四种方式定义了完全相同的字符串(其中的两个中括号可以用于定义有换行的字符串)
 a = 'alo\n123"'
 a = "alo\n123\""
 a = '\97lo\10\04923"'
 a = [[alo
 123"]]
-C语言中的NULL在Lua中是nil，比如你访问一个没有声明过的变量，就是nil，比如下面的v的值就是nil
+C语言中的NULL在Lua中是nil,比如你访问一个没有声明过的变量,就是nil,比如下面的v的值就是nil
 v = UndefinedVariable
-布尔类型只有nil和false是 false，数字0啊，‘’空字符串（’\0’）都是true！
-另外，需要注意的是：lua中的变量如果没有特殊说明，全是全局变量，那怕是语句块或是函数里。变量前加local关键字的是局部变量。
+布尔类型只有nil和false是 false,数字0啊,''空字符串('\0')都是true!
+另外,需要注意的是:lua中的变量如果没有特殊说明,全是全局变量,那怕是语句块或是函数里.变量前加local关键字的是局部变量.
 theGlobalVar = 50
 local theLocalVar = "local variable"
 ```
 
 4. 控制流程
 ```
-控制语句（Lua没有++或是+=这样的操作）
+控制语句(Lua没有++或是+=这样的操作)
 while循环#######
 sum = 0
 num = 1
@@ -84,11 +84,11 @@ else
     local age = io.read()
     print("Your age is "..age)
 end
-上面的语句不但展示了if-else语句，也展示了
-1）“～=”是不等于，而不是!=
-2）io库的分别从stdin和stdout读写的read和write函数
-3）字符串的拼接操作符“..”
-另外，条件表达式中的与或非为分是：and, or, not关键字。
+上面的语句不但展示了if-else语句,也展示了
+1)"~="是不等于,而不是!=
+2)io库的分别从stdin和stdout读写的read和write函数
+3)字符串的拼接操作符".."
+另外,条件表达式中的与或非为分是:and, or, not关键字.
 for 循环#######
 从1加到100
 sum = 0
@@ -121,7 +121,7 @@ function fib(n)
   if n < 2 then return 1 end
   return fib(n - 2) + fib(n - 1)
 end
-闭包,同样，Javascript附体！
+闭包,同样,Javascript附体!
 示例一
 function newCounter()
     local i = 0
@@ -142,19 +142,19 @@ power3 = myPower(3)
 print(power2(4)) --4的2次方
 print(power3(5)) --5的3次方
 函数的返回值
-和Go语言一样，可以一条语句上赋多个值，如：
+和Go语言一样,可以一条语句上赋多个值,如:
 name, age, bGay = "haoel", 37, false, "haoel@hotmail.com"
-上面的代码中，因为只有3个变量，所以第四个值被丢弃。
-函数也可以返回多个值：
+上面的代码中,因为只有3个变量,所以第四个值被丢弃.
+函数也可以返回多个值:
 function getUserInfo(id)
     print(id)
     return "haoel", 37, "haoel@hotmail.com", "http://coolshell.cn"
 end
 name, age, email, website, bGay = getUserInfo()
-注意：上面的示例中，因为没有传id，所以函数中的id输出为nil，因为没有返回bGay，所以bGay也是nil。
+注意:上面的示例中,因为没有传id,所以函数中的id输出为nil,因为没有返回bGay,所以bGay也是nil.
 局部函数
-函数前面加上local就是局部函数，其实，Lua中的函数和Javascript中的一个德行。
-比如：下面的两个函数是一样的：
+函数前面加上local就是局部函数,其实,Lua中的函数和Javascript中的一个德行.
+比如:下面的两个函数是一样的:
 function foo(x) return x^2 end
 foo = function(x) return x^2 end
 ```

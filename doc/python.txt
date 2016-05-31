@@ -1,6 +1,6 @@
-[]列表	可以包含不同类型的对象，可以增减元素，可以跟其他的列表结合或者把一个列表拆分，用[]来定义的, 列表是任意对象的序列,方扩号就是列表
+[]列表	可以包含不同类型的对象,可以增减元素,可以跟其他的列表结合或者把一个列表拆分,用[]来定义的, 列表是任意对象的序列,方扩号就是列表
 eg:aList=[123,'abc',4.56,['inner','list'],7-9j]
-1.list(str):将str转换成list类型，str可以使字符串也可以是元组类型
+1.list(str):将str转换成list类型,str可以使字符串也可以是元组类型
 2.aList.append('test'):追加元素到列表中去
 3.del aList[1]:删除列表中下标为1的元素
 del aList:删除整个列表
@@ -10,7 +10,7 @@ del aList:删除整个列表
 7.reversed(list):倒置列表中的元素位置
 8.list.count(obj):返回对象obj在list中出现的次数
 9.list.extend(seq):把序列seq的内容添加到list中10.list.insert(index,obj):在索引量为index的地方插入obj对象
-11.list.pop(index=-1):删除并返回指定位置的对象，默认是最后一个对象
+11.list.pop(index=-1):删除并返回指定位置的对象,默认是最后一个对象
 12.list.remove(obj):从list中删除obj对象
 13. 列表可以用insert来插入一项alist.insert(2, "Test")
 14. 列表可以用 + 运算符来连接列表
@@ -19,27 +19,27 @@ del aList:删除整个列表
 15. 创建空列表可以用alist=[] 或者是alist=list()来生成一个空列表
 
 
-()元组	可以包含不同类型的对象，但不可变，不可以在增减元素，用()来定义; 即使没有扩号,python也可以识别出元组
+()元组	可以包含不同类型的对象,但不可变,不可以在增减元素,用()来定义; 即使没有扩号,python也可以识别出元组
 eg:aTuple=(123,'abc',4.56,['inner','list'],7-9j)
 eg:aTuple=123,'abc',4.56,['inner','list'],7-9j
-1.tuple(obj):将对象obj转换成tuple对象，obj可以是任意字符串或者列表
-2.适用于列表的del,cmp,len,max,min方法也适用于tuple，但是由于元祖是不可变的，替换、添加、排序等不可实现
+1.tuple(obj):将对象obj转换成tuple对象,obj可以是任意字符串或者列表
+2.适用于列表的del,cmp,len,max,min方法也适用于tuple,但是由于元祖是不可变的,替换,添加,排序等不可实现
 元组的优势就是不可变,导致它们的表示更为紧凑,不会占据额外的内存空间.(小列表指的是包含的项少于12个)
 
-{}字典  键值对，用{}来定义,就是一个关联数组或者散列表, 字典可以通过{}或者dict()来创建
+{}字典  键值对,用{}来定义,就是一个关联数组或者散列表, 字典可以通过{}或者dict()来创建
 eg:aDict={'name':'cynthia','age':18}
 1.dict1=dict((['x',1],['y',2])):dict()创建字典
-2.dict1={}.fromkeys(('x','y'),-1):fromkeys()创建一个默认字典，字典中元素具有相同的值
+2.dict1={}.fromkeys(('x','y'),-1):fromkeys()创建一个默认字典,字典中元素具有相同的值
 3.dict1.keys():获取字典的键值列表
-4.dict1.has_key('x'):判断字典中是否有‘x'键值，返回bool型
-5.dict.get(key,default):返回键值key的值，若是key不存在，返回default的值
+4.dict1.has_key('x'):判断字典中是否有'x'键值,返回bool型
+5.dict.get(key,default):返回键值key的值,若是key不存在,返回default的值
 6.dict.items():返回键值对列表值
 7.dict.values():返回字典中所有值的列表
 8.dict.update(dict2):将dict2的键值对列表添加到字典dict中去
-9.dict.pop(key)：返回键值key的value
-10.setdefault():类似get方法，能够获得给定key的value，此外setdefault还能在自动重不含有给定key的情况下设定相应的key-value
-11.clear():清除字典中所有的项。原地操作，无返回(或说返回值为None）
-12.copy():返回具有相同key-value的新字典，为浅复制(shallow copy)
+9.dict.pop(key):返回键值key的value
+10.setdefault():类似get方法,能够获得给定key的value,此外setdefault还能在自动重不含有给定key的情况下设定相应的key-value
+11.clear():清除字典中所有的项.原地操作,无返回(或说返回值为None)
+12.copy():返回具有相同key-value的新字典,为浅复制(shallow copy)
 字典使用in运算符来测试某个内容想是不是字典成员
     if "SCOX" in princes:
         p = princes["SCOX"]
@@ -62,7 +62,7 @@ t = set("hello")
 
 x = input("x:") 获取用户输入
 2**3 = pow(2,3) 幂运算符**,乘方
-round           四舍五入最接近的整数。
+round           四舍五入最接近的整数.
 abs             绝对值
 1//2            整除
 1.0/2           浮点运算
@@ -74,10 +74,10 @@ import 来导入模块
     math.floor(32.9) 会取整 =32.0
     要输出为整数
     int(math.floor(32.9)) 输出32,自动向下取整,所以可以直接int(32.9)
-    要输出向上的整数，ceil
+    要输出向上的整数,ceil
     math.ceil(32.9) 输出33, 32.0 =32 32.1=33
 
-from模块import函数来指定。就不要在每次调用函数的时候都写模块名字
+from模块import函数来指定.就不要在每次调用函数的时候都写模块名字
     sqrt是math里面计算一个数的平方根
     from math import sqrt
     sqrt(9)   输出3.0
@@ -85,7 +85,7 @@ from模块import函数来指定。就不要在每次调用函数的时候都写�
         foo(4) = 2.0
 
 sqrt(-1) 会输出nan/NAN 意思就是not a number 非数值
-要处理负数的平方根（负数的平方根是虚数),需要用cmath(complex math,复数)模块
+要处理负数的平方根(负数的平方根是虚数),需要用cmath(complex math,复数)模块
     import cmath
     cmath.sqrt(-1) 输出1j  j/J就是虚数,不使用from cmath import sqrt是怕命名冲突污染
         虚数相乘为-1
@@ -98,11 +98,11 @@ python IDE /idle
     在Debug窗口的Debugger
 
 raw_input("Press <enter>") 来提供交互,
-    与input不同，input会假设用户输入的都是合法的python表达式，而raw_input会把所有的输入当作原始数据(raw data)
+    与input不同,input会假设用户输入的都是合法的python表达式,而raw_input会把所有的输入当作原始数据(raw data)
     所有如果也是获取用户输入,如果是数字,需要进行转换.int(raw_input(''))
 
-str函数， 把值转换为合理形式的字符串, str实际是一种类型,类似int/long，repr是函数。
-repr函数，创建一个字符串以合法的python表达式的形式来表示值
+str函数, 把值转换为合理形式的字符串, str实际是一种类型,类似int/long,repr是函数.
+repr函数,创建一个字符串以合法的python表达式的形式来表示值
     >>>print repr("Hello, world!")
     'Hello, world!'
     >>>print repr(10000L)
@@ -111,12 +111,12 @@ repr函数，创建一个字符串以合法的python表达式的形式来表示�
     Hello, world!
     >>>print str(10000L)
     10000
-    repr也可以作为`x` 反引号的实现。
+    repr也可以作为`x` 反引号的实现.
     >>>temp = 42
-    >>>print "The temperature is " + `temp` 就不会报错,python3不再使用反引号，所以应该用repr
+    >>>print "The temperature is " + `temp` 就不会报错,python3不再使用反引号,所以应该用repr
 
 
-长字符串用'''string'''来包围,或者"""string""" 里面可以随意用单双引号。
+长字符串用'''string'''来包围,或者"""string""" 里面可以随意用单双引号.
 如果一行的最后一个字符是反斜杠\ 换行符本身就转义而被忽略掉
 
 原始字符串
@@ -126,29 +126,29 @@ repr函数，创建一个字符串以合法的python表达式的形式来表示�
             >>>print path
             C:
             owhere
-    对于短的，可以再转义一次
+    对于短的,可以再转义一次
             >>print "c:\\nowhere"
             c:\nowhere
-    对于长的，加上r表示原始字符串,原始字符串的最后一个字符不能是反斜线，除非转义,因为不知道是否应该结束字符串,如果非要原始字符串以一个反斜杠结尾，把这个反斜线作为一个字符串处理
+    对于长的,加上r表示原始字符串,原始字符串的最后一个字符不能是反斜线,除非转义,因为不知道是否应该结束字符串,如果非要原始字符串以一个反斜杠结尾,把这个反斜线作为一个字符串处理
         >>>print r'Let\'s go!'
         Let\'s go!
         >>>print r'C:\Program Files\foo\bar' '\\'
         C:\Program Files\foo\bar\
 
-Unicode字符串,在python3.0，所有字符串都是unicode字符串
+Unicode字符串,在python3.0,所有字符串都是unicode字符串
     u"hello, world1"
 
 数据结构
 
-    sequence 序列,python有6种序列,包括列表，元组，字符串，Unicode字符串，buffer对象，xrange对象
-        列表可以修改，元组不能修改
-    python中还有一种名叫容器container的数据结构。 容器就是包含其他对象的任意对象。
-    序列（例如和元组）和映射（例如字典） 是两类主要的容器。 序列中的每个元素都有自己的编号，而映射中的每个元素则右一个名字（键）。集合set是既不是序列也不是映射的容器类型。
+    sequence 序列,python有6种序列,包括列表,元组,字符串,Unicode字符串,buffer对象,xrange对象
+        列表可以修改,元组不能修改
+    python中还有一种名叫容器container的数据结构. 容器就是包含其他对象的任意对象.
+    序列(例如和元组)和映射(例如字典) 是两类主要的容器. 序列中的每个元素都有自己的编号,而映射中的每个元素则右一个名字(键).集合set是既不是序列也不是映射的容器类型.
 
-    所有序列都可以进行某些特定操作,索引indexing,分片slicing,加adding，乘multiplying
-    以及检查某个元素是否属于序列的成员（成员资格）。除此之外，python还有计算序列长度，找出最大元素，最小元素的内建函数
-    迭代iteration，对序列进行迭代的意思，就是依次对序列中的每个元素重复执行某些操作。
-    字符串就是一个由字符组成的序列。索引0指向第一个元素
+    所有序列都可以进行某些特定操作,索引indexing,分片slicing,加adding,乘multiplying
+    以及检查某个元素是否属于序列的成员(成员资格).除此之外,python还有计算序列长度,找出最大元素,最小元素的内建函数
+    迭代iteration,对序列进行迭代的意思,就是依次对序列中的每个元素重复执行某些操作.
+    字符串就是一个由字符组成的序列.索引0指向第一个元素
 
     分片slicing.可以指定步长step length,步长不能为0
         >>>numbers = [1,2,3,4,5,6,7,8,9,10]
@@ -156,8 +156,8 @@ Unicode字符串,在python3.0，所有字符串都是unicode字符串
         >>>numbers[::3]     #[1,4,7,10]
         >>>numbers[8:3:-1]  #[9,8,7,6,5]
 
-    空列表，[]
-    None python内建值，表示没有在里面放置任何元素
+    空列表,[]
+    None python内建值,表示没有在里面放置任何元素
     初始化一个长度10的列表
         >>>sequence = [None] * 10
         >>>sequence
@@ -167,7 +167,7 @@ Unicode字符串,在python3.0，所有字符串都是unicode字符串
     内建函数len 返回序列包含元素的数量
     内建函数min/max返回序列中最大/最小的元素
 
-    list函数，实现字符串可以像列表一样被修改,list也适用于所有类型的序列。
+    list函数,实现字符串可以像列表一样被修改,list也适用于所有类型的序列.
         >>>list('Hello')
         ['H','e','l','l','o']
         >>> hello = ['H','e','l','l','o']
@@ -183,14 +183,14 @@ Unicode字符串,在python3.0，所有字符串都是unicode字符串
         append/count/extend/index/insert/pop/remove/reverse/sort
         pop是唯一一个既能修改列表又返回元素值(除了None)的列表方法
 
-    元组，不可变的序列
-    用逗号分割值，就自动创建了元组,元组大部分是通过圆括号括起来的。可以用没有那个的两个圆括号表示空元组
+    元组,不可变的序列
+    用逗号分割值,就自动创建了元组,元组大部分是通过圆括号括起来的.可以用没有那个的两个圆括号表示空元组
         >>>42  #42
         >>>42, #(42,)
         >>>(42,) #(42,)
         >>>3*(40+2)  #126
         >>>3*(40+2,)  #(42,42,42)
-    tuple函数,以一个序列作为参数并把它转换为元组。 如果参数是元组就原样返回
+    tuple函数,以一个序列作为参数并把它转换为元组. 如果参数是元组就原样返回
         >>>tuple([1,2,3]) #(1,2,3)
         >>>tuple('abc') #('a','b','c')
         >>>typle(1,2,3) #(1,2,3)
@@ -198,16 +198,16 @@ Unicode字符串,在python3.0，所有字符串都是unicode字符串
         >>>x=1,2,3 #x = (1,2,3)
         >>>x[1] #2
         >>>x[0:2] (1,2)
-    cmp函数cmp(x,y) 比较两个值。1,0,-1
+    cmp函数cmp(x,y) 比较两个值.1,0,-1
 
 
-    格式化字符串，字符串格式化操作符%, %s是转换说明符conversion specifier, 标记了需要插入转换值的位置，s表示值会被格式化成字符串，如果不是字符串，会用str将其转换为字符串
-        如果格式化字符串有百分号。就用%%，这样python就不会将百分号误认为是转换说明符了。
+    格式化字符串,字符串格式化操作符%, %s是转换说明符conversion specifier, 标记了需要插入转换值的位置,s表示值会被格式化成字符串,如果不是字符串,会用str将其转换为字符串
+        如果格式化字符串有百分号.就用%%,这样python就不会将百分号误认为是转换说明符了.
         >>>format = "Hello, %s. %s enough for ya?"
         >>>values = ('world','Hot')
         >>>print format %s vlaues
         Hello, world. Hot enough for ya?
-    格式化浮点数,f和精度 如%.3f是小数点后保留3位。 因为格式化转换说明符总是以表示类型的字符结束，所以精度在类型字符的前面
+    格式化浮点数,f和精度 如%.3f是小数点后保留3位. 因为格式化转换说明符总是以表示类型的字符结束,所以精度在类型字符的前面
         >>>format = "Pi with three 10 decimals: %.10f"
         >>>from math import pi
         >>>print format % pi
@@ -218,8 +218,8 @@ Unicode字符串,在python3.0，所有字符串都是unicode字符串
         >>>s = Template('$x,glorious $x!')
         >>>s.substitute(x='slurm')
         'slurm. glorious slurm!'
-    如果替换字段是单词的一部分，参数名需要用括号括起来 ${x}
-    可以使用$$插入美元符号,除了关键字参数以外，还可以使用字典变量提供值/名称对
+    如果替换字段是单词的一部分,参数名需要用括号括起来 ${x}
+    可以使用$$插入美元符号,除了关键字参数以外,还可以使用字典变量提供值/名称对
         >>>s=Template('A $thing must never $action.')
         >>>d={}
         >>>d['thing'] = 'gentleman'
@@ -761,10 +761,10 @@ Object 对象
         'haha1'
         >>> bar.name
         'haha2'
-Python的类的方法和普通的函数有一个很明显的区别，在类的方法必须有个额外的第一个参数 (self )，但在调用这个方法的时候不必为这个参数赋值 （显胜于隐 的引发）。Python的类的方法的这个特别的参数指代的是对象本身，而按照Python的惯例，它用self来表示。（当然我们也可以用其他任何名称来代替，只是规范和标准在那建议我们一致使用self）
-为何Python给self赋值而你不必给self赋值？
-例子说明：创建了一个类MyClass，实例化MyClass得到了MyObject这个对象，然后调用这个对象的方法MyObject.method(arg1,arg2) ，这个过程中，Python会自动转为Myclass.mehod(MyObject,arg1,arg2)
-这就是Python的self的原理了。即使你的类的方法不需要任何参数，但还是得给这个方法定义一个self参数，虽然我们在实例化调用的时候不用理会这个参数不用给它赋值。
+Python的类的方法和普通的函数有一个很明显的区别,在类的方法必须有个额外的第一个参数 (self ),但在调用这个方法的时候不必为这个参数赋值 (显胜于隐 的引发).Python的类的方法的这个特别的参数指代的是对象本身,而按照Python的惯例,它用self来表示.(当然我们也可以用其他任何名称来代替,只是规范和标准在那建议我们一致使用self)
+为何Python给self赋值而你不必给self赋值?
+例子说明:创建了一个类MyClass,实例化MyClass得到了MyObject这个对象,然后调用这个对象的方法MyObject.method(arg1,arg2) ,这个过程中,Python会自动转为Myclass.mehod(MyObject,arg1,arg2)
+这就是Python的self的原理了.即使你的类的方法不需要任何参数,但还是得给这个方法定义一个self参数,虽然我们在实例化调用的时候不用理会这个参数不用给它赋值.
 
     python并不直接支持私有方式. 不过可以在方法/变量前加上__ 双下划线. 实际上也可以通过 "_类名__方法名"来直接从外部访问
         >>> class secretive:
@@ -1326,9 +1326,9 @@ Python的类的方法和普通的函数有一个很明显的区别，在类的�
             print constants.Pi
         drawing包,包含shapes和colors的模块.
             drawing/
-            ├── colors.py
-            ├── __init__.py
-            └── shapes.py
+            ├-- colors.py
+            ├-- __init__.py
+            └-- shapes.py
         如果drawing已经在PYTHONPAH. 则可以通过
             import drawing              #imports the drawing package
             import drawing.colors       #imports the colors module

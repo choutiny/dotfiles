@@ -10,13 +10,13 @@ zookeeper是一个注册中心
 3.监控中心启动时订阅/dubbo/com.foo.BarService目录下的所有提供者和消费者URL
 
 支持以下功能:
-1.当提供者出现断电等异常停机时,注册中心能自动删除提供者信息。
-2.当注册中心重启时,能自动恢复注册数据,以及订阅请求。
-3.当会话过期时,能自动恢复注册数据,以及订阅请求。
-4.当设置<dubbo:registry check="false" />时,记录失败注册和订阅请求,后台定时重试。
-5.可通过<dubbo:registry username="admin" password="1234" />设置zookeeper登录信息。
-6.可通过<dubbo:registry group="dubbo" />设置zookeeper的根节点,不设置将使用无根树。
-7.支持*号通配符<dubbo:reference group="*" version="*" />,可订阅服务的所有分组和所有版本的提供者。
+1.当提供者出现断电等异常停机时,注册中心能自动删除提供者信息.
+2.当注册中心重启时,能自动恢复注册数据,以及订阅请求.
+3.当会话过期时,能自动恢复注册数据,以及订阅请求.
+4.当设置<dubbo:registry check="false" />时,记录失败注册和订阅请求,后台定时重试.
+5.可通过<dubbo:registry username="admin" password="1234" />设置zookeeper登录信息.
+6.可通过<dubbo:registry group="dubbo" />设置zookeeper的根节点,不设置将使用无根树.
+7.支持*号通配符<dubbo:reference group="*" version="*" />,可订阅服务的所有分组和所有版本的提供者.
 ```
 
 ###command
@@ -37,23 +37,23 @@ rest_url=http://cnode1.domain,org:9998,http://cnode2.domain,org:9998,http://cnod
 
 ZooKeeper 四字命令
 
-conf 输出相关服务配置的详细信息。
-cons 列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息。包括“接受 / 发送”的包数量、会话 id 、操作延迟、最后的操作执行等等信息。
-dump 列出未经处理的会话和临时节点。
-envi 输出关于服务环境的详细信息(区别于 conf 命令)。
+conf 输出相关服务配置的详细信息.
+cons 列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息.包括"接受 / 发送"的包数量,会话 id ,操作延迟,最后的操作执行等等信息.
+dump 列出未经处理的会话和临时节点.
+envi 输出关于服务环境的详细信息(区别于 conf 命令).
 reqs 列出未经处理的请求
-ruok 测试服务是否处于正确状态。如果确实如此,那么服务返回“ imok ”,否则不做任何相应。
-stat 输出关于性能和连接的客户端的列表。
-wchs 列出服务器 watch 的详细信息。
-wchc 通过 session 列出服务器 watch 的详细信息,它的输出是一个与 watch 相关的会话的列表。
-wchp 通过路径列出服务器 watch 的详细信息。它输出一个与 session 相关的路径。
+ruok 测试服务是否处于正确状态.如果确实如此,那么服务返回" imok ",否则不做任何相应.
+stat 输出关于性能和连接的客户端的列表.
+wchs 列出服务器 watch 的详细信息.
+wchc 通过 session 列出服务器 watch 的详细信息,它的输出是一个与 watch 相关的会话的列表.
+wchp 通过路径列出服务器 watch 的详细信息.它输出一个与 session 相关的路径.
 
 shell:echo rouk | nc 192.168.85.333 2181
 
 zk command:
 
 ls: 命令来查看当前 ZooKeeper 中所包含的内容:
-create: 创建一个新的 znode ,使用 create /zk myData 。这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串:
+create: 创建一个新的 znode ,使用 create /zk myData .这个命令创建了一个新的 znode 节点" zk "以及与它关联的字符串:
 get:    命令来确认第二步中所创建的 znode 是否包含我们所创建的字符串
 set:    命令来对 zk 所关联的字符串进行设置
 delete: delete /zk删除zk节点
@@ -78,7 +78,7 @@ hbaseid:集群id, 包含了集群ID, 跟存储在HDFS上的 hbase.id 文件中�
 master:存储hmaster节点(Master启动后,注册在该节点中),包含了服务器名称
 replication: 包含了replication的细节信息
 root-region-server: 包含了持有 -ROOT- regions 的region server的服务器名称. 在region查找过程中会用到它ROOT表所在的regionserver(HMaster查找root表并分配给一个NodeServer上后,注册在zookeeper上)
-rs: 作为所有region servers的根节点,会记录它们是何时启动。用来追踪服务器的失败。每个内部的znode节点是临时性的,以它所代表的region server的服务器名称为名子节点表示在线的region server(regionserver上线后,注册在rs下面)
+rs: 作为所有region servers的根节点,会记录它们是何时启动.用来追踪服务器的失败.每个内部的znode节点是临时性的,以它所代表的region server的服务器名称为名子节点表示在线的region server(regionserver上线后,注册在rs下面)
 draining:(HDFS currently has a way to exclude certain datanodes and prevent them from getting new blocks. HDFS goes one step further and even drains these nodes for you. This enhancement is a step in that direction.
 The idea is that we mark nodes in zookeeper as draining nodes. This means that they don't get any more new regions. These draining nodes look exactly the same as the corresponding nodes in /rs, except they live under /draining.)
 backup-masters:存储backup master节点(Backup master注册在该节点下)

@@ -3,19 +3,19 @@ All food words
 
 水果类
 ------------
-西红柿tomato  菠萝pineapple  西瓜watermelon  香蕉banana  柚子shaddock(pomelo)  橙子orange  苹果apple  柠檬lemon  樱桃cherry  桃子peach  梨pear  枣Chinese date(去核枣pitted date)  椰子coconut  草莓strawberry  树莓raspberry  蓝莓blueberry  黑莓blackberry  葡萄grape  甘蔗sugar cane  芒果mango  木瓜pawpaw或者papaya  杏子apricot  油桃nectarine  柿子persimmon  石榴pomegranate  榴莲jackfruit  槟榔果areca nut  西班牙产苦橙bitter orange  猕猴桃kiwi fruit or Chinese gooseberry  金橘cumquat  蟠桃flat peach  荔枝litchi  青梅greengage  山楂果haw  水蜜桃honey peach  香瓜、甜瓜musk melon  李子plum  杨梅waxberry red bayberry  桂圆longan  沙果crab apple  杨桃starfruit  枇杷loquat  柑橘tangerine  莲雾wax-apple  番石榴 guava
+西红柿tomato  菠萝pineapple  西瓜watermelon  香蕉banana  柚子shaddock(pomelo)  橙子orange  苹果apple  柠檬lemon  樱桃cherry  桃子peach  梨pear  枣Chinese date(去核枣pitted date)  椰子coconut  草莓strawberry  树莓raspberry  蓝莓blueberry  黑莓blackberry  葡萄grape  甘蔗sugar cane  芒果mango  木瓜pawpaw或者papaya  杏子apricot  油桃nectarine  柿子persimmon  石榴pomegranate  榴莲jackfruit  槟榔果areca nut  西班牙产苦橙bitter orange  猕猴桃kiwi fruit or Chinese gooseberry  金橘cumquat  蟠桃flat peach  荔枝litchi  青梅greengage  山楂果haw  水蜜桃honey peach  香瓜,甜瓜musk melon  李子plum  杨梅waxberry red bayberry  桂圆longan  沙果crab apple  杨桃starfruit  枇杷loquat  柑橘tangerine  莲雾wax-apple  番石榴 guava
 
-肉、蔬菜类
+肉,蔬菜类
 ------------
-南瓜(倭瓜)pumpkin cushaw  甜玉米Sweet corn  牛肉beef  猪肉pork  羊肉mutton  羔羊肉lamb  鸡肉chicken  生菜、莴苣lettuce  白菜Chinese cabbage(celery cabbage)  甘蓝、卷心菜cabbage  萝卜radish  胡萝卜carrot  韭菜leek  木耳agarics  豌豆pea  马铃薯(土豆)potato  黄瓜cucumber  苦瓜balsam pear  秋葵okra  洋葱onion  芹菜celery  芹菜杆celery sticks  地瓜sweet potato  蘑菇mushroom  橄榄olive  菠菜spinach  冬瓜(Chinese)wax gourd  莲藕lotus root  紫菜laver  油菜cole rape  茄子eggplant  香菜caraway  枇杷loquat  青椒green pepper  四季豆、青刀豆garden bean  银耳silvery fungi  腱子肉tendon  肘子pork joint  茴香fennel(茴香油fennel oil 药用)  鲤鱼carp  咸猪肉bacon  金针蘑needle mushroom  扁豆lentil  槟榔areca  牛蒡great burdock  水萝卜summer radish  竹笋bamboo shoot  艾蒿Chinese mugwort  绿豆mung bean  毛豆green soy bean  瘦肉lean meat  肥肉speck  黄花菜day lily(day lily bud)  豆芽菜bean sprout  丝瓜towel gourd (注：在美国丝瓜或用来做丝瓜茎loofah洗澡的，不是食用的)
+南瓜(倭瓜)pumpkin cushaw  甜玉米Sweet corn  牛肉beef  猪肉pork  羊肉mutton  羔羊肉lamb  鸡肉chicken  生菜,莴苣lettuce  白菜Chinese cabbage(celery cabbage)  甘蓝,卷心菜cabbage  萝卜radish  胡萝卜carrot  韭菜leek  木耳agarics  豌豆pea  马铃薯(土豆)potato  黄瓜cucumber  苦瓜balsam pear  秋葵okra  洋葱onion  芹菜celery  芹菜杆celery sticks  地瓜sweet potato  蘑菇mushroom  橄榄olive  菠菜spinach  冬瓜(Chinese)wax gourd  莲藕lotus root  紫菜laver  油菜cole rape  茄子eggplant  香菜caraway  枇杷loquat  青椒green pepper  四季豆,青刀豆garden bean  银耳silvery fungi  腱子肉tendon  肘子pork joint  茴香fennel(茴香油fennel oil 药用)  鲤鱼carp  咸猪肉bacon  金针蘑needle mushroom  扁豆lentil  槟榔areca  牛蒡great burdock  水萝卜summer radish  竹笋bamboo shoot  艾蒿Chinese mugwort  绿豆mung bean  毛豆green soy bean  瘦肉lean meat  肥肉speck  黄花菜day lily(day lily bud)  豆芽菜bean sprout  丝瓜towel gourd (注:在美国丝瓜或用来做丝瓜茎loofah洗澡的,不是食用的)
 
 海鲜类
 ------------
-虾仁Peeled Prawns  龙虾lobster  小龙虾crayfish  蟹crab  蟹足crab claws  小虾shrimp  对虾、大虾prawn  (烤)鱿鱼(toast)squid  海参sea cucumber  扇贝scallop  鲍鱼sea-ear abalone  小贝肉cockles  牡蛎oyster  鱼鳞scale  海蜇jellyfish  鳖、海龟turtle  蚬、蛤clam  鲅鱼culter  鲳鱼butterfish  虾籽shrimp egg  鲢鱼、银鲤鱼chub silver carp  黄花鱼yellow croaker
+虾仁Peeled Prawns  龙虾lobster  小龙虾crayfish  蟹crab  蟹足crab claws  小虾shrimp  对虾,大虾prawn  (烤)鱿鱼(toast)squid  海参sea cucumber  扇贝scallop  鲍鱼sea-ear abalone  小贝肉cockles  牡蛎oyster  鱼鳞scale  海蜇jellyfish  鳖,海龟turtle  蚬,蛤clam  鲅鱼culter  鲳鱼butterfish  虾籽shrimp egg  鲢鱼,银鲤鱼chub silver carp  黄花鱼yellow croaker
 
 调料类
 ------------
-醋vinegar 酱油soy 盐salt 加碘盐iodized salt 糖sugar 白糖refined sugar 酱soy sauce 沙拉salad 辣椒hot(red)pepper 胡椒(black)pepper 花椒wild pepper Chinese prickly ash powder 色拉油salad oil 调料fixing sauce seasoning 砂糖granulated sugar 红糖brown sugar 冰糖Rock Sugar 芝麻Sesame 芝麻酱Sesame paste 芝麻油Sesame oil 咖喱粉curry 番茄酱(汁)ketchup redeye 辣根horseradish 葱shallot (Spring onions) 姜ginger 蒜garlic 料酒cooking wine 蚝油oyster sauce 枸杞(枇杷,欧查果 )medlar 八角aniseed 酵母粉yeast barm 　　Yellow pepper 黄椒 肉桂cinnamon (在美国十分受欢迎，很多事物都有肉桂料) 黄油butter 香草精vanilla extract(甜点必备) 面粉flour 洋葱onion
+醋vinegar 酱油soy 盐salt 加碘盐iodized salt 糖sugar 白糖refined sugar 酱soy sauce 沙拉salad 辣椒hot(red)pepper 胡椒(black)pepper 花椒wild pepper Chinese prickly ash powder 色拉油salad oil 调料fixing sauce seasoning 砂糖granulated sugar 红糖brown sugar 冰糖Rock Sugar 芝麻Sesame 芝麻酱Sesame paste 芝麻油Sesame oil 咖喱粉curry 番茄酱(汁)ketchup redeye 辣根horseradish 葱shallot (Spring onions) 姜ginger 蒜garlic 料酒cooking wine 蚝油oyster sauce 枸杞(枇杷,欧查果 )medlar 八角aniseed 酵母粉yeast barm 　　Yellow pepper 黄椒 肉桂cinnamon (在美国十分受欢迎,很多事物都有肉桂料) 黄油butter 香草精vanilla extract(甜点必备) 面粉flour 洋葱onion
 
 主食类
 ------------
@@ -23,7 +23,7 @@ All food words
 
 干果类
 ------------
-腰果Cashew nuts 花生peanut 无花果fig 榛子filbert hazel 栗子chestnut 核桃walnut 杏仁almond 果脯preserved fruit 芋头taro 葡萄干raisin cordial 开心果pistachion 巴西果brazil nut 菱角,荸荠water chestnut (和国内食用法不同，做坚果食用)
+腰果Cashew nuts 花生peanut 无花果fig 榛子filbert hazel 栗子chestnut 核桃walnut 杏仁almond 果脯preserved fruit 芋头taro 葡萄干raisin cordial 开心果pistachion 巴西果brazil nut 菱角,荸荠water chestnut (和国内食用法不同,做坚果食用)
 
 酒水类
 ------------

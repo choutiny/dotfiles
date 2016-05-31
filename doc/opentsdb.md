@@ -1,6 +1,6 @@
 OpenTSDB
 ========
-OpenTSDB是一个架构在Hbase系统之上的实时监控信息收集和展示平台。它支持秒级数据采集所有metrics，支持永久存储，可以做容量规划，并很容易的接入到现有的报警系统里。OpenTSDB可以从大规模的集群（包括集群中的网络设备、操作系统、应用程序）中获取相应的metrics并进行存储、索引以及服务，从而使得这些数据更容易让人理解，如web化，图形化等.
+OpenTSDB是一个架构在Hbase系统之上的实时监控信息收集和展示平台.它支持秒级数据采集所有metrics,支持永久存储,可以做容量规划,并很容易的接入到现有的报警系统里.OpenTSDB可以从大规模的集群(包括集群中的网络设备,操作系统,应用程序)中获取相应的metrics并进行存储,索引以及服务,从而使得这些数据更容易让人理解,如web化,图形化等.
 OpenTSDB是StumbleUpon公司开发出来的.
 [OpenTSDB Official](http://opentsdb.net/docs/build/html/index.html)
 
@@ -65,7 +65,7 @@ tsd.core.meta.enable_realtime_ts = true
 ----------------
 ```
 metric  监控项, 比如CPU利用率
-tags    标签,在OpenTSDB里面，Tags由tagk和tagv组成，即tagk=takv。标签是用来描述Metric的，譬如上面为了标记是服务器A的CpuUsage，tags可为hostname=qatest
+tags    标签,在OpenTSDB里面,Tags由tagk和tagv组成,即tagk=takv.标签是用来描述Metric的,譬如上面为了标记是服务器A的CpuUsage,tags可为hostname=qatest
 ```
 
 

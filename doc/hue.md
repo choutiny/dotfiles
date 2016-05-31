@@ -1,27 +1,27 @@
 HUE
 =========
-Hue是cdh专门的一套web管理器，它包括3个部分hue ui，hue server，hue db。hue提供所有的cdh组件的shell界面的接口。你可以在hue编写mr，查看修改hdfs的文件，管理hive的元数据，运行Sqoop，编写Oozie工作流等大量工作。
+Hue是cdh专门的一套web管理器,它包括3个部分hue ui,hue server,hue db.hue提供所有的cdh组件的shell界面的接口.你可以在hue编写mr,查看修改hdfs的文件,管理hive的元数据,运行Sqoop,编写Oozie工作流等大量工作.
 
 [HUE Docker](http://gethue.com/getting-started-with-hue-in-2-minutes-with-docker/)
 
-Hue是一个开源的Apache Hadoop UI系统，最早是由Cloudera Desktop演化而来，由Cloudera贡献给开源社区，它是基于Python Web框架Django实现的。通过使用Hue我们可以在浏览器端的Web控制台上与Hadoop集群进行交互来分析处理数据，例如操作HDFS上的数据，运行MapReduce Job等等。很早以前就听说过Hue的便利与强大，一直没能亲自尝试使用，下面先通过官网给出的特性，通过翻译原文简单了解一下Hue所支持的功能特性集合：
+Hue是一个开源的Apache Hadoop UI系统,最早是由Cloudera Desktop演化而来,由Cloudera贡献给开源社区,它是基于Python Web框架Django实现的.通过使用Hue我们可以在浏览器端的Web控制台上与Hadoop集群进行交互来分析处理数据,例如操作HDFS上的数据,运行MapReduce Job等等.很早以前就听说过Hue的便利与强大,一直没能亲自尝试使用,下面先通过官网给出的特性,通过翻译原文简单了解一下Hue所支持的功能特性集合:
 
 ```
-默认基于轻量级sqlite数据库管理会话数据，用户认证和授权，可以自定义为MySQL、Postgresql，以及Oracle
-基于文件浏览器（File Browser）访问HDFS
+默认基于轻量级sqlite数据库管理会话数据,用户认证和授权,可以自定义为MySQL,Postgresql,以及Oracle
+基于文件浏览器(File Browser)访问HDFS
 基于Hive编辑器来开发和运行Hive查询
-支持基于Solr进行搜索的应用，并提供可视化的数据视图，以及仪表板（Dashboard）
+支持基于Solr进行搜索的应用,并提供可视化的数据视图,以及仪表板(Dashboard)
 支持基于Impala的应用进行交互式查询
-支持Spark编辑器和仪表板（Dashboard）
-支持Pig编辑器，并能够提交脚本任务
-支持Oozie编辑器，可以通过仪表板提交和监控Workflow、Coordinator和Bundle
-支持HBase浏览器，能够可视化数据、查询数据、修改HBase表
-支持Metastore浏览器，可以访问Hive的元数据，以及HCatalog
-支持Job浏览器，能够访问MapReduce Job（MR1/MR2-YARN）
-支持Job设计器，能够创建MapReduce/Streaming/Java Job
-支持Sqoop 2编辑器和仪表板（Dashboard）
+支持Spark编辑器和仪表板(Dashboard)
+支持Pig编辑器,并能够提交脚本任务
+支持Oozie编辑器,可以通过仪表板提交和监控Workflow,Coordinator和Bundle
+支持HBase浏览器,能够可视化数据,查询数据,修改HBase表
+支持Metastore浏览器,可以访问Hive的元数据,以及HCatalog
+支持Job浏览器,能够访问MapReduce Job(MR1/MR2-YARN)
+支持Job设计器,能够创建MapReduce/Streaming/Java Job
+支持Sqoop 2编辑器和仪表板(Dashboard)
 支持ZooKeeper浏览器和编辑器
-支持MySql、PostGresql、Sqlite和Oracle数据库查询编辑器
+支持MySql,PostGresql,Sqlite和Oracle数据库查询编辑器
 ```
 
 ###Docker
@@ -151,4 +151,4 @@ Replace the kinit_path value, /usr/kerberos/bin/kinit
 ###参考
 -----------
 * [HUE offiical site](http://gethue.com/getting-started-with-hue-in-2-minutes-with-docker/)
-* [高可用Hadoop平台－Hue In Hadoop](http://www.cnblogs.com/smartloli/p/4527168.html)
+* [高可用Hadoop平台-Hue In Hadoop](http://www.cnblogs.com/smartloli/p/4527168.html)

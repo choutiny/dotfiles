@@ -57,7 +57,7 @@ cat -n file.txt | tr -s '\n'
     find . -name 'core' -type f | xargs rm
         第一种,-exec,相当于把前面find的结果替换到{} /;的位置去进行rm操作.
         第二种,|xargs 是相当于把管道前面的find结果替换到管道后面的末尾(默认是末尾)去执行rm操作.
-        -exec的方式只开启了一个rm进程去删除文件,而xargs因为是分批处理,所以会开启多个进程处理,效率自然稍微低一点,但为什么有时候还要用它呢？
+        -exec的方式只开启了一个rm进程去删除文件,而xargs因为是分批处理,所以会开启多个进程处理,效率自然稍微低一点,但为什么有时候还要用它呢?
         因为一次性替换find到的结果,如果结果过多,会出现参数过长的错误,这时候就需要用到xargs来分批处理了
     touch 1 2 3
     find . -type f -exec mv {} {}.bak \;
@@ -71,7 +71,7 @@ cat -n file.txt | tr -s '\n'
     find . -type f|xargs -I [] mv [] [].tmp
     ls
     1.bak.tmp 2.bak.tmp  3.bak.tmp
-怎么才能知道系统最大支持多少个命令参数呢？
+怎么才能知道系统最大支持多少个命令参数呢?
     getconf ARG_MAX
     2621440
 就是说,如果在我的系统find结果不超过2621440个文件的话,就不用担心参数超长问题了.
@@ -336,15 +336,15 @@ perl的元字符
     文件源控制
     -r, (--recursive): 前面都是在一个 指定文件名 的文件中搜索,  如果想搜索目录, 则要指定-r或-R, 或-d 递归的搜索该文件夹中的目录, 处理目录中的每个文件.等价于-d recurse. 
     -R, (--dereference-recursive): 也是递归搜索目录下的子文件. 与-r不完全一样, 主要是在处理symbolic links时候的差别, 准确差别个人还没有确定. -r与-R在不同shell下也不一样, 可以参考 http://unix.stackexchange.com/questions/154599/the-difference-between-r-and-r
-    -l, (--files-with-matches):   禁止通常的输出；作为替代, 打印出每个在通常情况下会产生输出的输入文件的名字. 对每个文件的扫描在遇到第一个匹配的时候就会停止. 
-    -L, (--files-without-match):   禁止通常的输出；作为替代, 打印出每个在通常情况下不会产生输出的输入文件的名字. 对每个文件的扫描在遇到第一个匹配的时候就会停止. 
+    -l, (--files-with-matches):   禁止通常的输出;作为替代, 打印出每个在通常情况下会产生输出的输入文件的名字. 对每个文件的扫描在遇到第一个匹配的时候就会停止. 
+    -L, (--files-without-match):   禁止通常的输出;作为替代, 打印出每个在通常情况下不会产生输出的输入文件的名字. 对每个文件的扫描在遇到第一个匹配的时候就会停止. 
 
 1) 在grep命令中输入字符串参数时, 最好将其用双引号括起来. 例如: "my strings", 这样做有两个原因, 一个是防止被误会是shell命令, 一个是可以用来查找多个单词组成的字符串, 就如这个例子中的"my strings". 
 2) 在调用变量的时候, 也应该使用双引号, 例如: grep "$MYNAME". 此时如果使用单引号, 则会把${var}当做字面本身, 而不会解析var变量的值. 
 3) 在调用模式匹配(正则表达式)时, 应该使用 单引号
 
 grep 搜索文本
-grep "match_text" file1 file2 file3 … 搜索多个文件
+grep "match_text" file1 file2 file3 ... 搜索多个文件
 grep wold filename –color=auto 重点标记出匹配到的单词
 echo "match_text" | grep -o -E "[a-z]+\." 只输出文件中匹配到的文本部分,用-o
     统计文件中匹配项的数量,
@@ -631,7 +631,7 @@ DOS版本的awk不能运行, 只能用gawk:
     awk '{for (i=NF; i>0; i--) printf("%s ",i);printf ("\n")}' file
 删除重复连续的行 (模拟 "uniq")
     awk 'a !~ $0; {a=$0}'
-删除重复的、非连续的行
+删除重复的,非连续的行
     awk '! a[$0]++' 最简练
     awk '!($0 in a) {a[$0];print}' 最有效
 用逗号链接每5行
@@ -654,9 +654,9 @@ DOS版本的awk不能运行, 只能用gawk:
     awk '/regex/{print (x=="" ? "match on line 1" : x)};{x=$0}'
 打印匹配正则表达式的后一行,但是不打印当前行
     awk '/regex/{getline;print}'
-以任何顺序查找包含 AAA、BBB 和 CCC 的行
+以任何顺序查找包含 AAA,BBB 和 CCC 的行
     awk '/AAA/; /BBB/; /CCC/'
-以指定顺序查找包含 AAA、BBB 和 CCC 的行
+以指定顺序查找包含 AAA,BBB 和 CCC 的行
     awk '/AAA.*BBB.*CCC/'
 打印长度大于64个字节的行
     awk 'length > 64'
@@ -866,7 +866,7 @@ $ ps -ef | grep test
 515 410 1 0 11:49 ? 00:00:00 /bin/sh ./test.sh
 515 413 21734 0 11:49 pts/12 00:00:00 grep test
 
-面的试验演示了使用nohup/setsid加上&使进程在后台运行,同时不受当前shell退出的影响.那么对于已经在后台运行的进程,该怎么办呢？可以使用disown命令: 
+面的试验演示了使用nohup/setsid加上&使进程在后台运行,同时不受当前shell退出的影响.那么对于已经在后台运行的进程,该怎么办呢?可以使用disown命令: 
     1
     2
     3
@@ -1025,7 +1025,7 @@ crontab -u user -r
 
 23.网站下载
 ```
-wget url1 url2 url3 … -O 指定输出名 -o 写入日志
+wget url1 url2 url3 ... -O 指定输出名 -o 写入日志
 wget -t 重试次数 url 中断后尝试次数
 下载限速 wget –limit-rate 20k url k或者m
 下载限制最大下载配额quota wget -Q 100m url 或者用—quota 
@@ -1219,7 +1219,7 @@ kill 进程名 /就是ps -A中的第一列的数字 或者killall 进程名
 kill -9 进程号 //强制中止一个进程. killall -9 进程名
 xkill //以图形方式中止一个进程 出现骷髅的标志 点要中止的
 lsof xxx // xxx的进程的
-uptime 显示系统已经运行了多长时间,它依次显示下列信息: 现在时间、系统已经运行了多长时间、目前有多少登陆用户、系统在过去的1分钟、5分钟和15分钟内的平均负载
+uptime 显示系统已经运行了多长时间,它依次显示下列信息: 现在时间,系统已经运行了多长时间,目前有多少登陆用户,系统在过去的1分钟,5分钟和15分钟内的平均负载
 ulimit -a //查看系统限制
     ulimit -Sn 软限制
     ulimit -Hn 硬限制
@@ -1339,7 +1339,7 @@ xargs 看例: find . -name *.conf -print0 | xargs -0 grep -l -Z mem_limit | xarg
 两者默认向屏幕输出,其中stdout 输出到磁盘文件,stderr输出到屏幕
 stdin 上面的命令中,"grep init"不仅搜索"ps aux"的标准输出,而且搜索 sterr 输出.
 bash 模式可通过 set -o emacs 设置 vi 模式set -o vi
-^S、^Q、^C、^Z 是由终端设备处理的,可用 stty 命令设置.
+^S,^Q,^C,^Z 是由终端设备处理的,可用 stty 命令设置.
 ```
 
 29.以HTTP方式局域网共享当前文件夹内容
@@ -1434,9 +1434,9 @@ ssh user@host cat /path/to/remotefile | diff /path/to/localfile -
     -n 直接显示ip,不做名称转换,以数字形式显示地址和端口号
     -o 显示与每个连接相关的所属进程 ID
     -p 显示相应的进程PID以及名称,用于指定默认情况的子集
-    -p proto  显示 proto 指定的协议的连接；proto 可以是下列协议之一: TCP、UDP、TCPv6 或 UDPv6.   如果与 -s 选项一起使用以显示按协议统计信息, proto 可以是下列协议之一: IP、IPv6、ICMP、ICMPv6、TCP、TCPv6、UDP 或 UDPv6
+    -p proto  显示 proto 指定的协议的连接;proto 可以是下列协议之一: TCP,UDP,TCPv6 或 UDPv6.   如果与 -s 选项一起使用以显示按协议统计信息, proto 可以是下列协议之一: IP,IPv6,ICMP,ICMPv6,TCP,TCPv6,UDP 或 UDPv6
     -r 显示路由表
-    -s 所有连接的统计,显示按协议统计信息. 默认地, 显示 IP、IPv6、ICMP、ICMPv6、TCP、TCPv6、UDP 和 UDPv6 的统计信息
+    -s 所有连接的统计,显示按协议统计信息. 默认地, 显示 IP,IPv6,ICMP,ICMPv6,TCP,TCPv6,UDP 和 UDPv6 的统计信息
     -t 显示TCP链接信息
     -u 显示UDP链接信息
     -v 与 -b 选项一起使用时将显示包含于 为所有可执行组件创建连接或监听端口的组件. 
@@ -1639,7 +1639,7 @@ iostat 系统输出输出统计 -c cpu的 -d 磁盘的使用情况 -k 每秒按k
 mpstat 实时系统监控工具 监控-P 监控哪个CPU ALL -P ALL 2 每2秒产生统计
 pmap -d PID 显示PID的内存信息
 
-iftop 可以用来监控网卡的实时流量(可以指定网段)、反向解析IP、显示端口信息等
+iftop 可以用来监控网卡的实时流量(可以指定网段),反向解析IP,显示端口信息等
     中间的<= =>这两个左右箭头, 表示的是流量的方向. 
     TX: 发送流量
     RX: 接收流量
@@ -1681,8 +1681,8 @@ iftop 可以用来监控网卡的实时流量(可以指定网段)、反向解析
     按<根据左边的本机名或IP排序;
     按>根据远端目标主机的主机名或IP排序;
     按o切换是否固定只显示当前的连接;
-    按f可以编辑过滤代码, 这是翻译过来的说法, 我还没用过这个！
-    按!可以使用shell命令, 这个没用过！没搞明白啥命令在这好用呢！
+    按f可以编辑过滤代码, 这是翻译过来的说法, 我还没用过这个!
+    按!可以使用shell命令, 这个没用过!没搞明白啥命令在这好用呢!
     按q退出监控. 
 ```
 
@@ -1792,7 +1792,7 @@ alt+b  //前移到单词开头
 alt+f  //后移到单词开头
 ctrl+f //一个字母的前移
 ctrl+b //一个字母的后移
-cut -d: -f 1-4 test //用: 分割文件,取分割后的1－4列
+cut -d: -f 1-4 test //用: 分割文件,取分割后的1-4列
 file /home/zhangy/test.php //用于查看文件的一些基本信息
 touch test.txt //创建一个空文件 text.txt
 touch /tmp/{test1,test2,test3} 按照test1~3的顺序建造文件
@@ -1947,7 +1947,7 @@ mysqldump -uroot -p --all-databases (默认记录注释)
 mysqldump -uroot -p --all-databases --skip-comments (取消注释)
 
 --compatible
-导出的数据将和其它数据库或旧版本的MySQL 相兼容.值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等,
+导出的数据将和其它数据库或旧版本的MySQL 相兼容.值可以为ansi,mysql323,mysql40,postgresql,oracle,mssql,db2,maxdb,no_key_options,no_tables_options,no_field_options等,
 要使用几个值,用逗号将它们隔开.它并不保证能完全兼容,而是尽量兼容.
 
 mysqldump -uroot -p --all-databases --compatible=ansi
@@ -2001,7 +2001,7 @@ mysqldump -uroot -p --all-databases --delete-master-logs
 mysqldump -uroot -p --all-databases
 
 --dump-slave
-该选项将导致主的binlog位置和文件名追加到导出数据的文件中.设置为1时,将会以CHANGE MASTER命令输出到数据文件；设置为2时,在命令前增加说明信息.该选项将会打开--lock-all-tables,除非--single-transaction被指定.该选项会自动关闭--lock-tables选项.默认值为0.
+该选项将导致主的binlog位置和文件名追加到导出数据的文件中.设置为1时,将会以CHANGE MASTER命令输出到数据文件;设置为2时,在命令前增加说明信息.该选项将会打开--lock-all-tables,除非--single-transaction被指定.该选项会自动关闭--lock-tables选项.默认值为0.
 mysqldump -uroot -p --all-databases --dump-slave=1
 mysqldump -uroot -p --all-databases --dump-slave=2
 
@@ -2046,7 +2046,7 @@ mysqldump -uroot -p --all-databases --force
 --help 显示帮助信息并退出.mysqldump --help
 
 --hex-blob
-使用十六进制格式导出二进制字符串字段.如果有二进制数据就必须使用该选项.影响到的字段类型有BINARY、VARBINARY、BLOB.
+使用十六进制格式导出二进制字符串字段.如果有二进制数据就必须使用该选项.影响到的字段类型有BINARY,VARBINARY,BLOB.
 mysqldump -uroot -p --all-databases --hex-blob
 
 --host, -h
@@ -2054,7 +2054,7 @@ mysqldump -uroot -p --all-databases --hex-blob
 mysqldump -uroot -p --host=localhost --all-databases
 
 --ignore-table
-不导出指定表.指定忽略多个表时,需要重复多次,每次一个表.每个表必须同时指定数据库和表名.例如: --ignore-table=database.table1 --ignore-table=database.table2 ……
+不导出指定表.指定忽略多个表时,需要重复多次,每次一个表.每个表必须同时指定数据库和表名.例如: --ignore-table=database.table1 --ignore-table=database.table2 ......
 mysqldump -uroot -p --host=localhost --all-databases --ignore-table=mysql.user
 
 --include-master-host-port
@@ -2083,7 +2083,7 @@ mysqldump -uroot -p --host=localhost --all-databases --lock-tables
 mysqldump -uroot -p --host=localhost --all-databases --log-error=/tmp/mysqldump_error_log.err
 
 --master-data
-该选项将binlog的位置和文件名追加到输出文件中.如果为1,将会输出CHANGE MASTER 命令；如果为2,输出的CHANGE MASTER命令前添加注释信息.该选项将打开--lock-all-tables 选项,除非--single-transaction也被指定(在这种情况下,全局读锁在开始导出时获得很短的时间；其他内容参考下面的--single-transaction选项).该选项自动关闭--lock-tables选项.
+该选项将binlog的位置和文件名追加到输出文件中.如果为1,将会输出CHANGE MASTER 命令;如果为2,输出的CHANGE MASTER命令前添加注释信息.该选项将打开--lock-all-tables 选项,除非--single-transaction也被指定(在这种情况下,全局读锁在开始导出时获得很短的时间;其他内容参考下面的--single-transaction选项).该选项自动关闭--lock-tables选项.
 mysqldump -uroot -p --host=localhost --all-databases --master-data=1;
 mysqldump -uroot -p --host=localhost --all-databases --master-data=2;
 
@@ -2294,7 +2294,7 @@ DROP INDEX index_name ON TBNAME;
 ```
 DML
 ----Data Manipulation Language 数据操纵语言
-如insert,delete,update,select(插入、删除、修改、检索)
+如insert,delete,update,select(插入,删除,修改,检索)
 插入修改数据
 
 如果每个字段都有值,不需要写字段名称,每组值用,隔开
@@ -2473,7 +2473,7 @@ myqsl 查询格式化的时间戳为时间 select *, FROM_UNIXTIME(*.TIMESTAMP) 
 62.apt & aptitude
 ```
 apt-cache search package 搜索包
-apt-cache show package 获取包的相关信息,如说明、大小、版本等
+apt-cache show package 获取包的相关信息,如说明,大小,版本等
 apt-get install package 安装包
 apt-get install package - - reinstall 重新安装包
 apt-get install $(grep -vE "^\s*#" filename  | tr "\n" " ") 从文本文件里面安装包
@@ -3169,8 +3169,8 @@ iptables -Z
         2).用REJECT方法
             iptables -A INPUT -j REJECT
             iptables -A FORWARD -j REJECT
-        4、屏蔽IP
-            #如果只是想屏蔽IP的话"3、开放指定的端口"可以直接跳过.
+        4,屏蔽IP
+            #如果只是想屏蔽IP的话"3,开放指定的端口"可以直接跳过.
             #屏蔽单个IP的命令是
                 iptables -I INPUT -s 123.45.6.7 -j DROP
             #封整个段即从123.0.0.1到123.255.255.254的命令
@@ -3179,12 +3179,12 @@ iptables -Z
                 iptables -I INPUT -s 124.45.0.0/16 -j DROP
             #封IP段即从123.45.6.1到123.45.6.254的命令是
                 iptables -I INPUT -s 123.45.6.0/24 -j DROP
-    4、查看已添加的iptables规则
+    4,查看已添加的iptables规则
         iptables -L -n
         v: 显示详细信息,包括每条规则的匹配包数量和匹配字节数
-        x: 在 v 的基础上,禁止自动单位换算(K、M) vps侦探
+        x: 在 v 的基础上,禁止自动单位换算(K,M) vps侦探
         n: 只显示IP地址和端口号,不将ip解析为域名
-    5、删除已添加的iptables规则
+    5,删除已添加的iptables规则
     将所有iptables以序号标记显示,执行: 
         iptables -L -n --line-numbers
     比如要删除INPUT里序号为8的规则,执行: 
@@ -3233,13 +3233,13 @@ iptables -Z
         -A FORWARD -j REJECT
                 COMMIT
                 可以使用一下方法直接载入: 
-                1、复制上面的规则粘贴到这里,保存本文件
+                1,复制上面的规则粘贴到这里,保存本文件
                 sudo vim /etc/iptables.test.rules
-                2、把本规则加载,使之生效,注意,iptables不需要重启,加载一次规则就成了
+                2,把本规则加载,使之生效,注意,iptables不需要重启,加载一次规则就成了
                 sudo iptables-restore < /etc/iptables.test.rules
-                3、查看最新的配置,应该所有的设置都生效了.
+                3,查看最新的配置,应该所有的设置都生效了.
                 sudo iptables -L -n
-                4、保存生效的配置,让系统重启的时候自动加载有效配置(iptables提供了保存当前运行的规则功能)
+                4,保存生效的配置,让系统重启的时候自动加载有效配置(iptables提供了保存当前运行的规则功能)
                 iptables-save > /etc/iptables.rules
 ```
 
@@ -3298,15 +3298,15 @@ y 立即刷新
 u + user 只查看相关用户的
 i 只查看前面有用的, 使top不显示任何闲置或者僵死进程
 d 修改延迟从3s到.
-s 使top命令在安全模式中运行。这将去除交互命令所带来的潜在危险 
+s 使top命令在安全模式中运行.这将去除交互命令所带来的潜在危险 
 p 通过指定监控进程ID来仅仅监控某个进程的状态
-q该选项将使top没有任何延迟的进行刷新。如果调用程序有超级用户权限，那么top将以尽可能高的优先级运行。 
-r 重新安排一个进程的优先级别。系统提示用户输入需要改变的进程PID以及需要设置的进程优先级值。输入一个正值将使优先级降低，反之则可以使该进程拥有更高的优先权。默认值是10
+q该选项将使top没有任何延迟的进行刷新.如果调用程序有超级用户权限,那么top将以尽可能高的优先级运行. 
+r 重新安排一个进程的优先级别.系统提示用户输入需要改变的进程PID以及需要设置的进程优先级值.输入一个正值将使优先级降低,反之则可以使该进程拥有更高的优先权.默认值是10
 l 切换显示平均负载和启动时间信息
-M 根据驻留内存大小进行排序。
+M 根据驻留内存大小进行排序.
 P 根据CPU使用百分比大小进行排序
 T 根据时间/累计时间进行排序
-W 将当前设置写入~/.toprc文件中。这是写top配置文件的推荐方法
+W 将当前设置写入~/.toprc文件中.这是写top配置文件的推荐方法
 f 显示条目修改., 上下选择, d来选中显示, s 来排序,
 h help
 k +PID 杀掉
@@ -3477,7 +3477,7 @@ ps -e -o 'pid,comm,args,pcpu,rsz,vsz,stime,user,uid' | grep oracle |  sort -nrk5
     　　-s 绑定到unix socket的路径path
     　　-C 指定产生的FastCGI的进程数,默认为5(仅用于PHP)
     　　-P 指定产生的进程的PID文件路径
-    　　-u和-g FastCGI使用什么身份(-u 用户 -g 用户组)运行,Ubuntu下可以使用www-data,其他的根据情况配置,如nobody、apache等
+    　　-u和-g FastCGI使用什么身份(-u 用户 -g 用户组)运行,Ubuntu下可以使用www-data,其他的根据情况配置,如nobody,apache等
     #vim /etc/nginx/sites-avilable/default 添加(要去修改前面的root的路径为/home/www)
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
@@ -3590,7 +3590,7 @@ panels   管理
         r 强制重绘未脱离的会话
         s 选择并切换会话,在同时开启了多个会话时使用
         : 进入命令行模式,此时可以输入支持的命令,比如kill-server可以关闭服务器
-        [ 进入复制模式,此时的操作与vi/emacs相同,按q/Esc退出、
+        [ 进入复制模式,此时的操作与vi/emacs相同,按q/Esc退出,
         ~ 列出提示信息缓存,其中包含了之前tmux返回的各种提示信息
     窗口操作
         c 创建新窗口
@@ -3900,7 +3900,7 @@ commit(提交前删除库中指定文件)
     mysql -uroot -p databasename < data.sql
 
     在导入大的csv sql文件时,可以用load data 命令
-        use db；
+        use db;
         创建好表,执行
         load data infile '/home/tom/Desktop/tmall_1111/运动鞋服.csv'  into table `product` fields terminated by ',' (band_name,p_name,now_price,mall_price,low_price,1111_price,links,click); 
     mysql -h xxx -u xxx -p -Pxxx --prompt="\\u@\\d \\R:\\m:\\s>"
@@ -4058,7 +4058,7 @@ tcpdump host sundown 监视指定主机的数据包 也可以是IP
     -n  不对地址(比如, 主机地址, 端口号)进行数字表示到名字表示的转换.
     -N  不打印出host 的域名部分. 比如, 如果设置了此选现, tcpdump 将会打印'nic' 而不是 'nic.ddn.mil'.
     -O  不启用进行包匹配时所用的优化代码. 当怀疑某些bug是由优化代码引起的, 此选项将很有用.
-    -p  一般情况下, 把网络接口设置为非'混杂'模式. 但必须注意 , 在特殊情况下此网络接口还是会以'混杂'模式来工作； 从而, '-p' 的设与不设, 不能当做以下选现的代名词:'ether host {local-hw-add}' 或  'ether broadcast'(nt: 前者表示只匹配以太网地址为host 的包, 后者表示匹配以太网地址为广播地址的数据包).
+    -p  一般情况下, 把网络接口设置为非'混杂'模式. 但必须注意 , 在特殊情况下此网络接口还是会以'混杂'模式来工作; 从而, '-p' 的设与不设, 不能当做以下选现的代名词:'ether host {local-hw-add}' 或  'ether broadcast'(nt: 前者表示只匹配以太网地址为host 的包, 后者表示匹配以太网地址为广播地址的数据包).
     -q  快速(也许用'安静'更好?)打印输出. 即打印很少的协议相关信息, 从而输出行都比较简短.
     -R  设定tcpdump 对 ESP/AH 数据包的解析按照 RFC1825而不是RFC1829(nt: AH, 认证头, ESP, 安全负载封装, 这两者会用在IP包的安全传输机制中). 如果此选项被设置, tcpdump 将不会打印出'禁止中继'域(nt: relay prevention field). 另外,由于ESP/AH规范中没有规定ESP/AH数据包必须拥有协议版本号域,所以tcpdump不能从收到的ESP/AH数据包中推导出协议版本号.
     -r  file
@@ -4244,18 +4244,18 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
             -f                          被测文件是一个regular文件(正常文件, 非目录或设备)
                 注意判断通配文件test.*是否存在, 需要用if(ls test.*) > /dev/null 2>&1; then ..; fi 来判断
                 >/dev/null 2>&1
-                    > 重定向，例如 echo "Hello" > /root/1.txt
+                    > 重定向,例如 echo "Hello" > /root/1.txt
                     1> stdout:表示标准输出,默认是1
                     2> stderr:表示标准错误
-                    &  表示等同于,2>&1，表示标准错误重定向，等同于标准输出
-                /dev/null 表示空设置文件, 首先表示标准输出重定向到空设备文件，就是不显示任何信息。
-                2>&1 接着, 标准错误输出重定向到标准输出，因为之前标准输出已经重定向到了空设备文件，所以标准错误输出也重定向到空设备文件
+                    &  表示等同于,2>&1,表示标准错误重定向,等同于标准输出
+                /dev/null 表示空设置文件, 首先表示标准输出重定向到空设备文件,就是不显示任何信息.
+                2>&1 接着, 标准错误输出重定向到标准输出,因为之前标准输出已经重定向到了空设备文件,所以标准错误输出也重定向到空设备文件
 
                 >/dev/null 2>&1
                 这条命令就将stdout直接送向file, stderr 继承了FD1管道后,再被送往file,
-                此时,file只被打开了一次,也只使用了一个管道FD1,它包括了stdout和stderr的内容。
+                此时,file只被打开了一次,也只使用了一个管道FD1,它包括了stdout和stderr的内容.
                 从I/O效率上,前一条命令的效率要比后面一条的命令效率要低,所以在编写shell脚本的时候,
-                最多的时候我们会command 1>file 2>&1 这样的写法， 或 "command >file 2&1 "
+                最多的时候我们会command 1>file 2>&1 这样的写法, 或 "command >file 2&1 "
 
             -s                          文件长度不为0
             -d                          被测对象是目录
@@ -4489,9 +4489,9 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
 
 93.vim中一些高级替换技巧
 ```
-前几天在实验室一个师姐在写Verilog代码时问了我一个问题,就是她需要定义一系列变量output rca_out_data0~rca_out_data15,现在她已经写好output rca_out_data0,然后复制了15行,她问我怎么把data后面的0一次替换成1~15,我不假思索的说,用脚本呗(我以前coding碰到这 种情况都是用perl -ne来做的).她说不想用脚本,问能不能就用vim就实现,这我倒是没尝试过.这两天腰受伤了,闲在宿舍休息,于是为了解决这个问题,去网上搜了不少资 料,经过整理,总结下述4条对于自己来说比较实用的替换技巧,其中第2条、第3条和第4条都可以完美的解决师姐的问题.过两天去实验室,又可以show一 下这么cool的操作,哈哈~~~
+前几天在实验室一个师姐在写Verilog代码时问了我一个问题,就是她需要定义一系列变量output rca_out_data0~rca_out_data15,现在她已经写好output rca_out_data0,然后复制了15行,她问我怎么把data后面的0一次替换成1~15,我不假思索的说,用脚本呗(我以前coding碰到这 种情况都是用perl -ne来做的).她说不想用脚本,问能不能就用vim就实现,这我倒是没尝试过.这两天腰受伤了,闲在宿舍休息,于是为了解决这个问题,去网上搜了不少资 料,经过整理,总结下述4条对于自己来说比较实用的替换技巧,其中第2条,第3条和第4条都可以完美的解决师姐的问题.过两天去实验室,又可以show一 下这么cool的操作,哈哈~~~
     1.替换变量
-        在正规表达式中使用 \( 和 \) 符号括起正规表达式,即可在后面使用\1、\2等变量来访问 \( 和 \) 中的内容.
+        在正规表达式中使用 \( 和 \) 符号括起正规表达式,即可在后面使用\1,\2等变量来访问 \( 和 \) 中的内容.
         example:
         ·将 data1 data2 修改为 data2 data1
         -----------------------------------
@@ -4507,9 +4507,9 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
         :s/替换字符串/\=函数式
         ---------------------------
         说明: 
-        ·函数式可以有多个,返回值可以用字符串连接符.连接起来,如line(".")返回匹配行号(:help line()  ),submatch(n)可以引用\1、\2的内容,其中submatch(0)引用匹配的整个内容；
-        ·函数式也可以是字符串常量,用双引号引起来.函数式也可以是任意表达式,需要用小括号引起来,如(3+2*6)；
-        ·函数式还可以是寄存器中的内容,通过"@寄存器名"访问,如@a(不需要加引号,但是还是需要用.来连接)；
+        ·函数式可以有多个,返回值可以用字符串连接符.连接起来,如line(".")返回匹配行号(:help line()  ),submatch(n)可以引用\1,\2的内容,其中submatch(0)引用匹配的整个内容;
+        ·函数式也可以是字符串常量,用双引号引起来.函数式也可以是任意表达式,需要用小括号引起来,如(3+2*6);
+        ·函数式还可以是寄存器中的内容,通过"@寄存器名"访问,如@a(不需要加引号,但是还是需要用.来连接);
         example:
         ·要将下列8行的data0依次变成data0~7(前面的数字是行号)
         double data0;
@@ -4544,11 +4544,11 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
         ---------------------------------------------------------------------------
         :let n=0 | g/^double\s\+data\zs\d/s//\=n/ | let n+=1
         ---------------------------------------------------------------------------
-        其中 ·|      用来分割不用的命令；
+        其中 ·|      用来分割不用的命令;
         ·g      在匹配后面模式的行中执行指定的ex命令
         ·\zs    指明匹配由此开始
         ·s//\=n 对匹配模式进行替换,匹配模式为空,表示以上一次匹配成功的模式,
-        并且指明替换是一个表达式；
+        并且指明替换是一个表达式;
     4. 高级递增替换
         把下面几句放到 _vimrc
         -------------------------------
@@ -4705,7 +4705,7 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
                     dig @dns_ip_address domain
     检查当前登录的用户个数
                     who | wc -l
-    日志查看、搜索 
+    日志查看,搜索 
                     cat /var/log/rflogview/*errors
                     grep -i error /var/log/messages
                     grep -i fail /var/log/messages
@@ -5025,9 +5025,9 @@ CALL selectnum(@a);
         可以用levae label1; 来跳出区块,执行区块后的代码
 
 函数库,字符串类型,数值类型,日期类型
-一、字符串类
+一,字符串类
 CHARSET(str) //返回字串字符集
-CONCAT (string2 [,… ]) //连接字串
+CONCAT (string2 [,... ]) //连接字串
 INSTR (string ,substring ) //返回substring首次在string中出现的位置,不存在返回0
 LCASE (string2 ) //转换成小写
 LEFT (string2 ,length ) //从string2中的左边起取length个字符
@@ -5064,7 +5064,7 @@ UCASE (string2 ) //转换成大写
 RIGHT(string2,length) //取string2最后length个字符
 SPACE(count) //生成count个空格
 
-二、数值类型
+二,数值类型
 
 ABS (number2 ) //绝对值
 BIN (decimal_number ) //十进制转二进制
@@ -5113,7 +5113,7 @@ mysql> select round(1.567,2);
 SIGN (number2 ) //返回符号,正负或0
 SQRT(number2) //开平方
 
-三、日期类型
+三,日期类型
 
 ADDTIME (date2 ,time_interval ) //将time_interval加到date2
 CONVERT_TZ (datetime2 ,fromTZ ,toTZ ) //转换时区
@@ -5162,7 +5162,7 @@ DECLARE l_varchar VARCHAR(255) DEFAULT 'This will not be padded';
 102.strace命令
 ```
 显示streams跟踪消息, 
-没有参数的 strace 命令将所有的驱动程序和模块中的所有 STREAMS 事件跟踪消息写入它的标准输出.这些消息是从 STREAMS 日志驱动程序中获取的.如果提供参数,它们必须是在三元组中.每个三元组表明跟踪消息要从给定的模块或驱动程序、子标识(通常表明次要设备)以及优先级别等于或小于给定级别的模块或驱动程序中接收.all 标记可由任何成员使用,以表明对该属性没有限制.
+没有参数的 strace 命令将所有的驱动程序和模块中的所有 STREAMS 事件跟踪消息写入它的标准输出.这些消息是从 STREAMS 日志驱动程序中获取的.如果提供参数,它们必须是在三元组中.每个三元组表明跟踪消息要从给定的模块或驱动程序,子标识(通常表明次要设备)以及优先级别等于或小于给定级别的模块或驱动程序中接收.all 标记可由任何成员使用,以表明对该属性没有限制.
 
 语法 strace [ mid sid level ] mid 指定STREAMS模块的标识号.  sid指定子标识号. level指定跟踪优先级别
 输出格式 每个跟踪消息输出的格式是:  <seq> <time> <ticks> <level> <flags> <mid> <sid> <text>
@@ -5403,12 +5403,12 @@ dmidecode -t   -t是类型, 后面跟要输出的类型,比如processor
     --from-dump FILE Read the DMI data from a binary file
     -V, --version Display the version and exit #显示版本信息
 
-    1、查看服务器型号: dmidecode | grep 'Product Name'
-    2、查看主板的序列号: dmidecode |grep 'Serial Number'
-    3、查看系统序列号: dmidecode -s system-serial-number
-    4、查看内存信息: dmidecode -t memory
-    5、查看OEM信息: dmidecode -t 1
-    6、查看bios,processor信息: dmidecode -t 0,4
+    1,查看服务器型号: dmidecode | grep 'Product Name'
+    2,查看主板的序列号: dmidecode |grep 'Serial Number'
+    3,查看系统序列号: dmidecode -s system-serial-number
+    4,查看内存信息: dmidecode -t memory
+    5,查看OEM信息: dmidecode -t 1
+    6,查看bios,processor信息: dmidecode -t 0,4
         Type  Information
         0  BIOS
         1  System
@@ -5451,11 +5451,11 @@ dmidecode -t   -t是类型, 后面跟要输出的类型,比如processor
         38  IPMI Device
         39  Power Supply
 
-    7、查看内存槽数、那个槽位插了内存,大小是多少 
+    7,查看内存槽数,那个槽位插了内存,大小是多少 
         dmidecode|grep -P -A5 "Memory\s+Device"|grep Size|grep -v Range
-    8、查看最大支持内存数
+    8,查看最大支持内存数
         dmidecode|grep -P 'Maximum\s+Capacity'
-    9、查看槽位上内存的速率,没插就是unknown.
+    9,查看槽位上内存的速率,没插就是unknown.
         dmidecode|grep -A16 "Memory Device"|grep 'Speed'
 ```
 
@@ -5691,28 +5691,28 @@ ldapsearch
     -w   绑定DN的密码
     -b   指定要查询的根节点
     -H   制定要查询的服务器
-CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称（DN, distinguished   name） 
-LDAP连接服务器的连接字串格式为：ldap://servername/DN   
-其中DN有三个属性，分别是CN,OU,DC   
-CN=Common Name 为用户名或服务器名，最长可以到80个字符，可以为中文
-OU=Organization Unit为组织单元，最多可以有四级，每级最长32个字符，可以为中文
-O=Organization 为组织名，可以3—64个字符长
-C=Country为国家名，可选，为2个字符长
+CN, OU, DC 都是 LDAP 连接服务器的端字符串中的区别名称(DN, distinguished   name) 
+LDAP连接服务器的连接字串格式为:ldap://servername/DN   
+其中DN有三个属性,分别是CN,OU,DC   
+CN=Common Name 为用户名或服务器名,最长可以到80个字符,可以为中文
+OU=Organization Unit为组织单元,最多可以有四级,每级最长32个字符,可以为中文
+O=Organization 为组织名,可以3—64个字符长
+C=Country为国家名,可选,为2个字符长
 
 CN=test,OU=developer,DC=domainname,DC=com 
-在上面的代码中 cn=test 可能代表一个用户名，ou=developer 代表一个 active directory 中的组织单位。这句话的含义可能就是说明 test 这个对象处在domainname.com 域的 developer 组织单元中。
+在上面的代码中 cn=test 可能代表一个用户名,ou=developer 代表一个 active directory 中的组织单位.这句话的含义可能就是说明 test 这个对象处在domainname.com 域的 developer 组织单元中.
 
 ldapsearch -x -D "cn=root,dc=starxing,dc=com" -w secret -b "dc=starxing,dc=com" 
-使用简单认证，用 "cn=root,dc=starxing,dc=com" 进行绑定，
-要查询的根是 "dc=starxing,dc=com"。这样会把绑定的用户能访问"dc=starxing,dc=com"下的
-所有数据显示出来。
+使用简单认证,用 "cn=root,dc=starxing,dc=com" 进行绑定,
+要查询的根是 "dc=starxing,dc=com".这样会把绑定的用户能访问"dc=starxing,dc=com"下的
+所有数据显示出来.
 ldapsearch -x -W -D "cn=administrator,cn=users,dc=osdn,dc=zzti,dc=edu,dc=cn" -b "cn=administrator,cn=users,dc=osdn,dc=zzti,dc=edu,dc=cn" -h ttest.org 
 ldapsearch -b "dc=canon-is,dc=jp" -H ldaps://192.168.0.92:636 
 
 ldapdelete 
     ldapdelete -x -D "cn=Manager,dc=test,dc=com" -w secret "uid=test1,ou=People,dc=test,dc=com" 
     ldapdelete -x -D 'cn=root,dc=it,dc=com' -w secert 'uid=zyx,dc=it,dc=com' 
-这样就可以删除'uid=zyx,dc=it,dc=com'记录了，应该注意一点，如果o或ou中有成员是不能删除的。
+这样就可以删除'uid=zyx,dc=it,dc=com'记录了,应该注意一点,如果o或ou中有成员是不能删除的.
 
 ldappasswd 
     -x   进行简单认证
@@ -5727,7 +5727,7 @@ ldappasswd
 ldappasswd -x -D 'cm=root,dc=it,dc=com' -w secret 'uid=zyx,dc=it,dc=com' -S
 New password:
 Re-enter new password: 
-就可以更改密码了，如果原来记录中没有密码，将会自动生成一个userPassword。
+就可以更改密码了,如果原来记录中没有密码,将会自动生成一个userPassword.
 
 ldapmodify 
     -a 添加新的条目.缺省的是修改存在的条目.
@@ -5735,7 +5735,7 @@ ldapmodify
     -c 出错后继续执行程序并不中止.缺省情况下出错的立即停止.比如如果你的ldif 文
        件内的某个条目在数据库内并不存在,缺省情况下程序立即退出,但如果使用了该参数,程
        序忽略该错误继续执行.
-    -n 用于调试到服务器的通讯.但并不实际执行搜索.服务器关闭时,返回错误；服务器
+    -n 用于调试到服务器的通讯.但并不实际执行搜索.服务器关闭时,返回错误;服务器
        打开时,常和-v 参数一起测试到服务器是否是一条通路.
     -v 运行在详细模块.在标准输出中打出一些比较详细的信息.比如:连接到服务器的
        ip 地址和端口号等.
@@ -5756,7 +5756,7 @@ ldapmodify
     -e 设置客户端证书文件,例: -e cert/client.crt
     -E 设置客户端证书私钥文件,例: -E cert/client.key
 ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif 
-将modify.ldif中的记录更新原有的记录。
+将modify.ldif中的记录更新原有的记录.
 
 ```
 
