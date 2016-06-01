@@ -34,7 +34,7 @@ if [ `uname` = 'Linux' ]; then
 else
     alias ls='ls -F --color=auto'
 fi
-export PATH+=:/opt/longene/qq/wine/bin/
+export PATH=$PATH:/opt/longene/qq/wine/bin/
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export XIM=ibus
@@ -76,8 +76,12 @@ ssh() {
 #c7="\[\e[37m\]"
 #PS1="$c2\W $c3(\$(~/.rvm/bin/rvm-prompt v g)) $c1\$(parse_git_branch) $c_1$ "
 
-if [ "$TERM" == "xterm" ]; then
+if [ "$COLORTERM" = "gnome-terminal" ] || [ "$COLORTERM" = "xfce4-terminal" ]
+then
     export TERM=xterm-256color
+elif [ "$COLORTERM" = "rxvt-xpm" ]
+then
+    export TERM=rxvt-256color
 fi
 
 alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
