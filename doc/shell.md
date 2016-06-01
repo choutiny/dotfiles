@@ -5766,6 +5766,9 @@ ldapmodify -x -D "cn=root,dc=it,dc=com" -W -f modify.ldif
 ```
 dpkg-reconfigure fontconfig-config 可以配置bitmap
 /etc/fonts/conf.d/6n 里面存在了中文和英文字体的绑定关系
+
+sudo fc-cache -fv  重建字体缓存(apt-get install fontconfig, yum install mkfontscale)
+fc-list  查看系统字体
 ```
 
 
