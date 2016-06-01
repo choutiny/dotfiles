@@ -36,4 +36,8 @@
 [push]
     default = matching
 [merge]
-	tool = meld
+    tool = meld
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
