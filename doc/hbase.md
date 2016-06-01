@@ -1609,7 +1609,7 @@ recommission
         `alter 'your_table', {NAME => 'family_name', REPLICATION_SCOPE => '1'}`
         `enable yourtable`
         `add_peer` a cluster
-            e.g.: add_peer '1', remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:2181:/hbase-unsecure 
+            e.g.: add_peer '1', "remote_cluster_server1,remote_cluster_server2,remote_cluster_server3:2181:/hbase-unsecure"
         replication 就会自动开始.
         `start_replication` `stop_replication`
         
