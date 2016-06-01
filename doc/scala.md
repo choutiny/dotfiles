@@ -33,8 +33,13 @@ Scala code runner version 2.11.8 -- Copyright 2002-2016, LAMP/EPFL
 
 ###Grammar
 -------------
-1. val 定义常量
-2. var 定义变量
+1. val 定义常量, 值赋值后不能再改变
+    val aa = 1 + 1
+2. var 定义变量, 可以修改名称和结果的绑定.注意一定是双引号
+    var name = "tommy"
+        name = "clare"
+3. 函数def 
+    def addOne(m: Int): Int = m + 1
 
 
 ###ENV

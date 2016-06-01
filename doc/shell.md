@@ -4774,6 +4774,12 @@ client: sslocal -s server_name -p server_port -l local_port -k password -m bf-cf
     /usr/bin/zsh
     /etc/passwd 修改修改用户的bash /bin/zsh
     chsh -s /bin/zsh
+
+git clone git@github.com:robbyrussell/oh-my-zsh.git
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+/root/.zshrc
+/root/.oh-my-zsh/themes/
 ```
 
 101.rename
