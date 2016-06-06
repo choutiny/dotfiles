@@ -429,9 +429,41 @@ sudo -u hdfs hadoop fs -chown hbase:hdfs hdfs://project-cnode1.domain.org:8020/a
 then restart hbase-hmaster service
 ```
 
-10. DataXceiver error processing unknown operation  src:
+10. DataXceiver error processing unknown operation src:
 ```
 https://issues.apache.org/jira/secure/attachment/12745526/HDFS-8738.001.patch
+```
+
+11. RegionServers Health Summary Dead RegionServer(s)2 out of 4
+```
+hbase shell>status
+hbase shell>status 'detailed'
+hbase shell>status 'simple'
+
+4 live servers
+    project-cnode3.domain.org:16020 1465194697532
+        requestsPerSecond=0.0, numberOfOnlineRegions=45, usedHeapMB=133, maxHeapMB=1004, numberOfStores=50, numberOfStorefiles=14, storefileUncompressedSizeMB=19585, storefileSizeMB=2557, compressionRatio=0.1306, memstoreSizeMB=0, storefileIndexSizeMB=0, readRequestsCount=0, writeRequestsCount=0, rootIndexSizeKB=156, totalStaticIndexSizeKB=33615, totalStaticBloomSizeKB=8816, totalCompactingKVs=0, currentCompactedKVs=0, compactionProgressPct=NaN, coprocessors=[GroupedAggregateRegionObserver, Indexer, ScanRegionObserver, SecureBulkLoadEndpoint, SequenceRegionObserver, ServerCachingEndpointImpl, UngroupedAggregateRegionObserver]
+    project-cnode1.domain.org:16020 1465194413601
+        requestsPerSecond=0.0, numberOfOnlineRegions=73, usedHeapMB=216, maxHeapMB=1004, numberOfStores=76, numberOfStorefiles=4, storefileUncompressedSizeMB=13947, storefileSizeMB=1721, compressionRatio=0.1234, memstoreSizeMB=0, storefileIndexSizeMB=0, readRequestsCount=130, writeRequestsCount=0, rootIndexSizeKB=36, totalStaticIndexSizeKB=29184, totalStaticBloomSizeKB=10402, totalCompactingKVs=0, currentCompactedKVs=0, compactionProgressPct=NaN, coprocessors=[GroupedAggregateRegionObserver, Indexer, MetaDataEndpointImpl, MetaDataRegionObserver, ScanRegionObserver, SecureBulkLoadEndpoint, SequenceRegionObserver, ServerCachingEndpointImpl, UngroupedAggregateRegionObserver]
+    project-cnode2.domain.org:16020 1465194558180
+        requestsPerSecond=0.0, numberOfOnlineRegions=54, usedHeapMB=75, maxHeapMB=1004, numberOfStores=63, numberOfStorefiles=17, storefileUncompressedSizeMB=53389, storefileSizeMB=6532, compressionRatio=0.1223, memstoreSizeMB=0, storefileIndexSizeMB=0, readRequestsCount=1470, writeRequestsCount=193, rootIndexSizeKB=300, totalStaticIndexSizeKB=113830, totalStaticBloomSizeKB=19444, totalCompactingKVs=4857, currentCompactedKVs=4857, compactionProgressPct=1.0, coprocessors=[GroupedAggregateRegionObserver, Indexer, MetaDataEndpointImpl, MultiRowMutationEndpoint, ScanRegionObserver, SecureBulkLoadEndpoint, SequenceRegionObserver, ServerCachingEndpointImpl, UngroupedAggregateRegionObserver]
+    cdkdc.domain.org:16020 1465194274253
+        requestsPerSecond=0.0, numberOfOnlineRegions=63, usedHeapMB=170, maxHeapMB=1004, numberOfStores=65, numberOfStorefiles=4, storefileUncompressedSizeMB=18523, storefileSizeMB=2186, compressionRatio=0.1180, memstoreSizeMB=0, storefileIndexSizeMB=0, readRequestsCount=0, writeRequestsCount=0, rootIndexSizeKB=51, totalStaticIndexSizeKB=39803, totalStaticBloomSizeKB=6656, totalCompactingKVs=0, currentCompactedKVs=0, compactionProgressPct=NaN, coprocessors=[GroupedAggregateRegionObserver, Indexer, ScanRegionObserver, SecureBulkLoadEndpoint, SequenceRegionObserver, ServerCachingEndpointImpl, UngroupedAggregateRegionObserver]
+2 dead servers
+    project-cnode2,16020,1459497079870
+    project-cnode2,16020,1464071314940
+Aggregate load: 0, regions: 235
+
+
+delete wrong WALs ,   sudo -u hdfs  hadoop fs -ls /apps/hbase/data/WALs, sudo -u hdfs hadoop fs -rm -r /apps/hbase/data/WALs/<wrong dead server>
+restart hbase-daemon.sh
+```
+
+12. Delete wrong replication 
+```
+zookeeper-client -server domain2.org:2181
+ls /hbase-unsecure/replication/rs/
+delete the wrong zookeeper node
 ```
 
 ### Hadoop ports

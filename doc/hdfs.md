@@ -81,7 +81,6 @@ distcp                                          #用来在两个HDFS之间拷贝
 你可以使用distcp命令在不同的datanode之间并行地复制大文件:
 $ hadoop distcp hdfs://datanode1/foo hdfs://datanode2/bar
 HDFS上的文件是使用URI来定位的,前缀都是hdfs://localhost:9000,你可以把这个前缀赋给属性fs.default.name(属性可以在配置文件中指定,也可以在代码中指定),这样你就不用每次都写这个前缀了,比如以下2个命令是等价的:
-
 hfds://namenode.domain.org:8020/path/to/directory
 
 
