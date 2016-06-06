@@ -1637,13 +1637,13 @@ recommission
 HDFS Replication
 `hbase shell>status 'replication'` 查看当前复制状态
 ```
-sizeOfLogQueue ： 还有多少wal文件没处理
-ageOfLastShippedOp ： 上一次复制延迟时间
+sizeOfLogQueue : 还有多少wal文件没处理
+ageOfLastShippedOp : 上一次复制延迟时间
 shippedBatches : 传输了多少批数据
-shippedKBs ：传输了多少KB的数据
-shippedOps ：传输了多少条数据
-logEditsRead ： 读取了多少个logEdits
-logReadInBytes ：读取了多少KB数据
+shippedKBs :传输了多少KB的数据
+shippedOps :传输了多少条数据
+logEditsRead : 读取了多少个logEdits
+logReadInBytes :读取了多少KB数据
 logEditsFiltered : 实际过滤了多少logEdits
 ```
 

@@ -371,8 +371,9 @@ DML支持:用于逐行插入的UPSERT VALUES,用于相同或不同表之间大�
 Grafana 是 Graphite 和 InfluxDB 仪表盘和图形编辑器.Grafana 是开源的,功能齐全的度量仪表盘和图形编辑器,支持 Graphite,InfluxDB 和 OpenTSDB.
 Grafana 主要特性:灵活丰富的图形化选项;可以混合多种风格;支持白天和夜间模式;多个数据源;Graphite 和 InfluxDB 查询编辑器等等.
 
-###
+### SOA
 ---------------
+SOA是英文Service-Oriented Architecture 三个首字母单词的缩写,中文译为:面向服务架构(SOA),SOA架构与B/S ,C/S架构是目前最流行三种Web服务的基础架构. 
 
 ###
 ---------------

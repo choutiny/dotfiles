@@ -466,6 +466,11 @@ ls /hbase-unsecure/replication/rs/
 delete the wrong zookeeper node
 ```
 
+13. Under Replicated Blocks in 'sudo -u hdfs hdfs dfsadmin -report'
+```
+
+```
+
 ### Hadoop ports
 ----------------------
 ```
