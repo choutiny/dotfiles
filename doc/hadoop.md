@@ -46,26 +46,26 @@ passwd hadoop  123456
 3.
 need three server, one master, two cluster
 vi three server hosts file && add 
-192.168.85.109 halo-cnode1 NameNode
-192.168.85.115 halo-cnode2 node1
-192.168.85.119 halo-cnode3 node2
+192.168.85.109 project-cnode1 NameNode
+192.168.85.115 project-cnode2 node1
+192.168.85.119 project-cnode3 node2
 
 4.
-ssh-keygen -t rsa in halo-cnode1 use hadoop user
+ssh-keygen -t rsa in project-cnode1 use hadoop user
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 chmod 700 ~/.ssh
 
 do it in two node server under hadoop user
 
-ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@halo-cnode1
-ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@halo-cnode2
-ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@halo-cnode3
+ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@project-cnode1
+ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@project-cnode2
+ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@project-cnode3
 ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@NameNode
 ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@node1
 ssh-copy-id -i ~/.ssh/id_rsa.pub hadoop@node2
 
-login each server and ssh halo-cnode1,halo-cnode2,halo-cnode3
+login each server and ssh project-cnode1,project-cnode2,project-cnode3
 
 5.
 go to three server and add sudo user for hadoop
@@ -73,7 +73,7 @@ sudo vim /etc/sudoers
 
 
 6.
-cd halo-cnode1 home
+cd project-cnode1 home
 vim /etc/profile
 
 export HADOOP_HOME=/home/hadoop/hadoop-2.7.1
@@ -211,11 +211,11 @@ vim slaves
 delete localhost
 add
 halo
-halo-cnode2
-halo-cnode3
+project-cnode2
+project-cnode3
 
 14.
-copy halo-cnode1,halo
+copy project-cnode1,halo
 modify ulimit -n
 vim /etc/security/limits.conf, for centos7
 add the below content at the end of file then restart server
@@ -237,7 +237,7 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux; setenfor
 
 17.
 start
-su - hadoop on halo-cnode1
+su - hadoop on project-cnode1
 hdfs namenode -format
 start-all.sh
 stop-all.sh
@@ -396,7 +396,46 @@ delete /var/log/hadoop-yarn/nodemanager/recovery-state/[nm-aux-services  yarn-nm
 retart yarn nodemanager
 ```
 
-8. Hadoop ports
+8 .hbase regionserver dump
+```
+gc.log
+2016-05-23T23:07:09.499-0700: 5.432: [GC (Allocation Failure) 5.432: [ParNew: 334336K->22126K(376064K), 0.0469211 secs] 334336K->22126K(2055424K), 0.0470048 secs] [Times: user=0.03 sys=0.01, real=0.05 secs]
+hbase-hbase-master-log
+2016-05-23 23:09:56,061 WARN  [MASTER_META_SERVER_OPERATIONS-project-lab:16000-1] master.SplitLogManager: returning success without actually splitting and deleting all the log files in path hdfs://project-lab.domain.org:8020/apps/hbase/data/WALs/hyve-hdata2-lab.domain.org,16020,1464070023271-splitting
+hbase-hbase-regionserver-.log
+2016-05-23 23:09:23,043 INFO  [ReplicationExecutor-0.replicationSource,1-hyve-hdata1-lab.domain.org,16020,1464070024825] regionserver.ReplicationSource: Log hdfs://project-lab.domain.org:8020/apps/hbase/data/oldWALs/hyve-hdata1-lab.domain.org%2C16020%2C1464070024825.default.1464070029141 still exists at hdfs://project-lab.domain.org:8020/apps/hbase/data/WALs/hyve-hdata1-lab.domain.org,16020,1464070024825-splitting/hyve-hdata1-lab.domain.org%2C16020%2C1464070024825.default.1464070029141
+2016-05-23 23:09:23,176 WARN  [ReplicationExecutor-0] regionserver.ReplicationSource: Queue size: 3 exceeds value of replication.source.log.queue.warn: 2
+2016-05-23 23:09:23,176 WARN  [ReplicationExecutor-0] regionserver.ReplicationSource: Queue size: 4 exceeds value of replication.source.log.queue.warn: 2
+2016-05-23 23:09:23,176 WARN  [ReplicationExecutor-0] regionserver.ReplicationSource: Queue size: 5 exceeds value of replication.source.log.queue.warn: 2
+2016-05-23 23:09:23,176 WARN  [ReplicationExecutor-0] regionserver.ReplicationSource: Queue size: 6 exceeds value of replication.source.log.queue.warn: 2
+```
+ 
+9. hbase master server crash
+```
+Check hbase-hbase-master-project-cnode1.domain.org.log 
+Fix the WARN and FATAL error
+[root@project-cnode1 ~]# sudo -u hdfs hadoop fs -ls hdfs://project-cnode1.domain.org:8020/apps/hbase/data
+Found 9 items
+drwxr-xr-x   - hbase hdfs          0 2016-05-27 13:58 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/.tmp
+drwxr-xr-x   - hbase hdfs          0 2016-05-27 13:58 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/MasterProcWALs
+drwxr-xr-x   - hbase hdfs          0 2016-05-27 13:50 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/WALs
+drwxr-xr-x   - hbase hdfs          0 2016-05-25 21:18 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/archive
+drwxr-xr-x   - hbase hdfs          0 2016-04-05 23:22 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/corrupt
+drwxr-xr-x   - hbase hdfs          0 2016-04-22 13:45 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/data
+-rw-r--r--   3 hbase hdfs         42 2016-04-01 15:48 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/hbase.id
+-rw-r--r--   3 hbase hdfs          7 2016-04-01 15:48 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/hbase.version
+drwxr-xr-x   - hdfs  hdfs          0 2016-05-27 10:33 hdfs://project-cnode1.domain.org:8020/apps/hbase/data/oldWALs
+sudo -u hdfs hadoop fs -chown hbase:hdfs hdfs://project-cnode1.domain.org:8020/apps/hbase/data/oldWALs
+then restart hbase-hmaster service
+```
+
+10. DataXceiver error processing unknown operation  src:
+```
+https://issues.apache.org/jira/secure/attachment/12745526/HDFS-8738.001.patch
+```
+
+### Hadoop ports
+----------------------
 ```
 1.系统
 8080,80 用于tomcat和apache的端口.

@@ -154,6 +154,7 @@ FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
 `sudo -u hdfs hadoop fs -setrep -R 2 /`
 如果再fsck时候出错,往往是由于某些文件的备份不正常导致的,可以用hadoop的balancer工具修复
 自动负载均衡hadoop文件:hadoop balancer, 不同节点之间复制数据的带宽是受限的,默认是1MB/s,可以通过hdfs-site.xml文件中的dfs.balance.bandwithPerSec属性指定(单位是字节).
+sudo -u hdfs hadoop balancer
 查看各节点的磁盘占用情况 hadoop dfsadmin -report
 
 hadoop fsck -locations 可以看到相应的提示信息,可以看到副本丢失率为0%:
