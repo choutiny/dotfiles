@@ -4017,7 +4017,7 @@ openssl rand -hex n
 ${variable:0:5}
 ```
 
-86.tcpdump
+86.tcpdump command
 ```
 tcpdump -Ans 40960 -iany port 2201
 tcpdump -i eth1 监视指定网络接口的数据包 不指定会默认第一个,一般eth0 
@@ -5776,7 +5776,32 @@ dpkg-reconfigure fontconfig-config 可以配置bitmap
 sudo fc-cache -fv  重建字体缓存(apt-get install fontconfig, yum install mkfontscale)
 fc-list  查看系统字体
 ```
+127. nc command
+用于调试和检查网络工具包, 可用于创建 TCP/IP 连接, 最大的用途就是用来处理 TCP/UDP 套接字
+```
+通信
+server 端: nc -l port  监听指定端口
+client 端: nl server_ip port 连接到服务器端口
+client 端: 输入文本,将会发送到server端
+传输文本
+server: nc -l port > test
+client: cat testfile | nc server_ip port
+server: cat test
 
+-w seconds 指定连接的超时时间, 同时该参数只在client端有效,在服务端无效
+-4/-6 指定IP地址类型,对应IPV4和IPV6
+-d 禁止从标准输入中读取数据, 在client 加上-d 后, 文本不会发送到server
+-k 来控制让服务器不会因为客户端的断开连接而退出, 在server端启用
+-q seconds 来控制接收到 EOF 后隔多长时间才退出
+-u 来启用 UDP 协议通讯
+
+端口扫描 指定范围
+c -v -w 1 192.168.1.29 -z 20-30
+
+克隆硬盘或分区
+server: nc -l -p 1234 | dd of=/dev/sdx
+client: dd if=/dev/sdx | nc server_ip 1234
+```
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
