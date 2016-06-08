@@ -71,6 +71,7 @@ tcollector  守护进程采集HBase
 
 ###Configuration
 ----------------
+http://project1.domain.org:4242/api/config
 ```
 tsd.network.port = 4242
 tsd.network.bind = 0.0.0.0
