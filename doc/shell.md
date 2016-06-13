@@ -4173,10 +4173,11 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
     共享文件夹\\Vboxsvr->\\vboxsvr\tmp,选择\\vboxsvr\tmp
 ```
 
-92.shell计算
+92.shell计算shell calculate
 ```
     echo `expr 1 + 2` 可以来计算出表达式, 必须有空格. 也可以用let 来赋值 let b=1+2然后echo $b
     ** 冥计算 
+    echo $[1+2], echo $[2*4], $[2**3]=8, $((a%b))
 
     文件重定向
     标准输入standard input的文件描述符是0
