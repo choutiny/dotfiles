@@ -20,9 +20,9 @@
     mt = mergetool
     line = log --oneline
     latest = for-each-ref --sort=-committerdate --format='%(committerdate:short) %(refname:short) [%(committername)]'
-    ls = log --pretty=format:\"%C(yellow)%h %C(blue)%ad %C(red)%d %C(reset)%s %C(green)[%cn]\" --decorate --date=short
-    log2=log --pretty=format:\"%Cgreen%ai [%h] %Cblue<%an> %Cred%s\" --date-order
-    hist = log --pretty=format:\"%C(yellow)%h %C(red)%d %C(reset)%s %C(green)[%an] %C(blue)%ad\" --topo-order --graph --date=short
+    ls = log --pretty=format:\"%C(yellow)%h %C(cyan)%ad %C(red)%d %C(reset)%s %C(green)[%cn]\" --decorate --date=short
+    log2=log --pretty=format:\"%Cgreen%ai [%h] %C(cyan)<%an> %Cred%s\" --date-order
+    hist = log --pretty=format:\"%C(yellow)%h %C(green)[%an] %C(cyan)%ad %C(red)%d %C(reset)%s\" --topo-order --graph --date=short
     type = cat-file -t
     dump = cat-file -p
 [color]
@@ -37,7 +37,7 @@
 [push]
     default = matching
 [merge]
-	tool = meld
+    tool = meld
 [diff]
     tool = meld
 [difftool]
