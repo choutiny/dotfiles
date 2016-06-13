@@ -7,8 +7,11 @@ vagrant Download [Vagrant](https://www.vagrantup.com/)
 ###Install vagrant
 ---------
 Download Page [vagrant](https://www.vagrantup.com/downloads.html)
-Debian deb package[Deb Package](https://releases.hashicorp.com/vagrant/1.8.1/vagrant_1.8.1_x86_64.deb)
+Debian deb package[Deb Package](https://releases.hashicorp.com/vagrant/1.8.3/vagrant_1.8.3_x86_64.deb)
+Centos rpm package[Rpm Package](https://releases.hashicorp.com/vagrant/1.8.3/vagrant_1.8.3_x86_64.rpm)
 ```
+dpkg -i vagrant.deb
+rpm -Uvh vagrant.rpm
 Install OS image
 Image Address[vagrantbox.es](http://www.vagrantbox.es/)
 ```
