@@ -2731,6 +2731,15 @@ git log --pretty=format:'%ai [%h] <%an> %s' --date-order  一行显示git log, �
 git log --pretty=format:'%ai [%h] <%an> %s' --date-order --graph
 git log --pretty=format:'%ai [%h] <%an> %s' --date-order --graph --decorate --since="yesterday"
 
+hist = log --pretty=format:\"%C(yellow)%h %C(green)[%an] %C(cyan)%ad %C(red)%d %C(reset)%s\" --topo-order --graph --date=short
+git hist --author=tommyx
+git hist --before=mm/dd/yyyy   [,mm-dd-yyyy],[,/three hours ago/yesterday/1 day ago/two weeks ago/last month]
+git hist --until=mm/dd/yyyy, mm-dd-yyyy
+git hist --after=mm/dd/yyyy, mm-dd-yyyy
+git hist --since=mm/dd/yyyy, mm-dd-yyyy
+git hist --grep="key\ words"
+
+
 git help <command> # 显示command的help
 git show # 显示某次提交的内容
 git show $id #
