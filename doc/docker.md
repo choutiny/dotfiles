@@ -199,6 +199,35 @@ RUN apt-get install -y nginx
 RUN echo 'Hi, i am in your container' \
         > /usr/share/nginx/html/index.html
 EXPOSE 80                                   #指定打开80端口
+
+
+docker file 里面, 使用 && : 来标记注释连续的命令.
+
+RUN apk --update add --virtual builddeps \
+    build-base \
+    autoconf \
+    automake \
+    git \
+    python \
+  && : Install OpenTSDB and scripts \
+  && wget --no-check-certificate \
+    -O v${TSDB_VERSION}.zip \
+    https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.zip \
+  && unzip v${TSDB_VERSION}.zip \
+  && rm v${TSDB_VERSION}.zip \
+  && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
+  && ./build.sh \
+  && : because of issue https://github.com/OpenTSDB/opentsdb/issues/707 \
+  && : commented lines do not work. These can be uncommeted when version of \
+  && : tsdb is bumped. Entrypoint will have to be updated too. \
+  && : cd build \
+  && : make install \
+  && : cd / \
+  && : rm -rf /opt/opentsdb/opentsdb-${TSDB_VERSION} \
+  && apk del builddeps \
+  && rm -rf /var/cache/apk/*
+
+
 ----------------------------
 执行docker build来build一个镜像
 $sudo docker build -t="rainysia/static_web" ./
