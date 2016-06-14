@@ -11,16 +11,6 @@ scala
 ```
 dpkg -i scala-2.11.8.deb or apt-get install scala
 ```
-sbt: [sbt](http://www.scala-sbt.org/release/docs/Installing-sbt-on-Linux.html)
-```
-echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
-apt-get update
-apt-get install sbt
-
-curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo
-yum install sbt
-```
 
 2. common
 ```
@@ -53,3 +43,18 @@ Scala code runner version 2.11.8 -- Copyright 2002-2016, LAMP/EPFL
 
 
 ###ENV
+-------------
+.....
+
+###SBT
+-------------
+sbt: [sbt](http://www.scala-sbt.org/release/docs/Installing-sbt-on-Linux.html)
+```
+echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
+apt-get update
+apt-get install sbt
+
+curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo
+yum install sbt
+```

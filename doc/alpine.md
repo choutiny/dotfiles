@@ -54,3 +54,8 @@ apk add gnuplot \
     --update-cache \
     --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 ```
+2. show all installed package
+```
+apk info
+apk -vv info | sort   (will list all installed packages in alphabetical order)
+```

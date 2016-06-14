@@ -14,6 +14,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk TSDB_VERSION=2.2.0 TSDB_HOME=/opents
 
 RUN apk --update add rsyslog make bash \
 	&& apk --update add --virtual builddeps build-base autoconf automake git python openssh
+    && apk --update add --virtual builddeps build-base autoconf automake git python openssh
 
 RUN wget -O v${TSDB_VERSION}.zip https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.zip \
 	&& unzip v${TSDB_VERSION}.zip \
@@ -95,3 +96,22 @@ tsd.storage.compaction.max_concurrent_flushes = 10000
 tsd.storage.compaction.flush_speed = 2
 ```
 
+###API
+----------------
+http://domain.org:4242/api/put?summary=true&details=true
+```
+/s
+/api/aggregators
+/api/annotation
+/api/config
+/api/dropcaches
+/api/put
+/api/query
+/api/search
+/api/serializers
+/api/stats
+/api/suggest
+/api/tree
+/api/uid
+/api/version
+```
