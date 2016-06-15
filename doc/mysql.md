@@ -97,6 +97,7 @@ write_buffer = 2M
 
 ### privileges
 ------------
+mysqladmin -uroot password "newpass"
 ```
 mysql>grant all privileges on *.* to root@'%'identified by 'password';
     grant all privileges on *.* to 'root'@'%' identified by 'your_password' with grant option;
@@ -692,6 +693,7 @@ myqsl 查询格式化的时间戳为时间 select *, FROM_UNIXTIME(*.TIMESTAMP) 
 ### 65.mysql 优化
 ------------
 ```
+show variables like '%character%'
 show variables like 'thread%';
 show status like '%connections%';
 show status like '%thread%';
