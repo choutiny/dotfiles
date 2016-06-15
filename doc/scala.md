@@ -58,3 +58,18 @@ apt-get install sbt
 curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo
 yum install sbt
 ```
+configure
+```
+whereis sbt
+/usr/share/sbt-launcher-packaging
+
+bashrc
+
+export SBT_HOME=/usr/share/sbt-launcher-packaging
+SBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M"
+# http proxy or socks proxy
+#export SBT_OPTS="$SBT_OPTS -Dhttp.proxyHost=server_ip -Dhttp.proxyPort=8080"
+export SBT_OPTS="$SBT_OPTS -DsocksProxyHost=127.0.0.1 -DsocksProxyPort=7070"
+export PATH=$PATH:$JAVA_HOME/bin:$HBASE_HOME/bin:$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$SCALA_HOME/bin:$SBT_HOME/bin
+```
+
