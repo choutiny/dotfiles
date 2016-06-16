@@ -991,6 +991,17 @@ docker stats $(docker ps -q)
 docker stats $(docker ps --format '{{.Names}}')
 ```
 
+### dns
+------------------------------------------------
+用户在创建docker容器的时候,不指定dns的话,Docker Daemon默认给Docker Container的DNS设置为8.8.8.8和8.8.4.4.
+而在国内这个特殊的环境下,这两个DNS地址并不提供稳定的服务.如此一来,只要Docker Container内部涉及到域名解析,则立即受到影响.
+
+解决方案:
+(1)使用docker run命令启动容器的时候,设定–dns参数,参数值为受信的DNS地址,必须保证该DNS地址Docker Container可访问. (2)如果按以上做修改,适用于docker run命令.而使用docker build的时候其实是多个docker run的叠加,由于docker build没有dns参数的传入,因此docker container不能保证域名的成功解析.
+
+解决方案:
+启动Docker Daemon的时候设定DOCKER_OPTS,添加–dns参数,这样可以保证所有的docker run默认使用这个DNS地址.   以上这些坑深浅不一,但基本上还都集中在Docker外围的配置,行为模式等方面.
+
 ###Private docker repository
 ------------------------------------------------
 ```

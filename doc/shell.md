@@ -4802,6 +4802,10 @@ c -v -w 1 192.168.1.29 -z 20-30
 克隆硬盘或分区
 server: nc -l -p 1234 | dd of=/dev/sdx
 client: dd if=/dev/sdx | nc server_ip 1234
+
+telnet baidu.org 80 测试某个远程地址对应端口是否打开
+nmap baidu.org -p 80  通过nmap来检查端口是否通畅
+nc -w 10  8.8.8.8 53 && echo ok ||echo no  通过nc来检验
 ```
 
 ##########################################################################
