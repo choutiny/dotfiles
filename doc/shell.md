@@ -4301,24 +4301,7 @@ strace用法,
 
 103.trigger
 ```
-show triggers;
-################ TRIGGER START #################
-DELIMITER //
-DROP TRIGGER IF EXISTS t_after_update_on_model_param//
-CREATE TRIGGER t_after_update_on_model_param
-AFTER UPDATE ON PLM.planning_bom_model_param 
-FOR EACH ROW
-BEGIN
-IF  new.prod_cycle_time != old.prod_cycle_time then
-    INSERT INTO dbname.planning_bom_change_log(`table_name`, `primary_key_id`, `change_action`, `col_name`, `new_value`, `change_source`, `change_user_id`, `change_timestamp`) 
-        values ('planning_bom_model_param', old.id, 'update', 'prod_cycle_time', new.prod_cycle_time, 'excel', 0, CURRENT_TIMESTAMP);
-ELSEIF new.default_bom != old.default_bom then
-    INSERT INTO dbname.planning_bom_change_log(`table_name`, `primary_key_id`, `change_action`, `col_name`, `new_value`, `change_source`, `change_user_id`, `change_timestamp`) 
-        values ('planning_bom_model_param', old.id, 'update', 'default_bom', new.default_bom, 'excel', 0, CURRENT_TIMESTAMP);
-END IF;
-END//
-DELIMITER ;
-################ TRIGGER END #################
+./mysql.md
 ```
 
 104.systemctl
