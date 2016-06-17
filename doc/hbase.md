@@ -817,7 +817,10 @@ refer: http://hbase.apache.org/book.html#_cluster_replication
 ```
 Hbase中split是一个很重要的功能,Hbase是通过把数据分配到一定数量的region来达到负载均衡的.一个table会被分配到一个或多个region中,这些region会被分配到一个或者多个regionServer中.在自动split策略中,当一个region达到一定的大小就会自动split成两个region.table在region中是按照row key来排序的,并且一个row key所对应的行只会存储在一个region中,这一点保证了Hbase的强一致性 .
 在一个region中有一个或多个stroe,每个stroe对应一个column families(列族).一个store中包含一个memstore 和 0 或 多个store files.每个column family 是分开存放和分开访问的.
-disable 'table_name','cf1', {REGION_REPLICATION => 3}
+disable 'table_name'
+alter 'table_name','cf1', {REGION_REPLICATION => 3}
+flust 'table_name'
+enable 'table_name'
 
 
 Client 
