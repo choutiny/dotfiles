@@ -3666,7 +3666,7 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
                 最多的时候我们会command 1>file 2>&1 这样的写法, 或 "command >file 2&1 "
 
             -s                          文件长度不为0
-            -d                          被测对象是目录
+            -d                          被测对象是目录 [ -d "$file"  -a  -x "$file" ] 表示当$file是一个目录，且同时具有x权限时，test才会为true。
             -b                          被测对象是块设备
             -c                          被测对象是字符设备
             -p                          被测对象是管道
@@ -3753,8 +3753,8 @@ ss "ss"表示socket统计.这个命令调查socket,显示类似netstat命令的�
     使用[[]]能避免像异常的文件扩展名之类的问题,而且能带来很多语法上的改进,而且还增加了很多新功能: 
 
     操作符  功能说明
-        ||      逻辑or(仅双中括号里使用)
-        &&      逻辑and(仅双中括号里使用)
+        ||      逻辑or(仅双中括号里使用) 在前一个命令执行结束时，若返回值为false，继续执行下一个命令
+        &&      逻辑and(仅双中括号里使用) 在前一个命令执行结束时，若返回值为true，继续执行下一个命令
         <       字符串比较(双中括号里不需要转移)
         -lt     数字比较
         =       字符串相等
@@ -4182,6 +4182,8 @@ client: sslocal -s server_name -p server_port -l local_port -k password -m bf-cf
     /usr/bin/zsh
     /etc/passwd 修改修改用户的bash /bin/zsh
     chsh -s /bin/zsh
+
+    cat /etc/shells 显示当前系统所有的shell
 
 git clone git@github.com:robbyrussell/oh-my-zsh.git
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

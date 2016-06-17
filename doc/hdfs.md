@@ -73,6 +73,7 @@ hdfs dfsadmin -help                             #管理员可以通过dfsadmin�
 hdfs dfsadmin -report                           #显示文件系统的基本数据
 hdfs dfsadmin -safemode < enter | leave | get | wait > #enter:进入安全模式;leave:离开安全模式;get:获知是否开启安全模式; wait:等待离开安全模式
 distcp                                          #用来在两个HDFS之间拷贝数据
+hdfs dfsadmin -refreshNodes
 
 ```
 
@@ -155,6 +156,13 @@ FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
 自动负载均衡hadoop文件:hadoop balancer, 不同节点之间复制数据的带宽是受限的,默认是1MB/s,可以通过hdfs-site.xml文件中的dfs.balance.bandwithPerSec属性指定(单位是字节).
 sudo -u hdfs hadoop balancer
 查看各节点的磁盘占用情况 hadoop dfsadmin -report
+sudo -u hdfs /bin/hadoop dfsadmin -report
+sudo -u hdfs hdfs dfsadmin -refreshNodes
+sudo -u yarn yarn rmadmin -refreshNodes
+sudo -u hdfs hadoop balancer
+
+Ambari web->Services->HDFS->Summary-> Service Actions->Rebalance HDFS->Start
+./bin/start-balancer.sh -threshold 10
 
 hadoop fsck -locations 可以看到相应的提示信息,可以看到副本丢失率为0%:
 `sudo -u hdfs hadoop fsck -locations  /` 
@@ -289,6 +297,5 @@ hbase实际数据文件
 
 ### /hbase/data/default/表名/region名/.tmp(按需创建)
 存储临时文件,比如某个合并产生的重新写回的文件.
-
 
 ```

@@ -254,12 +254,9 @@ jps
 hadoop dfsadmin -report
 ```
 
-
-
-
 #HADOOP Q&A
 ----------------------
-1. ScannerTimeoutException
+1 ScannerTimeoutException
 ```
 修改配置文件:$HBASE_HOME/conf/hbase-site.xml,修改或添加此属性
 <property>
@@ -271,8 +268,7 @@ hadoop dfsadmin -report
 Configuration conf = HBaseConfiguration.create()  
 conf.setLong(HConstants.HBASE_REGIONSERVER_LEASE_PERIOD_KEY, 120000)  
 ```
-
-2. regionServer dead
+2 RegionServer dead
 ```
 一将Zookeeper的timeout时间加长.
 二是配置"hbase.regionserver.restart.on.zk.expire" 为true. 这样子,遇到ZooKeeper session expired , regionserver将选择 restart 而不是 abort
@@ -294,8 +290,7 @@ Enable this will make the regionserver restart.
 
 hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 ```
-
-3. 如果一个HDFS上的文件大小(file size) 小于块大小(block size) ,那么HDFS会实际占用Linux file system的多大空间?
+3 如果一个HDFS上的文件大小(file size) 小于块大小(block size) ,那么HDFS会实际占用Linux file system的多大空间?
 ```
 1. 往hdfs里面添加新文件前,hadoop在linux上面所占的空间为 464 MB:
 2. 往hdfs里面添加大小为2673375 byte(大概2.5 MB)的文件: 2673375 derby.jar
@@ -310,10 +305,11 @@ hbase.client.keyvalue.maxsize => 0  # for thrift client timeout
 "The block size is a meta attribute. If you append tothe file later, it still needs to know when to split further - so it keeps that value as a mere metadata it can use to advise itself on write boundaries." 
 ```
 
-4. dfs.replication
+4 dfs.replication
+```
 hdfs - general - Block replication = 3 (default value)
 hdfs - hdfs.site - dfs.replication.max = 50 (default value)
-```
+
 查看hadoop集群的备份冗余情况 `hadoop fsck /`
 Total size: 14866531168 B (Total open files size: 415 B)
 Total dirs: 344
@@ -341,7 +337,7 @@ FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
 查看各节点的磁盘占用情况 hadoop dfsadmin -report
 ```
 
-5. ERROR: org.apache.hadoop.hbase.NotServingRegionException: Region hbase:meta,,1 is not online on xxxxx
+5 ERROR: org.apache.hadoop.hbase.NotServingRegionException: Region hbase:meta,,1 is not online on xxxxx
 ```
 可能原因1:
 zookeeper引起的, 通常这种情况往往是在你正在运行一个进程正在操作hbase数据库的时候, hbase进程被杀掉或hbase服务被停掉所引起的, 如果是hbase自身管理的zookeeper
@@ -361,7 +357,7 @@ zookeeper引起的, 通常这种情况往往是在你正在运行一个进程正
 hbase-site.xml
 ```
 
-6. HBase corrupt block
+6 HBase corrupt block
 ```
 `hdfs fsck /` to check the file block data is recoverable or not. it depends hdfs replication.
 `hdfs fsck / | egrep -v '^\.+$' | grep -v eplica` to get corrupt file blocks
@@ -370,7 +366,6 @@ hbase-site.xml
 or
 `hdfs dfs -rm /corrupt_block`
 `hbase hbck` to check again
-
 
 switch to hbase user: su hbase
 hbase hbck -details to understand the scope of the problem
@@ -388,7 +383,7 @@ hdfs fsck / to confirm healthy status
 
 ```
 
-7. YARN NodeManager  can't Start
+7 YARN NodeManager  can't Start
 ```
 Retrying after 1 seconds. Reason: Execution of 'ambari-sudo.sh su yarn -l -s /bin/bash -c 'ls /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid && ps -p `cat /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid`'' returned 1. /var/run/hadoop-yarn/yarn/yarn-yarn-nodemanager.pid
   PID TTY          TIME CMD
@@ -396,7 +391,7 @@ delete /var/log/hadoop-yarn/nodemanager/recovery-state/[nm-aux-services  yarn-nm
 retart yarn nodemanager
 ```
 
-8 .hbase regionserver dump
+8 hbase regionserver dump
 ```
 gc.log
 2016-05-23T23:07:09.499-0700: 5.432: [GC (Allocation Failure) 5.432: [ParNew: 334336K->22126K(376064K), 0.0469211 secs] 334336K->22126K(2055424K), 0.0470048 secs] [Times: user=0.03 sys=0.01, real=0.05 secs]
@@ -410,7 +405,7 @@ hbase-hbase-regionserver-.log
 2016-05-23 23:09:23,176 WARN  [ReplicationExecutor-0] regionserver.ReplicationSource: Queue size: 6 exceeds value of replication.source.log.queue.warn: 2
 ```
  
-9. hbase master server crash
+9 hbase master server crash
 ```
 Check hbase-hbase-master-project-cnode1.domain.org.log 
 Fix the WARN and FATAL error
@@ -429,12 +424,12 @@ sudo -u hdfs hadoop fs -chown hbase:hdfs hdfs://project-cnode1.domain.org:8020/a
 then restart hbase-hmaster service
 ```
 
-10. DataXceiver error processing unknown operation src:
+10 DataXceiver error processing unknown operation src:
 ```
 https://issues.apache.org/jira/secure/attachment/12745526/HDFS-8738.001.patch
 ```
 
-11. RegionServers Health Summary Dead RegionServer(s)2 out of 4
+11 RegionServers Health Summary Dead RegionServer(s)2 out of 4
 ```
 hbase shell>status
 hbase shell>status 'detailed'
@@ -459,14 +454,14 @@ delete wrong WALs ,   sudo -u hdfs  hadoop fs -ls /apps/hbase/data/WALs, sudo -u
 restart hbase-daemon.sh
 ```
 
-12. Delete wrong replication 
+12 Delete wrong replication 
 ```
 zookeeper-client -server domain2.org:2181
 ls /hbase-unsecure/replication/rs/
 delete the wrong zookeeper node
 ```
 
-13. Under Replicated Blocks in 'sudo -u hdfs hdfs dfsadmin -report'
+13 Under Replicated Blocks in 'sudo -u hdfs hdfs dfsadmin -report'
 ```
 su - <$hdfs_user>
 bash-4.1$ hdfs fsck / | grep 'Under replicated' | awk -F':' '{print $1}' >> /tmp/under_replicated_files
@@ -548,6 +543,74 @@ ganglia用于监控Hadoop和HBase运行情况.kerberos是一种网络认证协�
 产品	服务	安全	缺省端口	协议	访问	配置
 Ganglia	ganglia-gmond	8649	UDP/TCP	Internal
 ganglia-web	80	TCP	External	通过 Apache httpd
-Kerberos	KRB5 KDC Server	Secure	88	UDP*/TCP	External	[kdcdefaults] 或 [realms]段下的kdc_ports 和 kdc_tcp_ports
+Kerberos	KRB5 KDC Server	Secure	88	UDP*|TCP	External	[kdcdefaults] 或 [realms]段下的kdc_ports 和 kdc_tcp_ports
 KRB5 Admin Server	Secure	749	TCP	Internal	 Kdc.conf 文件:[realms]段kadmind_
+```
+
+### add/remove new server/host for existed cluster
+----------------------
+ADD OS:Centos7, Ambari
+```
+1. Get master server ssh private key.
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@new_server_FQCN
+ssh-keygen in new server and sent the public key to  master server.
+2. ntpdate
+yum install ntp
+vi /etc/ntp.conf and add "server asia.pool.ntp.org iburst"
+systemctl enable ntpd && systemctl start ntpd
+3. timedatectl
+timedatectl set-local-rtc yes
+timedatectl list-timezones
+timedatectl set-timezone Asia/Shanghai
+timedatectl set-ntp yes
+4. hostname
+vi /etc/hosts
+add the others host IP and FQCN in /etc/hosts
+add the new server host and FQCN in others server /etc/hosts
+vim new server /etc/hostname and modify to FQCN name
+5. ulimit
+vi /etc/security/limits.conf
+add 
+*	soft	nofile 102400
+*	hard	nofile	102400
+
+6. iptables
+setenforce 0
+vim /etc/selinux/config change to  SELINUX=disabled
+systemctl disable firewalld
+service firewalld stop
+7. ambari admin page to add new host
+8. ambari admin page Assign Slaved and Clients:
+choose DataNode, NodeManager, RegionServer, Spark Thrift Server, Client
+9. issues
+DataNode error. Check hosts
+RegionServer crash, Check memory
+Zookeeper error,  restart the upgrade for each search.'''
+WARN [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@357] - caught end of stream exception
+EndOfStreamException: Unable to read additional data from client sessionid 0x0, likely client has closed socket
+at org.apache.zookeeper.server.NIOServerCnxn.doIO(NIOServerCnxn.java:228)
+at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:208)
+at java.lang.Thread.run(Thread.java:745)'''
+ln -s /home/hdfs/data /hadoop/hdfs/data
+ln -s /home/hdfs/namenode /hadoop/hdfs/namenode
+chown hdfs:hadoop data -R
+chown hdfs:hadoop namenode -R
+Make sure all peer_id will update in others DC server.
+
+10. sudo -u hdfs /bin/hadoop dfsadmin -report
+11. sudo -u hdfs hdfs dfsadmin -refreshNodes
+sudo -u yarn yarn rmadmin -refreshNodes
+sudo -u hdfs hadoop balancer
+12. Ambari web->Services->HDFS->Summary-> Service Actions->Rebalance HDFS->Start
+./bin/start-balancer.sh -threshold 10
+```
+
+Remove
+```
+1. Ambari web->Hosts->select  one hosts->Host Actions->Delete Host
+
+2. sudo -u hdfs /bin/hadoop dfsadmin -report
+sudo -u hdfs hdfs dfsadmin -refreshNodes
+sudo -u yarn yarn rmadmin -refreshNodes
+sudo -u hdfs hadoop balancer
 ```
