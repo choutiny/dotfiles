@@ -16,3 +16,10 @@ systemctl status redis.service
 -----------
 /etc/redis.conf
 /etc/redis-sentinel.conf
+```
+bind 0.0.0.0
+```
+
+### command
+-----------
+redis-cli -h 192.168.85.119 -p 6379

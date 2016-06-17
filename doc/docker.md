@@ -995,12 +995,18 @@ docker stats $(docker ps --format '{{.Names}}')
 ------------------------------------------------
 用户在创建docker容器的时候,不指定dns的话,Docker Daemon默认给Docker Container的DNS设置为8.8.8.8和8.8.4.4.
 而在国内这个特殊的环境下,这两个DNS地址并不提供稳定的服务.如此一来,只要Docker Container内部涉及到域名解析,则立即受到影响.
-
+```
 解决方案:
 (1)使用docker run命令启动容器的时候,设定–dns参数,参数值为受信的DNS地址,必须保证该DNS地址Docker Container可访问. (2)如果按以上做修改,适用于docker run命令.而使用docker build的时候其实是多个docker run的叠加,由于docker build没有dns参数的传入,因此docker container不能保证域名的成功解析.
 
 解决方案:
 启动Docker Daemon的时候设定DOCKER_OPTS,添加–dns参数,这样可以保证所有的docker run默认使用这个DNS地址.   以上这些坑深浅不一,但基本上还都集中在Docker外围的配置,行为模式等方面.
+
+-h HOSTNAME or --hostname=HOSTNAME 设定容器的主机名,它会被写到容器内的 /etc/hostname 和 /etc/hosts.但它在容器外部看不到,既不会在 docker ps 中显示,也不会在其他的容器的 /etc/hosts 看到.
+--link=CONTAINER_NAME:ALIAS 选项会在创建容器的时候,添加一个其他容器的主机名到 /etc/hosts 文件中,让新容器的进程可以使用主机名 ALIAS 就可以连接它.
+--dns=IP_ADDRESS 添加 DNS 服务器到容器的 /etc/resolv.conf 中,让容器用这个服务器来解析所有不在 /etc/hosts 中的主机名.
+--dns-search=DOMAIN 设定容器的搜索域,当设定搜索域为 .example.com 时,在搜索一个名为 host 的主机时,DNS 不仅搜索host,还会搜索 host.example.com. 注意:如果没有上述最后 2 个选项,Docker 会默认用主机上的 /etc/resolv.conf 来配置容器.
+```
 
 ###Private docker repository
 ------------------------------------------------

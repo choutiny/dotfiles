@@ -2957,7 +2957,7 @@ rsync --info=progress2 source dest 显示复制的进度和百分比
 bashrc 原始的存在/etc/skel/.bashrc 
 ```
 
-77.jumei-extend
+77.dev-extend
 ```
         beanstalk libevent msgpack readline recode redis sqlite3
         pecl channel-discover php-msgpack.googlecode.com/svn/pecl
@@ -3096,14 +3096,14 @@ panels   管理
     [web]
     cacerts=/etc/ssl/certs/ca-certificates.crt
     [paths][auth]
-    hg.int.jumei.com.prefix = https://hg.int.jumei.com/
-    hg.int.jumei.com.username = test 
-    hg.int.jumei.com.password = interface
+    hg.int.devopler.com.prefix = https://hg.int.devopler.com/
+    hg.int.devopler.com.username = test 
+    hg.int.devopler.com.password = interface
     [hostfingerprints]
-    hg.int.jumei.com = d7:ce:75:52:4e:42:44:fb:bf:c2:40:dc:a8:61:32:3f:e0:ec:3f:4c
+    hg.int.devopler.com = d7:ce:75:52:4e:42:44:fb:bf:c2:40:dc:a8:61:32:3f:e0:ec:3f:4c
     [paths]
-    sandbox = ssh://hg@hg.jumeicd.com/sandbox 
-    default = ssh://hg@hg.jumeicd.com/kb
+    sandbox = ssh://hg@hg.devoplercd.com/sandbox 
+    default = ssh://hg@hg.devoplercd.com/kb
     [tortoisehg]
     ui.language = zh_CN
     vdiff = bcompare
