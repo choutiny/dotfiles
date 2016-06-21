@@ -1383,6 +1383,28 @@ svn !!
 34.快速备份一个文件,大括号是一个排列的意思,filename{,.bak}类似filename filenam.bak
 ```
 cp filename{,.bak}
+bash的brace expansion（大括号扩展）功能
+a{d,c,b}e 会被扩展成ade ace abe 
+
+改/加后缀
+1. for files in `ls *.`
+    do
+        mv $files `echo "$filesbak" `
+    done
+2. mv $files ${files}bak
+3. mv $files  `$files.bak|sed 's/\.//' `
+
+4. mv $files ${file%.old}.new
+5. mv $files `echo $files|tr .old .new`
+6. mv $files `echo $files|sed 's/\.old/\.new/' `
+7. rename .old .new  *
+改前缀
+1. mv $files un${$files#re}
+2. mv $files `echo $files | tr re un`
+去后缀
+1. mv $files `echo $files |sed 's/\.bak//' `
+2. mv $files  `echo $files|tr .bak  （4空格）`
+
 ```
 
 35.免密码ssh登录主机,把公钥串写入远程主机~/.ssh/authorized_keys,前提是当前用户有公钥,默认没有,需要ssh-keygen,如果需要删除,需要打开远程主机上authorized_keys,你的用户名,删除掉该行
@@ -4809,6 +4831,17 @@ telnet baidu.org 80 测试某个远程地址对应端口是否打开
 nmap baidu.org -p 80  通过nmap来检查端口是否通畅
 nc -w 10  8.8.8.8 53 && echo ok ||echo no  通过nc来检验
 ```
+
+128. nmap
+```
+nmap server2.domian.com 使用主机名扫描 
+nmap 192.168.0.101      使用IP地址扫描
+-v 更多详情
+nmap 192.168.0.101 192.168.0.102 192.168.0.103 扫描多台主机
+nmap 192.168.0. *        扫描整个子网
+nmap 192.168.0.101,102,103使用IP地址的最后一段扫描多台主机
+```
+
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
