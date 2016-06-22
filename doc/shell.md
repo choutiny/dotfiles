@@ -1706,6 +1706,11 @@ iftop 可以用来监控网卡的实时流量(可以指定网段),反向解析IP
     按f可以编辑过滤代码, 这是翻译过来的说法, 我还没用过这个!
     按!可以使用shell命令, 这个没用过!没搞明白啥命令在这好用呢!
     按q退出监控. 
+
+nethogs 报告程序的进程编号（PID）、用户和路径
+netwatch 显示本地主机与其他远程主机之间的连接，并显示哪些数据在每个连接上所传输的速度
+apt-get install netdiag
+    netwatch -e eth0 -nt 
 ```
 
 56.Others skills
