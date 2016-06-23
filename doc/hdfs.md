@@ -30,6 +30,7 @@ rm命令
 `hadoop fs -expunge`
 `sudo -u hdfs  hadoop fs -du -s -h /user`
 ```
+
 4. others
 ```
 hadoop fs -ls /
@@ -74,7 +75,6 @@ hdfs dfsadmin -report                           #显示文件系统的基本数�
 hdfs dfsadmin -safemode < enter | leave | get | wait > #enter:进入安全模式;leave:离开安全模式;get:获知是否开启安全模式; wait:等待离开安全模式
 distcp                                          #用来在两个HDFS之间拷贝数据
 hdfs dfsadmin -refreshNodes
-
 ```
 
 5. backup
@@ -83,8 +83,6 @@ hdfs dfsadmin -refreshNodes
 $ hadoop distcp hdfs://datanode1/foo hdfs://datanode2/bar
 HDFS上的文件是使用URI来定位的,前缀都是hdfs://localhost:9000,你可以把这个前缀赋给属性fs.default.name(属性可以在配置文件中指定,也可以在代码中指定),这样你就不用每次都写这个前缀了,比如以下2个命令是等价的:
 hfds://namenode.domain.org:8020/path/to/directory
-
-
 $ hadoop fs -ls /
 $ hadoop fs -ls hsfs://localhost:9000/
 本地文件系统的前缀是file://
@@ -92,8 +90,7 @@ HDFS默认的文件备份数量是3,这个可以在dfs.replication属性中设�
 drwxr-xr-x   　　- 　　tester 　　supergroup        0 　　2012-08-20 14:23　　 /tmp
 -rw------- 　　　1 　　tester 　　supergroup 　　4 　　2012-08-20 14:23 　　/tmp/jobtracker.info
 跟UNIX下的ls命令很像,其中第2列就是replication的数目,第5列是文件的长度,以B为单位(文件夹的长度是0,而在UNIX文件系统中目录的长度是512B的整倍数,因为目录所占的空间是以块为分配单位的,每块为512B).
-
- 上面已经提到大量的小文件会极大消耗namenode的内存,所以在这种情况下我们需要使用Hadoop Archives(HAR)把文件归档为一个大文件.
+上面已经提到大量的小文件会极大消耗namenode的内存,所以在这种情况下我们需要使用Hadoop Archives(HAR)把文件归档为一个大文件.
 $ hadoop archive -archiveName tester.har -p /user/tester /user
 把/user/tester下的所有文件打包成tester.tar放在/user目录下.
 还可以查看一个har文件中包含哪些文件:
@@ -105,31 +102,21 @@ drwxr-xr-x   - tester supergroup          0 2012-08-20 16:49 /user/tester.har/ms
 Found 1 items
 -rw-r--r--   1 tester supergroup          0 2012-08-20 16:49 /user/tester.har/mse/list
 HAR也是一个文件系统,一个Har URI的完整模式是har://<scheme>-<host>/<path>
-
 tester@testerpc:~$ hadoop fs -lsr har://hdfs-localhost:9000/user/tester.har/mse
 -rw-r--r--   1 tester supergroup          0 2012-08-20 16:49 /user/tester.har/mse/list
 删除har文件必须使用rmr命令,用rm是不行的.
-
 $ hadoop fs -rmr /user/tester.har
-
  使用HAR的一些限制:
-
 会产生原始文件的完整备份,占用磁盘空间.当然你可以以在建好har文件后把原文件删掉.
 HAR只是把多个文件打包成一个文件并没有采用任何的压缩策略.
 HAR文件是不可变,如何你想增加或从har中删除一个文件,你只能重新归档.
 InputFormat不理会har的存在,这意味着har文件对于MapReduce来说仍然会产生多个InputSlit,不会提高效率.要解决"小文件很多导致map task很多"的问题,可以采用CombineFileInputFormat.
-
-
 Hadoop的备份系数是指每个block在hadoop集群中有几份,系数越高,冗余性越好,占用存储也越多.备份系数在hdfs-site.xml中定义,默认值为3.
 修改hadoop的备份系数dfs.replication
 查看hadoop集群的备份冗余情况 `hadoop fsck /`
 sudo -u hdfs hadoop fsck /
-
-
 su - hdfs
 hdfs fsck / -files -blocks
-
-
  Total size:    14866531168 B (Total open files size: 415 B)
  Total dirs:    344
  Total files:   712
@@ -146,7 +133,6 @@ hdfs fsck / -files -blocks
  Number of data-nodes:          3
  Number of racks:               1
 FSCK ended at Wed Mar 30 17:34:10 CST 2016 in 111 milliseconds
-
 可以看见Average block replication 仍是3
 需要修改hdfs中文件的备份系数.
 修改hdfs文件备份系数:hadoop dfs -setrep [-R] <path>  如果有-R将修改子目录文件的性质.
@@ -160,20 +146,14 @@ sudo -u hdfs /bin/hadoop dfsadmin -report
 sudo -u hdfs hdfs dfsadmin -refreshNodes
 sudo -u yarn yarn rmadmin -refreshNodes
 sudo -u hdfs hadoop balancer
-
 Ambari web->Services->HDFS->Summary-> Service Actions->Rebalance HDFS->Start
 ./bin/start-balancer.sh -threshold 10
-
 hadoop fsck -locations 可以看到相应的提示信息,可以看到副本丢失率为0%:
 `sudo -u hdfs hadoop fsck -locations  /` 
-
 `Fix under-replicated blocks`
 su - <$hdfs_user>
 bash-4.1$ hdfs fsck / | grep 'Under replicated' | awk -F':' '{print $1}' >> /tmp/under_replicated_files 
 -bash-4.1$ for hdfsfile in `cat /tmp/under_replicated_files`; do echo "Fixing $hdfsfile :" ;  hadoop fs -setrep 3 $hdfsfile; done
-
-
-
 otal size:    14866530469 B (Total open files size: 415 B)
  Total dirs:    337
  Total files:   706
@@ -190,7 +170,6 @@ otal size:    14866530469 B (Total open files size: 415 B)
  Number of data-nodes:          3
  Number of racks:               1
 FSCK ended at Wed Mar 30 18:08:58 CST 2016 in 64 milliseconds
-
 ```
 
 6. webhdfs
@@ -203,8 +182,7 @@ curl --negotiate -u : -b ~/cookiejar.txt -c ~/cookiejar.txt http://node1.domain.
 hbase or hbase-unsecure, maybe in /apps/hbase
 /hbase/.tmp             当对表做创建或者删除操作的时候,会将表move 到该 tmp 目录下,然后再去做处理操作
 /hbase/archive          HBase 在做 Split或者 compact 操作完成之后,会将 HFile 移到.archive 目录中,
-                            然后将之前的 hfile 删除掉,该目录由 HMaster 上的一个定时任务定期去清理
-
+                        然后将之前的 hfile 删除掉,该目录由 HMaster 上的一个定时任务定期去清理
 /hbase/corrupt          存储HBase做损坏的日志文件,一般都是为空的
 /hbase/data             这个才是 hbase 的核心目录,0.98版本里支持 namespace 的概念模型,系统会预置两个 namespace 即:hbase和default
 /hbase/data/default         这个默认的namespace即没有指定namespace 的表都将会flush 到该目录下面.
@@ -213,64 +191,47 @@ hbase or hbase-unsecure, maybe in /apps/hbase
                                 然后通过 meta 表定位到 region. namespace 中存储了 HBase 中的所有 namespace 信息,
                                 包括预置的hbase 和 default.acl 则是表的用户权限控制.
                             如果自定义一些 namespace 的话,就会再/hbase/data 目录下新建一个 namespace 文件夹,该 namespace 下的表都将 flush 到该目录下.
-
 /hbase/WALs             HBase 是支持 WAL(Write Ahead Log)的,HBase在第一次启动之初会给每一台RegionServer在.log 下创建一个目录,
                             若客户端如果开启WAL模式,会先将数据写入一份到.log 下,当 RegionServer crash 或者目录达到一定大小,会开启 replay 模式,类似 MySQL 的 binlog.
-
 /hbase/oldWALs          当WALs文件夹中的 HLog 没用之后会 move 到oldWALs中,HMaster会定期去清理, 
                             由参数hadoop.logfile.size 和 hadoop.logfile.count 来指定每个log file最大size和最大超出多少个logfile后作清理
                             以及hbase.master.logcleaner.ttl Hlog存在oldWALs的最长时间,默认600000
 /hbase/.snapshot        hbase若开启了 snapshot 功能之后,对某一个用户表建立一个 snapshot 之后,snapshot 都存储在该目录下,
                             如对表test 做了一个 名为sp_test 的snapshot,就会在/hbase/.snapshot/目录下创建一个sp_test 文件夹,
                             snapshot 之后的所有写入都是记录在这个 snapshot 之上
-
 /hbase/hbase.id         它是一个文件,存储集群唯一的 cluster id 号,是一个 uuid.
 /hbase/hbase.version    同样也是一个文件,存储集群的版本号,貌似是加密的,看不到,只能通过web-ui 才能正确显示出来.
-
-
 HBase 在HDFS上的文件可以被分为俩类,一类位于Hbase根目录下,另一类位于根目录的表目录下
 .根级文件
 ### /hbase/WALs 被HLog实例管理的WAL文件.
-
 ### /hbase/WALs/data-hbase.com,60020,1443159380730
 对于每个HregionServer,日志目录中都包含一个对应的子目录
-
 ### hbase/WALs/data-hbase.com,60020,1443159380730/data-hbase.com%2C60020%2C1443159380730.1443787240573
 在每个子目录下有多个HLog文件(因为日志滚动)
-
 ### /hbase/oldWALs
 当/hbase/WALs 中的HLog文件被持久化到存储文件中,不再需要日志文件时,它们会被移动到/hbase/oldWALs目录.
-
 ### /hbase/oldWALs/data-hbase.com%2C60020%2C1443159381290.1443787452518
 具体的oldWALs文件.
-
 ### /hbase/hbase.id
 集群的唯一ID
-
 ### /hbase/hbase.version
 集群的文件格式版本信息
-
 ### /hbase/corrupt
 损坏的日志文件,一般为空
-
 ### /hbase/archive/
 存储表的归档和快照,HBase 在做 Split或者 compact 操作完成之后,会将 HFile 移到archive 目录中,然后将之前的 hfile 删除掉,该目录由 HMaster 上的一个定时任务定期去清理.
 存储表的归档和快照具体目录:
 /hbase/archive/data/default/表名/region名/列族名/fd2221d8d1ae4e579c21882f0ec4c5a5
-
 ### /hbase/.tmp
 当对表做创建或者删除操作的时候,会将表move 到该 tmp 目录下,然后再去做处理操作.
-
 ### /hbase/data
 hbase存储数据的核心目录
 ### /hbase/data/hbase
 该目录存储了存储了 HBase 的 namespace,meta 和acl 三个系统级表.
 namespace 中存储了 HBase 中的所有 namespace 信息,包括预置的hbase 和 default.acl 则是表的用户权限控制.
-
-- /hbase/data/hbase/meta
-- /hbase/data/hbase/namespace
-- /hbase/data/hbase/acl
-
+-/hbase/data/hbase/meta
+-/hbase/data/hbase/namespace
+-/hbase/data/hbase/acl
 ### /hbase/data/default/
 该目录存储所有用户数据表
 /hbase/data/default/表名
@@ -279,23 +240,18 @@ namespace 中存储了 HBase 中的所有 namespace 信息,包括预置的hbase 
 表的元数据信息
 #### /hbase/data/default/PERFORMANCE_TEST/.tabledesc/.tableinfo.0000000008
 表的元数据信息具体文件
-
 ### /hbase/data/default/表名/.tmp
 中间临时数据,当.tableinfo被更新时该目录就会被用到
-
 ### /hbase/data/default/表名/f569a17359edb2250cdf07964be606a7(由region的表名+Start Key+时间戳产生的hashcode)
 表中每一个region的目录
 region 目录
 ### /hbase/data/default/表名/region名/.regioninfo
 包含了对应region的HRegionInfo的序列化信息,类似.tableinfo.hbase hbck 工具可以用它来生成丢失的表条目元数据
-
 ### /hbase/data/default/表名/region名/列族名
 每个列族的所有实际数据文件
-
 #### /hbase/data/default/表名/region名/列族名/文件名
 hbase实际数据文件
-
 ### /hbase/data/default/表名/region名/.tmp(按需创建)
 存储临时文件,比如某个合并产生的重新写回的文件.
-
 ```
+

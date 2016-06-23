@@ -614,3 +614,74 @@ sudo -u hdfs hdfs dfsadmin -refreshNodes
 sudo -u yarn yarn rmadmin -refreshNodes
 sudo -u hdfs hadoop balancer
 ```
+
+
+### Performance
+--------------------
+
+1. hdfs 
+    1. linux filesystem ext4 or XFS
+        ext4, 支持大文件,单个最大(16GB~16TB),最大支持1EB(exabyte=1024PB petabyte= 1024^2 TB terabyte)
+              目录支持64000个子目录(ext3 32000个) 
+            多块分配,延迟分配,journal校验,更快的fsck,可以关闭journaling日志,更快的write,read速度
+            
+    2. hdfs-site.xml
+        (old data lost on power outage)当机房突然掉电时, HBase不仅可能丢失最新更新的数据, 如果刚好又在做Compact,也可能丢失较早之前更新的数据
+        dfs.datanode.sync.behind.writes         = true  尽全力把数据块同步到本地硬盘
+        dfs.datanode.synconclose                = true
+
+        Datanode会发送block reports给Namenode, 如果10分钟没有报告, DN会被报告为已经死了.
+        但是NN会继续从这些DN读和写. 所以需要避免去读写死掉的DN
+        def.namenode.avoid.read.stale.datanode         = true
+        def.namenode.avoid.write.stale.datanode        = true
+        def.namenode.stale.datanode.interval           = 30000 (default, ms)
+
+        HDFS short circuit read, 当RegionServer和DataNode在同一server时, HDFS会直接读取本地的文件块而不通过DN
+        dfs.client.read.shortcircuit                   = true
+        dfs.client.read.shortcircuit.buffer.size       = 131072 (default KB)
+        hbase.regionserver.checksum.verify             = true (default)
+        dfs.domain.socket.path
+
+        让DataNode 继续在一些有故障的硬盘上运行
+        dfs.datanode.failed.volumes.tolerated          = <N>
+
+        在一个DataNode上分布存储数据在整个硬盘, HDFS-1804 当硬盘上有超过10GB的可用空间时, write数据的命中率会更高.
+        dsf.datanode.fsdataset.volumen.choosing.policy = AvailableSpaceVolumeChoosingPolicy
+
+        dfs.block.size             = 268435456 (WAL is rolled at 95% of this)
+        ipc.server.tcpnodelay      = true
+        ipc.client.tcpnodelay      = true
+        dfs.datanode.max.xcievers  = 8192
+        dfs.namenode.handler.count = 64
+        dfs.datanode.handler.count = 8 (match number of spindles)
+
+2. Hbase 
+    1. RegionServer settings, hbase-site.xml
+        写缓存在内存->内存把内容以HFiles的形式刷新到磁盘上
+        需要限制HFiles, 通过重写小Files 到稍大一些的HFiles
+        read requires merging HFiles -> fewer is better  读需要合并HFiles, 越少越好
+        write throughput better with fewer compactions -> leads to more files. 写吞吐量减少压缩更好 ->导致更多的文件
+
+        hbase.hstore.blockingStoreFiles      = 10  当超过10个文件后将不允许flush操作, small for read, large for write
+        hbase.hstore.compactionThreshold     = 3  当文件数量达到3个时开始压缩, small for read, large for write
+        hbase.hregion.memstore.flush.size    = 128 最大内存存储大小, 默认就很好. lart good for fewer compaction ( watch RegionServer heap )
+
+        time based compactions, 基于时间的压缩, 昂贵而且总是在错误的时间
+        hbase.hregion.majorcompaction        = 604800000 (week, default)
+        hbase.hregion.majorcompaction.jitter = 0.5 (1/2 week, default)
+
+        memstore/Cache sizing
+        hbase.hregion.memstore.flush.size             = 128
+        hbase.hregion.memstore.block.multiplier       = 2     当一个region里的memstore占用内存大小超过hbase.hregion.memstore.flush.size两倍的大小时, block该region的所有请求,进行flush,释放内存.
+            比如hfile.block.cache.size和hbase.regionserver.global.memstore.upperLimit/lowerLimit,以预留更多内存,防止HBase server OOM.
+        hbase.regionserver.global.memstore.upperLimit = 0.4 (default)  单个Region内所有的memstore大小总和超过指定值时,flush该region的所有memstore,
+        hbase.regionserver.global.memstore.size       = 0.35 (default)
+        hfile.block.cache.size                        = 0.4 (default)
+
+
+
+
+
+
+
+
