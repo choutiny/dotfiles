@@ -675,13 +675,26 @@ sudo -u hdfs hadoop balancer
         hbase.hregion.memstore.block.multiplier       = 2     当一个region里的memstore占用内存大小超过hbase.hregion.memstore.flush.size两倍的大小时, block该region的所有请求,进行flush,释放内存.
             比如hfile.block.cache.size和hbase.regionserver.global.memstore.upperLimit/lowerLimit,以预留更多内存,防止HBase server OOM.
         hbase.regionserver.global.memstore.upperLimit = 0.4 (default)  单个Region内所有的memstore大小总和超过指定值时,flush该region的所有memstore,
-        hbase.regionserver.global.memstore.size       = 0.35 (default)
-        hfile.block.cache.size                        = 0.4 (default)
+        hbase.regionserver.global.memstore.size       = 0.4 (default) 读越大,就减少这个值的百分比
+        hfile.block.cache.size                        = 0.4 (default) 用于块缓存百分比
 
+        autotune blockcache vs. Memstore 自动调整块缓存和内存存储
+        hbase.regionserver.global.memstore.size.{max|min}.range
+        hfile.block.cache.size.{max|min}.range
+        hbase.regionserver.heapmemory.tuner.class
+        hbase.regionserver.heapmemory.tuner.period
 
+        Data Locality 数据本地化
+        hbase.hstore.min.locality.to.skip.major.compact  避免压缩即使是最小的本地存储
+        hbase.master.wait.on.regionservers.timeout  = 4.5s (default) 允许主等待一段时间,避免所有的在30~90s登录的region去第一台服务器
+        Don't use the HDFS balancer
 
-
-
-
-
-
+    2. Column family settings
+        block encoding 
+            (NONE, FAST_DIFF, PREFIX, etc), scan 友好(解压所有扫描), get不友好.(需要解压需要之前的单元)
+            alter 'test', { NAME => 'cf', DATA_BLOCK_ENCODING => 'FAST_DIFF'}
+            会产生大量的额外的垃圾 
+        compression
+            NONE,GZIP,SNAPPY,etc
+            create 'test', { NAME => 'CF', COMPRESSION => 'SNAPPY' }
+            压缩整个块, 对scan 和 get不友好
