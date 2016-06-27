@@ -698,3 +698,63 @@ sudo -u hdfs hadoop balancer
             NONE,GZIP,SNAPPY,etc
             create 'test', { NAME => 'CF', COMPRESSION => 'SNAPPY' }
             压缩整个块, 对scan 和 get不友好
+            hbase.block.data.cachecompressed = true 块缓存压缩,需要更多的缓存容量,每次访问需要解压缩
+
+        HFile block size
+            create 'test', {NAME => 'cf1', BLOCKSIZE => '4096'}
+            blocksize 默认是64k, 这个值是一个均衡的值在 scan和get
+            增加-> 大量的scan,  减少->多个get, 很少设置超过1mb
+
+    3. RegionServer GC(garbage collection)
+        RPC 是短周期的垃圾回收
+        memstore是相对长期的,(2mb 块)
+        blockcache 是长期的,(64k块分配)
+            -Xmn512m (非常小的eden空间)
+            -XX:+UserParNewGC(collect edin in parallel)
+            -XX:+UserConcMarkSweepGC(使用不移动的CMS collector)
+            -XX:CMSInitiatingOccupancyFraction=70 (开始回收当70%的终身占用满时.  在压力的时候避免回收)
+            -XX:+UseCMSInitiatingOccupancyOnly (不要尝试调整CMS settings)
+        RegionServer 机器大小
+            RegionSize / MemstoreSize * ReplicationFactor * HeapFractionForMemstores * 2 (假设memstore占平均的1/2)
+            10gb/128mb * 3 * 0.4 * 2 = 192 (默认)
+            每192bytes 在硬盘上需要1bytes为Heap(堆), 32GB的堆, 可以勉强填满 6T的硬盘/机器(32gb * 192 = 6tb)
+            1gb的regionSize/128 mb * 3 * 0.4 * 2 = 19 会导致宕机
+            hbase.hregion.max.filesize (默认10g就好)
+            hbase.hregion.memstore.flush.size(默认128m, 当读负载很重的时候减少这个值)
+            hbase.regionserver.maxlogs (HDFS blocksize * 0.95 这个值应该大于0.4 * JavaHeap)
+        RegionServer Hardware
+            <=6T 硬盘空间每机. 足够多的heap( ~diskspace/200)
+            core越多越好, HBase 是CPU 渐进的
+            更好的网络和硬盘读写速度.(1ge, 24disk 对于 125mb/s 和 2.4gb/s 不够, 10ge 对于24disk 差不多, 1ge对4 or 6硬盘也可以)
+            对于filter, 多个硬盘更好
+    4.HBase client settings
+        典型的数据中心内的延迟：为0.1ms〜1毫秒
+        传送2MB超过1GE：150毫秒
+        传送2MB超过10GE：15毫秒
+        write
+            hbase.client.write.buffer = 2mb (默认写buffer, 很好)
+        read
+            scan.setCaching(<n) (默认是100行)
+            hbase.client.scanner.max.result.size = 2mb (默认scan的buffer)
+        client,允许region移动和拆分
+            考虑到 RPC size *  hbase.regionserver.handler.count 为服务器GC
+            hbase.client.pause = 100
+            hbase.client.retries.number = 35
+            hbase.ipc.client.tcpnodelay = true
+        replication
+            hbase.zookeeper.userMulti = true (need ZK 3.4, 非常重要)
+            replication.sleep.before.failover = 30000
+            replication.source.maxretriesmultiplier = 300
+            replication.source.ratio = 0.10
+    5. linux
+        Turn THP(transparent Huge Pages) OFF
+        set swappiness to 0
+        set vm.min_free_kbytes 至少1GB(8GB 在大系统, 服务器立即分配)
+        set zone_reclaim_mode to 0(在NUMA中一个缓存)
+        目录mount用EXT4或者xfs
+            
+
+
+
+
+
