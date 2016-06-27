@@ -618,13 +618,11 @@ sudo -u hdfs hadoop balancer
 
 ### Performance
 --------------------
+https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-common/DeprecatedProperties.html
 
 1. hdfs 
     1. linux filesystem ext4 or XFS
-        ext4, 支持大文件,单个最大(16GB~16TB),最大支持1EB(exabyte=1024PB petabyte= 1024^2 TB terabyte)
-              目录支持64000个子目录(ext3 32000个) 
-            多块分配,延迟分配,journal校验,更快的fsck,可以关闭journaling日志,更快的write,read速度
-            
+        ext4, 支持大文件,单个最大(16GB~16TB),最大支持1EB(exabyte=1024PB petabyte= 1024^2 TB terabyte) 目录支持64000个子目录(ext3 32000个) 多块分配,延迟分配,journal校验,更快的fsck,可以关闭journaling日志,更快的write,read速度
     2. hdfs-site.xml
         (old data lost on power outage)当机房突然掉电时, HBase不仅可能丢失最新更新的数据, 如果刚好又在做Compact,也可能丢失较早之前更新的数据
         dfs.datanode.sync.behind.writes         = true  尽全力把数据块同步到本地硬盘
@@ -632,28 +630,29 @@ sudo -u hdfs hadoop balancer
 
         Datanode会发送block reports给Namenode, 如果10分钟没有报告, DN会被报告为已经死了.
         但是NN会继续从这些DN读和写. 所以需要避免去读写死掉的DN
-        def.namenode.avoid.read.stale.datanode         = true
-        def.namenode.avoid.write.stale.datanode        = true
-        def.namenode.stale.datanode.interval           = 30000 (default, ms)
+        dfs.namenode.avoid.read.stale.datanode         = true
+        dfs.namenode.avoid.write.stale.datanode        = true
+        dfs.namenode.stale.datanode.interval           = 30000 (default, ms)
 
         HDFS short circuit read, 当RegionServer和DataNode在同一server时, HDFS会直接读取本地的文件块而不通过DN
-        dfs.client.read.shortcircuit                   = true
+        dfs.client.read.shortcircuit                   = true (开关)
         dfs.client.read.shortcircuit.buffer.size       = 131072 (default KB)
-        hbase.regionserver.checksum.verify             = true (default)
-        dfs.domain.socket.path
+        hbase.regionserver.checksum.verify             = true (default) hbase使用自己的数据校验,而不是hdfs的校验
+        dfs.domain.socket.path = /var/lib/hadoop-hdfs/dn_socket, 是Datanode和DFSClient之间沟通的Socket的本地路径
 
-        让DataNode 继续在一些有故障的硬盘上运行
-        dfs.datanode.failed.volumes.tolerated          = <N>
+        让DataNode 继续在一些有故障的硬盘上运行,当出现几个坏盘时候,DN还能继续工作,默认一出现坏盘DN就死掉
+        dfs.datanode.failed.volumes.tolerated          = 0 
 
-        在一个DataNode上分布存储数据在整个硬盘, HDFS-1804 当硬盘上有超过10GB的可用空间时, write数据的命中率会更高.
-        dsf.datanode.fsdataset.volumen.choosing.policy = AvailableSpaceVolumeChoosingPolicy
+        在一个DataNode上分布存储数据在整个硬盘, HDFS-1804 当硬盘上有超过10GB的可用空间时, write数据的命中率会更高. 数据副本存放磁盘选择策略
+        dfs.datanode.fsdataset.volume.choosing.policy =  org.apache.hadoop.hdfs.server.datanode.fsdataset.AvailableSpaceVolumeChoosingPolicy 选择可用空间足够多的磁盘方式存储
 
-        dfs.block.size             = 268435456 (WAL is rolled at 95% of this)
-        ipc.server.tcpnodelay      = true
-        ipc.client.tcpnodelay      = true
-        dfs.datanode.max.xcievers  = 8192
-        dfs.namenode.handler.count = 64
-        dfs.datanode.handler.count = 8 (match number of spindles)
+        
+        dfs.blocksize, old dfs.block.size             = 268435456 (WAL is rolled at 95% of this),块设置大小, 1T file/64MB=16000块
+        ipc.server.tcpnodelay      = true 在Hadoop server是否启动 Nagle's 算法.设true会disable这个算法,关掉会减少延迟,但是会增加小数据包的传输
+        ipc.client.tcpnodelay      = true 关闭Nagle算法,增加客户端响应速度
+        dfs.datanode.max.transfer.threads, old  dfs.datanode.max.xcievers  = 8192 DN上传送数据出入的最大线程数, 
+        dfs.namenode.handler.count = 64 设定 namenode server threads 的数量,这些 threads 會用 RPC 跟其他的 datanodes 沟通
+        dfs.datanode.handler.count = 8 (match number of spindles, 指定 data node 上用的 thread 数量)
 
 2. Hbase 
     1. RegionServer settings, hbase-site.xml
@@ -662,16 +661,27 @@ sudo -u hdfs hadoop balancer
         read requires merging HFiles -> fewer is better  读需要合并HFiles, 越少越好
         write throughput better with fewer compactions -> leads to more files. 写吞吐量减少压缩更好 ->导致更多的文件
 
-        hbase.hstore.blockingStoreFiles      = 10  当超过10个文件后将不允许flush操作, small for read, large for write
+        hbase.hstore.blockingStoreFiles      = 10  当超过10个文件后将不允许flush操作, small for read, large for write, 
+            定义storefile数量达到多少时block住update操作.设置过小会使影响系统吞吐率(使吞吐率不高).
+            建议将该值调大一些,(但也不应过大,经验值是20左右吧.太大的话会在系统压力很大时使storefile过多,compact一直无法完成,扫库或者数据读取的性能会受到影响).
+            同时,可以适当提高一些hbase.hstore.compactionThreshold,增加compact的处理线程数,加快compact的处理速度而避免block.
         hbase.hstore.compactionThreshold     = 3  当文件数量达到3个时开始压缩, small for read, large for write
         hbase.hregion.memstore.flush.size    = 128 最大内存存储大小, 默认就很好. lart good for fewer compaction ( watch RegionServer heap )
 
         time based compactions, 基于时间的压缩, 昂贵而且总是在错误的时间
-        hbase.hregion.majorcompaction        = 604800000 (week, default)
+        Compaction是buffer->flush->merge的Log-Structured Merge-Tree模型的关键操作,主要起到如下几个作用:
+        1)合并文件
+        2)清除删除,过期,多余版本的数据
+        3)提高读写数据的效率
+        Minor & Major Compaction的区别
+        1)Minor操作只用来做部分文件的合并操作以及包括minVersion=0并且设置ttl的过期版本清理,不做任何删除数据,多版本数据的清理工作.
+        2)Major操作是对Region下的HStore下的所有StoreFile执行合并操作,最终的结果是整理合并出一个文件.
+        从这个功能上理解,Minor Compaction也不适合做Major的工作,因为部分的数据清理可能没有意义,例如,maxVersions=2,那么在少部分文件中,是否是kv仅有的2个版本也无法判断.
+        hbase.hregion.majorcompaction        = 604800000 (week, default), 尽量低谷手动执行(major_compact 'testtable'),更新低改为1周, PROD设为0最好.
         hbase.hregion.majorcompaction.jitter = 0.5 (1/2 week, default)
 
         memstore/Cache sizing
-        hbase.hregion.memstore.flush.size             = 128
+        hbase.hregion.memstore.flush.size             = 128 , MemStore达到上限默认是128M的时候,会触发MemStore的刷新.这个参数表示单个MemStore的大小的阈值.这个时候是不阻塞写操作的
         hbase.hregion.memstore.block.multiplier       = 2     当一个region里的memstore占用内存大小超过hbase.hregion.memstore.flush.size两倍的大小时, block该region的所有请求,进行flush,释放内存.
             比如hfile.block.cache.size和hbase.regionserver.global.memstore.upperLimit/lowerLimit,以预留更多内存,防止HBase server OOM.
         hbase.regionserver.global.memstore.upperLimit = 0.4 (default)  单个Region内所有的memstore大小总和超过指定值时,flush该region的所有memstore,
@@ -679,14 +689,17 @@ sudo -u hdfs hadoop balancer
         hfile.block.cache.size                        = 0.4 (default) 用于块缓存百分比
 
         autotune blockcache vs. Memstore 自动调整块缓存和内存存储
-        hbase.regionserver.global.memstore.size.{max|min}.range
-        hfile.block.cache.size.{max|min}.range
-        hbase.regionserver.heapmemory.tuner.class
-        hbase.regionserver.heapmemory.tuner.period
+        hbase.regionserver.global.memstore.size.{max|min}.range = 0.4|0.1
+            当用于MemStore和BlockCache的堆内存百分比达到80%时,系统将会抛出异常.
+            因此在设置相关参数时,应满足如下判断条件:
+            hfile.block.cache.size + hbase.regionserver.global.memstore.size <= 0.8
+        hfile.block.cache.size.{max|min}.range  0.4|0.1
+        hbase.regionserver.heapmemory.tuner.class todo
+        hbase.regionserver.heapmemory.tuner.period todo
 
         Data Locality 数据本地化
-        hbase.hstore.min.locality.to.skip.major.compact  避免压缩即使是最小的本地存储
-        hbase.master.wait.on.regionservers.timeout  = 4.5s (default) 允许主等待一段时间,避免所有的在30~90s登录的region去第一台服务器
+        hbase.hstore.min.locality.to.skip.major.compact =0.7  0~1 避免压缩即使是最小的本地存储, 是一个压缩比
+        hbase.master.wait.on.regionservers.timeout  = 4500 (default 4.5s ) 允许主等待一段时间,避免所有的在30~90s登录的region去第一台服务器
         Don't use the HDFS balancer
 
     2. Column family settings
@@ -728,31 +741,47 @@ sudo -u hdfs hadoop balancer
             更好的网络和硬盘读写速度.(1ge, 24disk 对于 125mb/s 和 2.4gb/s 不够, 10ge 对于24disk 差不多, 1ge对4 or 6硬盘也可以)
             对于filter, 多个硬盘更好
     4.HBase client settings
-        典型的数据中心内的延迟：为0.1ms〜1毫秒
-        传送2MB超过1GE：150毫秒
-        传送2MB超过10GE：15毫秒
+        典型的数据中心内的延迟:为0.1ms〜1毫秒
+        传送2MB超过1GE:150毫秒
+        传送2MB超过10GE:15毫秒
         write
-            hbase.client.write.buffer = 2mb (默认写buffer, 很好)
+            hbase.client.write.buffer = 2097152 (默认写buffer, 2M很好)
+                客户端通过Write Buffer方式提交的话,会导致客户端和服务端均有一定的额外内存开销,Write Buffer Size越大,则占用的内存越大.客户端占用的内存开销可以粗略使用以下公式预估:
+                    hbase.client.write.buffer * number of HTable object for writing
+                而对于服务端来说,可以使用以下公式预估占用的Region Server总内存开销:
+                    hbase.client.write.buffer * hbase.regionserver.handler.count * number of region server
+                其中,hbase.regionserver.handler.count为每个Region Server上配置的RPC Handler线程数
         read
             scan.setCaching(<n) (默认是100行)
-            hbase.client.scanner.max.result.size = 2mb (默认scan的buffer)
+            hbase.client.scanner.max.result.size = 2097152 (默认scan的buffer, 2M)
         client,允许region移动和拆分
             考虑到 RPC size *  hbase.regionserver.handler.count 为服务器GC
-            hbase.client.pause = 100
-            hbase.client.retries.number = 35
-            hbase.ipc.client.tcpnodelay = true
+            hbase.client.pause = 100 重试的休眠时间,默认为1s,可减少,比如100ms
+            hbase.client.retries.number = 35 重试次数,默认为14,可配置为3
+            hbase.ipc.client.tcpnodelay = true 具体就是在tcp socket连接时设置 no delay
         replication
             hbase.zookeeper.userMulti = true (need ZK 3.4, 非常重要)
-            replication.sleep.before.failover = 30000
+            replication.sleep.before.failover = 30000 主集群在regionserver当机后几毫秒开始执行failover
             replication.source.maxretriesmultiplier = 300
-            replication.source.ratio = 0.10
-    5. linux
-        Turn THP(transparent Huge Pages) OFF
-        set swappiness to 0
-        set vm.min_free_kbytes 至少1GB(8GB 在大系统, 服务器立即分配)
-        set zone_reclaim_mode to 0(在NUMA中一个缓存)
-        目录mount用EXT4或者xfs
-            
+            replication.source.ratio = 0.10-1 主集群里使用slave服务器的百分比. 0.5比较好
+
+        hbase.rpc.timeout:rpc的超时时间,默认60s,不建议修改,避免影响正常的业务,在线上环境刚开始配置的是3秒,
+            运行半天后发现了大量的timeout error,原因是有一个region出现了如下问题阻塞了写操作:"Blocking updates ... memstore size 434.3m is >= than blocking 256.0m size"可见不能太低.
+        ipc.socket.timeout:socket建立链接的超时时间,应该小于或者等于rpc的超时时间,默认为20s
+        hbase.client.retries.number:重试次数,默认为14,可配置为3
+        hbase.client.pause:重试的休眠时间,默认为1s,可减少,比如100ms
+        zookeeper.recovery.retry:zk的重试次数,可调整为3次,zk不轻易挂,且如果hbase集群出问题了,每次重试均会对zk进行重试操作,
+            zk的重试总次数是:hbase.client.retries.number * zookeeper.recovery.retry,并且每次重试的休眠时间均会呈2的指数级增长,每次访问hbase均会重试,
+            在一次hbase操作中如果涉及多次zk访问,则如果zk不可用,则会出现很多次的zk重试,非常浪费时间.
+        zookeeper.recovery.retry.intervalmill:zk重试的休眠时间,默认为1s,可减少,比如:200ms
+        hbase.regionserver.lease.period:scan查询时每次与server交互的超时时间,默认为60s,可不调整.
+3. linux
+    Turn THP(transparent Huge Pages) OFF
+    set swappiness to 0
+    set vm.min_free_kbytes 至少1GB(8GB 在大系统, 服务器立即分配)
+    set zone_reclaim_mode to 0(在NUMA中一个缓存)
+    目录mount用EXT4或者xfs
+
 
 
 
