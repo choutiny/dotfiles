@@ -371,6 +371,27 @@ centos:
     find /var/log/ -type f | grep -E "[a-z]+[log].[0-9]+" | xargs rm
     find /var/log/ -type f | grep -E "[ERROR|WARNING|INFO]+.[0-9]+" | xargs rm
     find /var/log/ -type f | grep -E "[a-z]+\.[0-9]{4}+-[0-9]{2}+-[0-9]{2}" | xargs rm
+
+
+ACK command,apt-get install ack-grep
+ack-grep --line=1       # 输出所有文件第二行
+ack-grep -l 'hello'     # 包含的文件名
+ack-grep -L 'print'     # 非包含文件名
+ack-grep hello --pager='less -R'    # 以less形式展示
+ack-grep hello --noheading          # 不在头上显示文件
+ack-grep hello --nocolor            # 不对匹配字符着色
+ack-grep -f hello.py    # 查找全匹配文件
+ack-grep -g hello.py$   # 查找正则匹配文件
+ack-grep -g hello  --sort-files     #查找然后排序
+ack-grep --python hello #查找所有python文件
+ack-grep -G hello.py$ hello     # 查找匹配正则的文件
+设置排序 --sort-files
+设置文件过滤 --python --html --js --conf
+设置显示 --noheading
+定义新的文件类型 --type-set=conf=.conf
+智能识别大小写 --smart-case
+设置以less形式展示，设定less参数 --pager=less -R -M --shift 5 -i
+
 ```
 
 13.cut切分文件
