@@ -390,7 +390,7 @@ ack-grep -G hello.py$ hello     # 查找匹配正则的文件
 设置显示 --noheading
 定义新的文件类型 --type-set=conf=.conf
 智能识别大小写 --smart-case
-设置以less形式展示，设定less参数 --pager=less -R -M --shift 5 -i
+设置以less形式展示,设定less参数 --pager=less -R -M --shift 5 -i
 
 ```
 
