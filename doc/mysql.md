@@ -109,6 +109,10 @@ mysql>create user 'username'@'%' identified by 'password';
 ### 58.MYSQL
 ------------
 ```
+根据query来导出结果
+mysql -e "select * from xxxTable" -u root -pxxxx db > xxx.txt
+mysql -e "SELECT id, model, sku WHERE id >= 1978630)" -h 192.168.85.133 -u root -P3308 -p dbName > sc.sql
+
 导出指定表 
 mysqldump -uroot -p dbname tbname > ./path.sql
     -d = no-data
