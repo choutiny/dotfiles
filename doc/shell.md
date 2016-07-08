@@ -1294,6 +1294,8 @@ find ./ -type l | wc -l //
 ./terminfo/mostlike.txt,
 tic mostlike.txt
 alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
+
+bash补全, 安装bash-completion
 ```
 用于编辑的终端快捷键
     ctrl + a 将光标定位到命令的开头
@@ -1433,6 +1435,14 @@ a{d,c,b}e 会被扩展成ade ace abe
     ssh-copy_id remote-machine
 指定ssh 的private key 来登录
     ssh -i private_key_file root@ip_address -p port_num
+
+shell: ssh-keygen -t rsa -N "" -f my.key
+    -N "" 使用空的密码短语, 等于两次交互下的回车
+    -f my.key 存储到哪儿
+    下面会自动运行完所有的内容并且输入回车来确定执行
+    echo -e "\n\n\n" | ssh-keygen -t rsa -N "" -f /tmp/my.key
+
+ssh user@other.server sh -c "'cat >> ~/.ssh/authorized_keys'" < /home/user/.ssh/id_rsa.pub
 ```
 
 36.抓取桌面的视频,-f x11grab 指定输入类型,-s wxga 1366x768的区域,-r 25帧率,-i:0.0
@@ -1609,7 +1619,7 @@ vi /etc/ntp.conf
 server asia.pool.ntp.org iburst 
 
 `centos7`
-yum install ntp
+yum install ntp ntpd
 systemctl enable ntpd
 systemctl start ntpd
 ntpstat 查看是否更新
@@ -4381,6 +4391,8 @@ chkconfig --list	systemctl list-unit-files --type=service (推荐)
 ls /etc/systemd/system/*.wants/	输出在各个运行级别下服务的启用和禁用情况
 chkconfig frobozz --list	ls /etc/systemd/system/*.wants/frobozz.service	用来列出该服务在哪些运行级别下启用和禁用. 
 chkconfig frobozz --add	systemctl daemon-reload	当您创建新服务文件或者变更设置时使用. 
+
+systemctl status rc-local
 
 ```
 
