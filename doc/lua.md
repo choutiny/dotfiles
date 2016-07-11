@@ -44,6 +44,10 @@ or add "#!/usr/local/bin/lua"
 2. add `#!/usr/local/bin/lua` in lua
 3. 变量 
 ``` 
+全局变量:所有的变量默是全局除非显式地声明为局部.
+局部变量:当类型被指定为局部的一个变量,它的范围是有限的在自己的范围内使用.
+表字段:这是一种特殊类型的变量,可以除了nil,包括功能不放任何东西.
+
 Lua的数字只有double型,64bits,你不必担心Lua处理浮点数会慢(除非大于100,000,000,000,000),或是会有精度问题,你可以以如下的方式表示数字,0x开头的16进制和C是很像的.
 num = 1024
 num = 3.0
@@ -65,9 +69,27 @@ v = UndefinedVariable
 另外,需要注意的是:lua中的变量如果没有特殊说明,全是全局变量,那怕是语句块或是函数里.变量前加local关键字的是局部变量.
 theGlobalVar = 50
 local theLocalVar = "local variable"
+
+local d, f = 5, 10  --declaration of d and f as local variables.
+d, f = 5, 10;       --declaration of d and f as global variables.
+d, f = 10           --[[declaration of d and f as global variables. Here value of f is nil --]]
+```
+4. 数据类型
+```
+Lua是动态类型语言,所以变量没有类型,仅值有类型.值可以被存储在变量中,作为参数传递,并作为结果返回
+值类型      描述
+nil         用于区分具有一些数据或没有(nil)数据的值.
+boolean     包括true和false值.一般用于条件检查.
+number      表示真实(双精度浮点数)的数字.
+string      表示字符数组.
+function    表示是用C或Lua语言的方法.
+userdata    表示任意C数据.
+thread      独立的执行线程,它是用来实现协程.
+table       代表普通数组,符号表,集合,记录,图,树等,并实现关联数组.它可以容纳任何值(除了nil).
+
 ```
 
-4. 控制流程
+5. 控制流程
 ```
 控制语句(Lua没有++或是+=这样的操作)
 while循环#######
