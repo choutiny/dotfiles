@@ -17,6 +17,9 @@ debian:
 apt-get install lua5.3
 ln -s /usr/bin/lua5.3 /usr/bin/lua
 ln -s /usr/bin/lua5.3 /usr/local/bin/lua
+
+lua -i
+
 ```
 
 ## run
@@ -30,6 +33,8 @@ or
 shell#lua32 hello.lua
 
 or chmod +x hello.lua
+#lua ./hello.lua
+or add "#!/usr/local/bin/lua"
 #./hello.lua
 ```
 
