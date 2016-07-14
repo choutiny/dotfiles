@@ -1179,4 +1179,5 @@ log = "/var/log/mysql/genquery.log"
 
 3.实时监控
 mysqladmin -u root -p -i 1 processlist
+watch --interval=[your-interval-in-seconds] "mysqladmin -u root -p[your-root-pw] processlist | grep [your-db-name]"
 ```
