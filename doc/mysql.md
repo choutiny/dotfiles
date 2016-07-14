@@ -1160,3 +1160,23 @@ END//
 DELIMITER ;
 ################ TRIGGER END #################
 ```
+
+### mysql show sql
+------------
+```
+1. no need to restart mysql 
+SET GLOBAL general_log = 'ON';
+SET GLOBAL log_output = "FILE"; which is set by default.
+SET GLOBAL general_log_file = "/path/to/your/logfile.log";
+
+2. chang my.cnf, ned to restart mysql
+[mysqld]  Set Slow Query Log
+long_query_time = 1
+slow_query_log = 1
+slow_query_log_file = "/var/log/mysql/slowquery.log"
+
+log = "/var/log/mysql/genquery.log"
+
+3.实时监控
+mysqladmin -u root -p -i 1 processlist
+```
