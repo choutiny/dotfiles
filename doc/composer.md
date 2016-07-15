@@ -34,7 +34,7 @@ download the stable version, preview will download pre-release version
 
 go to project folder and run the below command
 ```
-php composer.phar install
+php composer.phar install/update
 composer install
 ```
 
@@ -44,3 +44,14 @@ composer install
 
 ### composer.json
 ------------
+```
+{
+    "require": {
+        "xxx/xxx": "dev"
+    },
+    "autoload": {
+        
+    }
+
+}
+```
