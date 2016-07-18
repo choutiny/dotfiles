@@ -33,6 +33,54 @@ cat -n file.txt | tr -s '\n'
     mkdir -p /home/user/{test1,test2,test3}
     mkdir filenames && chown tommy:tommy -R !$ 创建目录并且授权.
 打印访问时间超过7分钟的所有文件 atime 访问时间 mtime 修改时间 ctime 变化时间 分钟amin mmin cmin 后面参数 用+ -来控制大于还是小于 这个时间参数
+
+根据属主 属组查找
+  -user username:查找属主是xx的文件
+  -group group:查找属组的xx文件
+  -uid useruid:查找uid号的文件
+  -gid groupid:查找gid号的文件
+  -nouser:查找没有属主的文件,即文件存在但是 user已被删除
+  -nogroup:查找没有属组的文件
+根据文件类型查找
+  -type f:普通文件
+  -type d:目录文件
+  -type l:符号链接文件
+  -type s:套接字文件
+  -type b:块设备文件
+  -type c:字符设备文件
+  -type p:管道文件
+根据大小查找
+    -size +10M :大于10m的文件
+    -size +10k:大于10k的文件
+    -size +1G:大于1G的文件
+    -size -1G:小于文件的文件
+根据时间查找
+    一天为单位
+        -atime :访问时间
+        -mtime :修改时间
+        -ctime :改变时间
+  以分钟为单位:
+        -amin: 访问时间
+        -mmin:修改时间
+        -cmin:改变时间
+根据权限查找
+    -perm +mode:
+    -perm +600:属主属组其他权限 只要有一个匹配就当成功;600代表三个对象,6属主 CentOS7上 使用 /600
+    -perm -600:每个对象都必须同时拥有其指定的权限,三个对象同时成立 如:-003表示其他用户必须有写与执行权限
+组合条件查找
+  -a  :与
+  -o  :或
+  -not:非
+  !　 :非
+处理动作
+    -print:打印到屏幕
+    -ls:查找到的文件 进行 ls
+    -delete:删除查找到的文件
+    -ok command {}\; 对查找的文件执行由command指定的命令,交互式
+    -exec command {}\;同上,非交互式
+    {}:代表前面find找到的 文件名称本身
+例如:
+    find ./ -type f -exec cp {} {}.bak \; 将查找到的文件都复制出一个.bak文件
     find . -type f -amin +7 -print 打印访问时间超过7分钟的所有文件
     find . -type f -atime +7 -print 打印访问时间超过7天的所有文件
     find . -type f -newer file.txt -print 找出比file.txt更新的文件
