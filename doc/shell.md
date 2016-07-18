@@ -1898,10 +1898,17 @@ ctrl+u //命令行下,清除光标所在的行
 ctrl+r <keywords> //搜索history的关键词的命令, 再ctrl+r 上翻下一个
 ctrl+z //暂停已经运行的进程,挂起当前会话
 ctrl+c //退出
-alt+b  //前移到单词开头
+alt+b  //前移到单词开头 
 alt+f  //后移到单词开头
+ctrl+b ←
+ctrl+f →
+ctrl+p ↑
+ctrl+n ↓
 ctrl+f //一个字母的前移
 ctrl+b //一个字母的后移
+ctrl+d 删除光标后一个字符
+ctrl+h 删除光标前一个字符,等效于 backspace
+
 cut -d: -f 1-4 test //用: 分割文件,取分割后的1-4列
 file /home/zhangy/test.php //用于查看文件的一些基本信息
 touch test.txt //创建一个空文件 text.txt
