@@ -1,34 +1,94 @@
-[giggle]
-    main-window-maximized = true
-    main-window-geometry = 1600x835+0+20
-    history-view-vpane-position = 478
-    main-window-view = HistoryView
-    file-view-vpane-position = 756
 [user]
     name = rainysia
     email = rainysia@gmail.com
+[core]
+    editor = vim
 [alias]
-    co = checkout
-    br = branch
-    ci = commit
-    st = status
+    # branch
+    br   = branch
+    bra  = branch --all
+    brd  = branch --delete
+    brdd = branch -D
+
+    # commit
+    ci   = commit
+    cia  = commit --all
+    cim  = commit --amend
+    md   = commit --amend
+
+    # checkout
+    co   = checkout
+    cob  = checkout -b
+    cot  = checkout --track
+
+    # diff
+    df   = diff
+    dfc  = diff --cached
+    dfn  = diff --name-only
+    dfs  = diff --stat
+    dt   = difftool
+    dft  = difftool
+    dfct = difftool --cached
+    dftc = difftool --cached
+
+    # merge
+    mg  = merge
+    mgn = merge --no-ff
+    mgs = merge --squash
+    mgt = mergetool
+    mt  = mergetool
+
+    plb     = pull --rebase
+    st      = status
+    sta     = status --short --branch
+    throw   = reset --hard HEAD
+    unstage = reset --soft HEAD -- #fileName
+    cf      = config
+    type    = cat-file -t
+    dump    = cat-file -p
+    latest  = for-each-ref --sort=-committerdate --format='%(committerdate:short) %(refname:short) [%(committername)]'
+
+    # log
     last = log -1 HEAD
-    cf = config
-    md = commit --amend
-    dt = difftool
-    mt = mergetool
     line = log --oneline
-    latest = for-each-ref --sort=-committerdate --format='%(committerdate:short) %(refname:short) [%(committername)]'
-    ls = log --pretty=format:\"%C(yellow)%h %C(cyan)%ad %C(red)%d %C(reset)%s %C(green)[%cn]\" --decorate --date=short
-    log2=log --pretty=format:\"%Cgreen%ai [%h] %C(cyan)<%an> %Cred%s\" --date-order
     hist = log --pretty=format:\"%C(yellow)%h %C(green)[%an] %C(cyan)%ad %C(red)%d %C(reset)%s\" --topo-order --graph --date=short
-    type = cat-file -t
-    dump = cat-file -p
+    ls   = log --pretty=format:\"%C(yellow)%h %C(cyan)%ad %C(red)%d %C(reset)%s %C(green)[%cn]\" --decorate --date=short
+    lp   = log --color --graph --date-order --pretty=format:'%C(magenta)%h %C(reset)-%C(red)%d %C(cyan)%ai %C(reset)%s %C(bold blue)<%an> %C(reset)%C(green)%ar' --date=local
+    log2 = log --pretty=format:\"%Cgreen%ai [%h] %C(cyan)<%an> %Cred%s\" --date-order
+    log3 = log --color --graph --date-order --pretty=format:'%C(red)%d%C(yellow)%B %n%C(ul)Hash:%C(reset) %C(magenta)%H %n%C(ul)Author:%C(reset) %C(bold blue)%an<%ae> %C(reset)%C(green)%ar%C(cyan)(%ad) %n%C(ul)Committer:%C(reset) %C(bold blue)%cn<%ce> %C(reset)%C(green)%cr%C(cyan)(%cd) %n'  --stat --date=local
+
+    # %h => commit hash => like `--abbrev-commit'
+    # %H => full commit hash
+    # %d => ref names, like --decorate option
+    # %s => subject
+    # %cn => committer name
+    # %cd => committer date. e.g.(Fri May 15 22:57:50 2015 +0800)
+    # %cD => committer date, RFC2822 style. e.g.(Fri, 15 May 2015 22:57:50 +0800)
+    # %cr => committer date, relative => like `--date=relative'. e.g.(4 days ago)
+    # %ct => committer date, UNIX timestamp
+    # %ci => committer date, ISO 8601 format. e.g.(2015-05-15 22:57:50 +0800)
+    # %an => author name
+    # %ar => author date, relative
+    # %ad => author date, (format respects --date= option) e.g.(Tue May 19 10:15:48 2015 +0800)
+    # %aD => author date, RFC2822 style. e.g.(Fri, 15 May 2015 22:57:50 +0800)
+    # %at => author date, UNIX timestamp
+    # %ai => author date, ISO 8601 format. e.g.(2015-05-15 22:57:50 +0800)
+    # %n => new line
+    # --stat       => diff status
+    # --patch      => diff preview
+    # --date=local => delete timezone information
 [color]
-    diff = auto
+    diff   = auto
     status = auto
     branch = auto
-    ui = true
+    ui     = true
+#[color "diff"]
+#	meta       = yellow bold
+#	commit     = green bold
+#	frag       = magenta bold
+#	old        = red bold
+#	new        = green bold
+#	whitespace = red reverse
 [http]
     sslverify = true
 [https]

@@ -838,6 +838,8 @@ pkill process_name
 pkill -s signal process_name
 pkill -kill -t pts/0 踢掉tty/0的用户,踢下线
 
+kill -STOP PROCESS_ID 会暂停掉进程ID的运行
+
 
 trap 捕捉并相应信号
 trap 'signal_handler_function_name' signal list 其中signal list以空格分隔,可以是信号数字或者信号名称
