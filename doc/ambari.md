@@ -1,8 +1,9 @@
 ambari
 ========
+[hortonworks documents](http://hortonworks.com/downloads/#data-platform)
 ###Install Flow
 ----------------------
-1. Install centos7 on 3 server or more, centos7 ISO in http://192.168.85.133/
+1. Install centos7 on 3 server or more, centos7 ISO in http://192.168.85.133/, https://www.centos.org/download/
 2. Fetch IP address and Hostname. named 'node1, node2, node3' etc.
 3. `yum install ntpdate`
 
