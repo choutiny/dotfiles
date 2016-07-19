@@ -4341,6 +4341,7 @@ windows键可以在stardict双击选中单词的时候,按住windows键可以弹
 
 106,REALVNC
 ```
+https://www.realvnc.com/download/vnc/
 dpkg -i VNC-Server-5.2.3-Linux-x64.deb
     key:8KNFU-MZZHE-WA449-2SLLH-48Q7A
 mkdir /usr/lib/systemd/system
