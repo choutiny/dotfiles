@@ -248,6 +248,7 @@ du -s path | sort -rn 按字节排序
 du -sh path | sort -rn 按照M 大小排序
 du -s path | sort -rn | head 选出排前10个的
 du -s path | sort -rn | tail ...尾
+du -shx * | sort -rh | head -10  占用磁盘空间最大的前10个文件
 
 find /etc -name "*" | xargs grep "hello abcserver" > ./cqtest.txt
 grep 后-n 可以显示行号
