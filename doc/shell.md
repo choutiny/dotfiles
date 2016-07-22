@@ -1039,7 +1039,7 @@ There is a screen on:
 9649.test1   (Detached)
 
 恢复Screen,使用命令: 
-[linux@user~]$ screen -r test1 (or 9649)
+[linux@user~]$ screen -r test1 (or 9649), 或者screen -x test1 (or 9649)
 
 Screen命令中用到的快捷键
     Ctrl+a c : 创建窗口
