@@ -1,4 +1,10 @@
 go
+========
+https://golang.org/dl/
+
+### Installation
+--------------
+```
 // 默认安装
 tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 
@@ -14,4 +20,4 @@ go run hello.go
 在终端运行godoc -http=:8000 就可以开启http://localhost:port 的go官方文档.
 安装gccgo
 #apt-get install gccgo-4.7 gccgo-4.7-multilib gccgo gccgo-multilib gccgo-4.7-doc
-i
+```
