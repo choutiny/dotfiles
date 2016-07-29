@@ -1325,7 +1325,7 @@ CPU 时间: ulimit -t unlimited
 
 
 ipcs -l //查看内核限制
-xrandr //查看当前屏幕分辨率
+xrandr //查看当前屏幕分辨率,刷新率(也可以用xvidtune).
     dual-screen display
         xrandr --output DP1/HDMI1/VGA1 --right-of LVDS1
 
