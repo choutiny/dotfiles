@@ -2021,8 +2021,15 @@ svn revert --recursive ./ 取消掉svn add的内容
 ```
 apt-cache search package 搜索包
 apt-cache show package 获取包的相关信息,如说明,大小,版本等
+
+apt-get socks5 proxy setting
+1. apt-get install tsocks
+2. vim /etc/tsocks.conf
+3. 启一个socks5的ssh -D 7070
+4. tsocks apt-get xxxx
+
 apt-get install package 安装包
-apt-get install package - - reinstall 重新安装包
+apt-get install package --reinstall 重新安装包
 apt-get install $(grep -vE "^\s*#" filename  | tr "\n" " ") 从文本文件里面安装包
 apt-get install $(cat filename)
 xargs -a <(cat filename) -r apt-get install 其中-r是如果标准输出不包含任何非空d,就不执行命令而直接输出.可以配合-t使用

@@ -25,7 +25,7 @@ apt-get update
 apt-get install docker-engine
 
 remove docker
-apt-get purge docker-io
+apt-get purge docker.io
     or
 apt-get autoremove --purge docker-io
 rm -rf /var/lib/docker
