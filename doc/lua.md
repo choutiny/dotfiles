@@ -7,9 +7,10 @@ lua
 ```
 centos:
 
-yum install gcc readline readline-devel
+yum install gcc readline readline-devel (apt-get install libreadline-dev)
 tar zxvf lua-5.3.2.tar.gz
-cd lua-5.3.2 && make linux test
+cd lua-5.3.2 && make linux test(lua.c:80:31: fatal error: readline/readline.h: No such file or directory)
+
 make install
 
 debian:

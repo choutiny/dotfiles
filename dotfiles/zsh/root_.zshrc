@@ -59,6 +59,7 @@ plugins=(git autojump git-flow github zsh-syntax-highlighting sudo colored-man)
 # User configuration
 
 export PATH="/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/longene/qq/wine/bin/:/usr/local/go/bin:/usr/java/java7/bin"
+export PATH=.:$PATH:/home/softs/linux/jdk1.8.0_74/bin
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh

@@ -4309,8 +4309,13 @@ client: sslocal -s server_name -p server_port -l local_port -k password -m bf-cf
     /usr/bin/zsh
     /etc/passwd 修改修改用户的bash /bin/zsh
     chsh -s /bin/zsh
+    (usermod -s /usr/local/bin/zsh 用户下修改)
 
     cat /etc/shells 显示当前系统所有的shell
+    setopt nonomatch 
+        shell 不会按照远程地址上的文件去扩展参数,当你使用 ip:/home/tommy/*,因为本地当前目录中, +不存在 ip:/home/tommy/*,所以匹配失败
+        默认情况下,bash 在匹配失败时就使用原来的内容,zsh 则报告一个错误.
+        在 zsh 中执行 setopt nonomatch 则告诉它不要报告 no matches 的错误,而是当匹配失败时直接使用原来的内容.
 
 git clone git@github.com:robbyrussell/oh-my-zsh.git
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
