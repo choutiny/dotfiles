@@ -107,6 +107,9 @@ cat -n file.txt | tr -s '\n'
         第二种,|xargs 是相当于把管道前面的find结果替换到管道后面的末尾(默认是末尾)去执行rm操作.
         -exec的方式只开启了一个rm进程去删除文件,而xargs因为是分批处理,所以会开启多个进程处理,效率自然稍微低一点,但为什么有时候还要用它呢?
         因为一次性替换find到的结果,如果结果过多,会出现参数过长的错误,这时候就需要用到xargs来分批处理了
+    xargs -P $core_num (让几个CPU核心来并行执行)
+    parallel 和xrags -P 一样, 优点是支持多个机器同时运行
+
     touch 1 2 3
     find . -type f -exec mv {} {}.bak \;
     ls
@@ -1073,6 +1076,7 @@ crontab -e
 然后就会进入vi供用户输入cron作业并且保存,然后这个作业会在指定时间调用
 或者crontab task.cron 创建一个文本文件task.cron并且写入cron作业
 ```
+
 ```
     crontab<<EOF 在行内inline指定cron作业
     02  /home/user/test.sh
@@ -1827,7 +1831,11 @@ echo $PATH //查看单个变量
 cmp file1 file2 //文件内容比对
 clear //清屏
 echo 23423 |awk --re-interval '/[0-9]{3,}/' //如果不加re-interval的话,不显示
-cal //得到一个整齐的日历格式
+cal //得到一个整齐的日历格式    cal 7 2016 查看2016年7月的日历
+yes "sentence" 会死循环输出后面的句子除非你中断它
+time process 查看程序运行时间
+factor number 找出一个数的正整数的因子
+
 wc -l //统计行数,wc -w 统计单词
 echo "AaDCbd23" |tr "[A-Z]" "[a-z]" 大写变小写,echo "AaDCbdc23" |tr -c b-d = 将b-d之外的字符串替换成=
 echo "ADSF" | iconv -f UTF8 -t GBK //把字符由utf8转成gbk -f是from和简写,-t好像terminal的简写
@@ -4330,6 +4338,11 @@ rename [-v -n -f] <pcre> <files>   -v 会显示文件名改变的细节 -n 选�
 rename 's/\.jpeg$/\.jpg/' *.jpeg 重名令jpg为jpeg
 rename 'y/A-Z/a-z/' *             大写改成小写
 rename -v 's/img_\d{3}(\d{4})\.jpeg$/dan_$1\.jpg/' *jpeg    将img_000NNNN.jpeg变成dan_NNNN.jpg
+
+for fn in *.jpg; do convert "$fn" `echo $fn sed 's/jpg$/png/'`; done; 重名令jpg为png
+ls *.jpg | xargs -I{} -P 4 convert "{}" `echo {} | sed 's/jpg$/png/'` 重名令jpg为png
+ls *.jpg | parallel -I{} -S 32/m{1..4} convert "{}" `echo {} | sed 's/jpg$/png/'`
+名字是m1, m2, m3和m4的4台机器上并行处理,每个机器跑32个进程
 ```
 
 102.ample
