@@ -18,6 +18,6 @@ All php framework
 composer global require 'laravel/installer'
 alias laravel='~/.config/composer/vendor/bin/laravel'
 mkdir test && cd test
-laravel new
+laravel new project_or_folder
 
 ```
