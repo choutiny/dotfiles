@@ -40,6 +40,9 @@ composer install
 
 ### RD command 
 ------------
+```
+composer global require "laravel/installer"
+```
 
 
 ### composer.json

@@ -11,3 +11,13 @@ All php framework
     $route['default_controller'] = 'Welcome';
 
 
+###Laravel
+-----------------
+1. Install
+```
+composer global require 'laravel/installer'
+alias laravel='~/.config/composer/vendor/bin/laravel'
+mkdir test && cd test
+laravel new
+
+```
