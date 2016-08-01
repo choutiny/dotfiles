@@ -1868,6 +1868,8 @@ mkfs -t vfat /dev/hda6 //将移动硬盘里面的一个分区格式化成vfat格
     mkdir /media/exfat && cd /media && mount -t exfat /dev/sdb1 exfat
     unmount /dev/sdb1
 
+    apt-get install exfat-utils 
+
 mount /dev/cdrom /media/cdrom //挂载cdrom, 要挂在的设备, 挂在的目录
 getent group 532 //通过组ID,来查找组信息
 last //登录成功用户记录 last reboot 查看重启时间
