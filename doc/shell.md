@@ -2048,7 +2048,7 @@ xargs -a <(cat filename) -r apt-get install 其中-r是如果标准输出不包�
 
 apt-get -f install 修复安装"-f = --fix-missing"
 apt-get remove package 删除包
-apt-get remove package - - purge 删除包,包括删除配置文件等
+apt-get remove package --purge 删除包,包括删除配置文件等
 apt-get update 更新源
 apt-get upgrade 更新已安装的包
 apt-get dist-upgrade 升级系统
