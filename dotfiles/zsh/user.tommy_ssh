@@ -25,17 +25,6 @@ alias gno='xdg-open'
 alias cdh='cd /home'
 alias cdw='cd /home/www/'
 alias cdnw='cd /home/www'
-alias cdws='cd /home/www/chinasite'
-alias cdww='cd /home/www/wordpress'
-alias cdwh='cd /home/www/domain'
-alias cdwha='cd /home/www/domain/ansible'
-alias cdwhb='cd /home/www/domain/bom'
-alias cdwhc='cd /home/www/domain/curator'
-alias cdwhd='cd /home/www/domain/DBAPI'
-alias cdwhp='cd /home/www/domain/pxeboot'
-alias cdwhs='cd /home/www/domain/stress'
-alias cdwht='cd /home/www/domain/testview'
-
 
 alias cdwk='cd /home/work/'
 alias cdu='cd /home/tommy'
@@ -70,6 +59,7 @@ alias systart='sh /home/sh/start_debian.sh'
 alias ks='sh /home/sh/kill.sh'
 
 alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
+
 setopt nonomatch
 
 #export JAVA_HOME=/usr/java/java7

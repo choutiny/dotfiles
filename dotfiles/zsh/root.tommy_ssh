@@ -25,17 +25,13 @@ alias gno='xdg-open'
 alias cdh='cd /home'
 alias cdw='cd /home/www/ && su tommy'
 alias cdnw='cd /home/www'
-alias cdws='cd /home/www/chinasite'
-alias cdww='cd /home/www/wordpress && su tommy'
-alias cdwh='cd /home/www/domain'
-alias cdwha='cd /home/www/domain/ansible'
-alias cdwhb='cd /home/www/domain/bom'
-alias cdwhc='cd /home/www/domain/curator'
-alias cdwhd='cd /home/www/domain/DBAPI'
-alias cdwhp='cd /home/www/domain/pxeboot'
-alias cdwhs='cd /home/www/domain/stress'
-alias cdwht='cd /home/www/domain/testview'
 
+
+alias ssh106='ssh -p27329 root@xxx.xxx.xxx.xxx -D7070'
+alias ssh23='ssh -p27329 root@xxx.xxx.xxx.xxx -D7071'
+
+alias sss106='sslocal -c /etc/shadowsocks/config106.json'
+alias sss23='sslocal -c /etc/shadowsocks/config23.json'
 
 alias cdwk='cd /home/work/'
 alias cdu='cd /home/tommy'
