@@ -893,6 +893,11 @@ dumpe2fs /dev/sda1 | grep UUID
 blkid /dev/md0
 
 badblocks -s /dev/sda //坏道扫描时显示进度
+对硬盘进行只读扫描,自动获取硬盘块数目并扫描全部块,将扫描日志输出到屏幕同时记录
+badblocks -s -v -o /tmp/badblocks.log /dev/sdc 
+找到了坏道,进行写入扫描进行修复.
+写入扫描遇到坏道的时候会自动重映射.写入扫描会覆盖原有数据,所以先备份.写入扫描速度很低,所以应该只扫描只读扫描时候发现错误的部分
+badblocks -w -s  /dev/sdb END START
 df - disk space of file systems
 mount
 fdisk
