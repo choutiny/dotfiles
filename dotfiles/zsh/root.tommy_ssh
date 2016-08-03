@@ -64,6 +64,8 @@ alias gvimvimrc='gvim /etc/vim/vimrc'
 alias delpyc='find -name "*.pyc" | xargs "rm"'
 alias systart='sh /home/sh/start_debian.sh'
 alias ks='sh /home/sh/kill.sh'
+alias resn='systemctl restart nginx'
+alias resp='systemctl restart php5-fpm'
 
 alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
 
