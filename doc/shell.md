@@ -373,6 +373,34 @@ perl的元字符
     -x, (--line-regexp): 显示与指定模式 精确匹配 而不含其他字符的行. 比如匹配'error'则只匹配单独一行的'error',如果该行除了error之外还有其他字符则不算匹配. 
     -E "正则表达式" 或者用egrep "正则表达式" 
         grep -e "pattern1" -e "pattern2" 匹配多个样式 
+    egrep
+        . 代表任意单个字符, 如 /l..e/ 与包含一个l, 后跟两个字符, 然后跟一个e的行相匹配
+        ^ 代表行的开始.  ^love 如: 与所有 love 开头的行匹配
+        $ 代表行的结束. love$  如: 与所有 love 结尾的行匹配
+        [... ] 匹配括号中的字符之一
+        * 用于修饰前导字符,表示前导字符出现0次或任意多次
+            如: ' a* grep' 匹配所有0个或多个a后紧跟 grep 的行. ".*"表示任意字符串
+        \? 用于修饰前导字符, 表示前导字符出现0或1次
+            a\?  匹配0或1个a
+        \+ 用于修饰前导字符, 表示前导字符出现1或多次
+            a\+  匹配1或多个a
+        \{n,m\} 用于修饰前导字符,表示前导字符出现n至m次(n和m都是整数,且n<m)
+            a\{3,5\} 匹配3至5个连续的a
+            \{n,m\} 还有其他几种形式:
+                \{n\} 连续的n个前导字符
+                \{n,\}连续的至少n个前导字符
+        \ 用于转义紧跟其后的单个特殊字符,使该特殊字符成为普通字符
+            如:^ \ . [0-9][0-9] 对以一个句点和两个数字开始
+                a*  匹配连续的任意(也包括0)个a
+                a\?  匹配0或1个a
+                a\+  匹配1或多个a
+                a\{3,5\}  匹配3至5个连续的a
+            \.*  匹配0或多个连续的.  \. 表示普通字符句点
+            sed  ' s/^ *[0-9]*// '  test1
+        ｜表示或, 如: a|b|c 匹配a或b或c.如: grep|sed匹配grep或sed
+            如:egrep ' grep|sed ' test
+        (),将部分内容合成一个单位组,比如要搜索 glad 或 good 可以如下'g(la|oo)d'
+            如: egrep 'g(la|oo)d' test
 
     输出
     -c, (--count): 之前的pattern默认输出结果都是以原始文本的行为单位显示. 这里就不显示行内容, 只显示匹配到的行数,不是匹配的次数
@@ -2390,10 +2418,37 @@ git remote add origin git@ github:robbin/robbin_site.git # 添加远程仓库地
 git remote set-url origin git@ github.com:robbin/robbin_site.git # 设置远程仓库地址(用于修改远程仓库地址)
 git remote rm <repository> # 删除远程仓库
 git branch -d -r origin/branch_name 删除远程仓库分支 git push origin --delete branch_name 
+
+example:
+git push origin --delete `git branch | grep -E '正则'` 来批量删除大量的分支
+git push origin --delete `git br -r | grep 'release' | cut -c10- | egrep "^release/tff"` 
+git br -r | grep 'release' | cut -c10-  | egrep '(t4f)' | xargs git push origin --delete  
+
+            git branch  | cut -c3- | egrep "^3.2" | xargs git branch -D
+              ^                ^                ^         ^ 
+              |                |                |         |--- create arguments
+              |                |                |              from standard input
+              |                |                |
+              |                |                |---your regexp 
+              |                |
+              |                |--- skip asterisk , -c 从第几个字母开始截取, -c3-, 从第三个字截取到最后
+              |--- list all 
+                   local
+                   branches
 git branch -D master develop 删除掉本地develop分支
 删除掉错误的分支后, 需要重新fetch upstream branch_name:branch_name
 如果push 到origin报错, error: src refspec 1.4.0 matches more than one.,说明有tag
-需要删除掉对应branch的tag, git tag -d tag-name
+需要删除掉对应branch的tag, git tag -d tag-name, 删除本地tag, 
+git push --delete origin tagname 来删除远端tag
+
+example:
+git fetch --tags origin
+git for-each-ref  --format="%(refname:short)" refs/tags | xargs git push --delete origin
+git for-each-ref  --format="%(refname:short)" refs/tags | xargs git tag --delete
+
+
+git for-each-ref --format="%(refname:short)" refs/tags/\*@\* | xargs git tag -d
+                    固定格式,                 对应关键字
 
 
 创建远程仓库
