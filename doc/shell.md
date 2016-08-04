@@ -2419,10 +2419,11 @@ git remote set-url origin git@ github.com:robbin/robbin_site.git # 设置远程�
 git remote rm <repository> # 删除远程仓库
 git branch -d -r origin/branch_name 删除远程仓库分支 git push origin --delete branch_name 
 
-example:
+example: delete remote branches
 git push origin --delete `git branch | grep -E '正则'` 来批量删除大量的分支
 git push origin --delete `git br -r | grep 'release' | cut -c10- | egrep "^release/tff"` 
 git br -r | grep 'release' | cut -c10-  | egrep '(t4f)' | xargs git push origin --delete  
+git br -r | egrep 'release|hotfix|feature' | cut -c10-  | egrep '(t4f)' | xargs git push origin --delete  
 
             git branch  | cut -c3- | egrep "^3.2" | xargs git branch -D
               ^                ^                ^         ^ 
@@ -2441,7 +2442,7 @@ git branch -D master develop 删除掉本地develop分支
 需要删除掉对应branch的tag, git tag -d tag-name, 删除本地tag, 
 git push --delete origin tagname 来删除远端tag
 
-example:
+example: delete remote tags
 git fetch --tags origin
 git for-each-ref  --format="%(refname:short)" refs/tags | xargs git push --delete origin
 git for-each-ref  --format="%(refname:short)" refs/tags | xargs git tag --delete
