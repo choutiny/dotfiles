@@ -2398,7 +2398,7 @@ git checkout -b dev 本地建立一个dev分支 = git branch dev
 git远程分支管理
 git pull #抓取远程仓库所有分支更新并合并到本地
 git pull --no-ff #抓取远程仓库所有分支更新并合并到本地,不要快进合并
-git fetch origin # 抓取远程仓库更新
+git fetch origin # 抓取远程仓库更新, git fetch --no-tags 不抓取tags
 git merge origin/master #将远程主分支合并到本地当前分支
 git co --track origin/branch #跟踪某个远程分支创建相应的本地分支
 git co -b <local_branch> origin/<remote_branch> #基于远程分支创建本地分支,功能同上
