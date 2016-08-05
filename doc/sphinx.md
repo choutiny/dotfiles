@@ -1,9 +1,10 @@
 sphinx & coreseek
 ==========
-[sphinx official](http://sphinxsearch.com/)<br />
-[Coreseek](http://coreseek.cn/)包含
-1. csft-4.1, CSFT(coreseek fulltext search server), 实际就是sphinx-2.1
-2. mmseg-3.2.14, 中文分词算法
+1. [sphinx official](http://sphinxsearch.com/)
+2. [Coreseek](http://coreseek.cn/)包含
+    1. csft-4.1, CSFT(coreseek fulltext search server), 实际就是sphinx-2.1
+    2. mmseg-3.2.14, 中文分词算法<br />
+3. [solr](http://lucene.apache.org/solr)
 
 ### Install
 -----------
