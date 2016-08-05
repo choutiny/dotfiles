@@ -5031,6 +5031,12 @@ nmap 192.168.0. *        扫描整个子网
 nmap 192.168.0.101,102,103使用IP地址的最后一段扫描多台主机
 ```
 
+129. nautilus bookmarks delete
+```
+vim ~/.config/user-dirs.dirs
+uncomment Videos,Music,Pictures etc.
+```
+
 
 ##########################################################################
 5.2 更新hg                                          2013-11-14 11:14:11
