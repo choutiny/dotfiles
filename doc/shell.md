@@ -5033,8 +5033,10 @@ nmap 192.168.0.101,102,103使用IP地址的最后一段扫描多台主机
 
 129. nautilus bookmarks delete
 ```
+vim /etc/xdg/user-dirs.defaults                                                                                                                                    [10:56:32]
 vim ~/.config/user-dirs.dirs
 uncomment Videos,Music,Pictures etc.
+xdg-user-dirs-gtk-update
 ```
 
 
