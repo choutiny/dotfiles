@@ -20,4 +20,7 @@ alias laravel='~/.config/composer/vendor/bin/laravel'
 mkdir test && cd test
 laravel new project_or_folder
 
+2. laravel grammer
+```
+php artisan key:generate
 ```
