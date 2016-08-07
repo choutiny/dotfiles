@@ -614,6 +614,7 @@ awk -F: '{ print $NF }' /etc/passwd 或者
 awk 'BEGIN { FS=":" } { print $NF }' /etc/passwd 在begin语句块中用OFS="delimiter" 设置输出字段的定界符
 
 awk ' { print NR=$2 }' | sed -n 2p 获取某一列的某一行内容, 2p是第2行
+awk ' { print NR=$2 }' | sed -n 2,3p 获取某一列的某一行内容, 2,3p是第2,3行
 
 查看系统所有用户 cut -d: -f1 /etc/passwd
 查看系统所有组   cut -d: -f1 /etc/group
@@ -2646,6 +2647,7 @@ visudo (delete用户的sudo)
 
 本地电脑个人pc,比如tommy的
 su - tommy
+su - username1 -c "command" 用 username1 来执行某个命令.
 注意用户名要和里面的id_rsa.pub的账户对应
 scp -P5647 ~/.ssh/id_rsa.pub git@serverIP:/home/git/tommy.pub
 
@@ -4522,25 +4524,27 @@ systemctl enable mysql      #make mysql will start when system initial
 systemctl --failed          #list all failed
 systemctl status mysql      #show the mysql status
 
-Sysvinit 命令	Systemd 命令	备注
-service frobozz start	systemctl start frobozz.service	用来启动一个服务 (并不会重启现有的)
-service frobozz stop	systemctl stop frobozz.service	用来停止一个服务 (并不会重启现有的). 
-service frobozz restart	systemctl restart frobozz.service	用来停止并启动一个服务. 
-service frobozz reload	systemctl reload frobozz.service	当支持时, 重新装载配置文件而不中断等待操作. 
-service frobozz condrestart	systemctl condrestart frobozz.service	如果服务正在运行那么重启它. 
-service frobozz status	systemctl status frobozz.service	汇报服务是否正在运行. 
-ls /etc/rc.d/init.d/	systemctl list-unit-files --type=service (推荐)
+Sysvinit 命令               Systemd 命令	备注
+service frobozz start       systemctl start frobozz.service	用来启动一个服务 (并不会重启现有的)
+service frobozz stop        systemctl stop frobozz.service	用来停止一个服务 (并不会重启现有的). 
+service frobozz restart     systemctl restart frobozz.service	用来停止并启动一个服务. 
+service frobozz reload      systemctl reload frobozz.service	当支持时, 重新装载配置文件而不中断等待操作. 
+service frobozz condrestart systemctl condrestart frobozz.service	如果服务正在运行那么重启它. 
+service frobozz status      systemctl status frobozz.service	汇报服务是否正在运行. 
+ls /etc/rc.d/init.d/        systemctl list-unit-files --type=service (推荐)
 ls /lib/systemd/system/*.service /etc/systemd/system/*.service	用来列出可以启动或停止的服务列表. 
-chkconfig frobozz on	systemctl enable frobozz.service	在下次启动时或满足其他触发条件时设置服务为启用
-chkconfig frobozz off	systemctl disable frobozz.service	在下次启动时或满足其他触发条件时设置服务为禁用
-chkconfig frobozz	systemctl is-enabled frobozz.service	用来检查一个服务在当前环境下被配置为启用还是禁用. 
-chkconfig --list	systemctl list-unit-files --type=service (推荐)
+chkconfig frobozz on        systemctl enable frobozz.service	在下次启动时或满足其他触发条件时设置服务为启用
+chkconfig frobozz off       systemctl disable frobozz.service	在下次启动时或满足其他触发条件时设置服务为禁用
+chkconfig frobozz           systemctl is-enabled frobozz.service	用来检查一个服务在当前环境下被配置为启用还是禁用. 
+chkconfig --list            systemctl list-unit-files --type=service (推荐)
+                            systemctl list-unit-files --type=service | grep php
 ls /etc/systemd/system/*.wants/	输出在各个运行级别下服务的启用和禁用情况
-chkconfig frobozz --list	ls /etc/systemd/system/*.wants/frobozz.service	用来列出该服务在哪些运行级别下启用和禁用. 
-chkconfig frobozz --add	systemctl daemon-reload	当您创建新服务文件或者变更设置时使用. 
+chkconfig frobozz --list    ls /etc/systemd/system/*.wants/frobozz.service	用来列出该服务在哪些运行级别下启用和禁用. 
+chkconfig frobozz --add     systemctl daemon-reload	当您创建新服务文件或者变更设置时使用
 
 systemctl status rc-local
 
+journactl -u servicename -f  记录servicename的日志
 ```
 
 105.mysql perfermance

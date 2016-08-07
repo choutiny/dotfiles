@@ -513,6 +513,13 @@ CREATE INDEX index_name ON TABLE (col_name[(length)] [ASC|DESC]) [USING {BTREE|H
 DROP INDEX index_name ON TBNAME;
 查看表状态:SHOW STATUS LIKE 'TBNAME';
 查看表的索引:SHOW INDEXES FROM TBNAME;
+
+给表添加一个时间字段, 并且以当前时间戳填满
+ALTER TABLE `12306_14` ADD create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+也可以直接对某个字段修改
+MODIFY COLUMN `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'add time';
+关于datetime和timestamp最重要的区别是:timestamp带有时区,而datetime没有时区,datetime只是一个固定的时间
+update  `12306_14` set add_time=CURRENT_TIMESTAMP;
 ```
 
 ```
