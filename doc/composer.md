@@ -42,6 +42,9 @@ composer install
 ------------
 ```
 composer global require "laravel/installer"
+composer update
+composer update vendor/packagename1 vendor/packagenam2
+composer update vendor/*
 ```
 
 
@@ -96,6 +99,33 @@ composer将会把psr-0注册为Acme的命名空间
 你可以定义一个映射通过命名空间到文件目录,src目录是你的根目录,vendor是同一级别的目录,例如一个文件为:src/Acme/Foo.php就包含了Acme\Foo类
 当你在增加autoload之后,你必须要重新install来生成vendor/autoload.php文件
 在我们引用此文件的时候,将会返回一个autoloader类的实力,所以你可以把返回的值放入一个变量,然后在增加更多的命名空间,如果在开发环境下这是非常方便的,例如:
+$loader = require 'vendor/autoload.php';
+$loader->add('Acme\Test', __DIR__);
+```
+
+### composer.lock
+------------
+锁定文件, install的时候会优先判断是否有composer.lock, 会根据lock文件里面指定的版本来安装.
+升级到新的版本,使用update命令即可,这样子就能获取最新版本的包并且也更新了你的composer.lock文件.
+php composer.phar update
+或者
+composer update
+
+### vendor/autoload.php
+------------
+通过`require 'vendor/autoload.php';`可以方便的调用第三方类库.
+也可以在composer.json中加载自己的代码,composer将会把psr-0注册为Acme的命名空间
+你可以定义一个映射通过命名空间到文件目录,src目录是你的根目录,vendor是同一级别的目录,
+例如一个文件为:src/Acme/Foo.php就包含了Acme\Foo类
+当你在增加autoload之后,你必须要重新install来生成vendor/autoload.php文件
+```
+{
+    "autoload": {
+        "psr-0": {"Acme": "src/"}
+    }
+}
+
+php
 $loader = require 'vendor/autoload.php';
 $loader->add('Acme\Test', __DIR__);
 ```

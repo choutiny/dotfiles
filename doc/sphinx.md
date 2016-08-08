@@ -73,11 +73,11 @@ make && make install
 ```
 cd testpack
 /usr/local/coreseek/bin/indexer -c etc/csft.conf --all
-##正常索引全部数据 （csft-4.0版类似）
+##正常索引全部数据 (csft-4.0版类似)
 /usr/local/coreseek/bin/search -c etc/csft.conf -a 服务
 ##以下为正常测试搜索关键词"服务"的数据
 /usr/local/coreseek/bin/searchd -c etc/csft.conf
-##以下为正常开启搜索服务时的提示信息（csft-4.0版类似）
+##以下为正常开启搜索服务时的提示信息(csft-4.0版类似)
 ##如要停止搜索服务, /usr/local/coreseek/bin/searchd -c etc/csft.conf --stop
 ##如要已启动服务, 要更新索引, /usr/local/coreseek/bin/indexer -c etc/csft.conf --all --rotate
 ```
